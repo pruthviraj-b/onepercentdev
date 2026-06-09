@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
   },
   env: {
     NEXT_PUBLIC_API_URL: 'http://localhost:3001', // Local dev backend fallback
+    NEXT_PUBLIC_GITHUB_PAGES: isGitHubPages ? 'true' : 'false',
   },
 };
 

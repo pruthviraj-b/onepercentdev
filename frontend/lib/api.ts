@@ -29,8 +29,10 @@ export interface NoteData {
   module_id: number;
 }
 
-// ── Modules & Notes — fetched from static JSON assets in production ────────────
-const BASE_PATH = process.env.NODE_ENV === 'production' ? '/onepercentdev' : '';
+// ── Modules & Notes — fetched from static JSON assets ────────────────────────
+// Only prefix with /onepercentdev on GitHub Pages (basePath is set there).
+// On Vercel or local dev, files are served from the root /api/*.json directly.
+const BASE_PATH = process.env.NEXT_PUBLIC_GITHUB_PAGES === 'true' ? '/onepercentdev' : '';
 
 export async function fetchModules(): Promise<Module[]> {
   const res = await fetch(`${BASE_PATH}/api/modules.json`);
