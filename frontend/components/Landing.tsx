@@ -219,6 +219,20 @@ export function Landing({
                   <td><strong>shyamiscoding</strong> — Beginner to 1% Developer 🚀</td>
                 </tr>
                 <tr>
+                  <td className="land-about-key">DEVELOPER</td>
+                  <td>
+                    DESIGNED &amp; BUILT BY{' '}
+                    <a
+                      href="https://pruthviraj-portfolio-nu.vercel.app/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      PRUTHVI RAJ B
+                    </a>{' '}
+                    . 2026
+                  </td>
+                </tr>
+                <tr>
                   <td className="land-about-key">SERIES</td>
                   <td>Python in Kannada — 77 videos complete</td>
                 </tr>
