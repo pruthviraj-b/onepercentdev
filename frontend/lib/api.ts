@@ -29,15 +29,17 @@ export interface NoteData {
   module_id: number;
 }
 
-// ── Modules & Notes — fetched from Next.js API routes ────────────────────────
+// ── Modules & Notes — fetched from static JSON assets in production ────────────
+const BASE_PATH = process.env.NODE_ENV === 'production' ? '/onepercentdev' : '';
+
 export async function fetchModules(): Promise<Module[]> {
-  const res = await fetch('/api/modules');
+  const res = await fetch(`${BASE_PATH}/api/modules.json`);
   if (!res.ok) throw new Error('Failed to fetch modules');
   return res.json();
 }
 
 export async function fetchNote(part: number): Promise<NoteData> {
-  const res = await fetch(`/api/notes/${part}`);
+  const res = await fetch(`${BASE_PATH}/api/notes/${part}.json`);
   if (!res.ok) throw new Error(`Part ${part} not found`);
   return res.json();
 }
