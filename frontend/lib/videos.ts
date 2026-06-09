@@ -1,0 +1,42 @@
+// YouTube video IDs mapped to each part number
+export const VIDEOS: Record<number, string> = {
+  1:  'NZELjoW1q_o',
+  2:  'NUv2HGIuALQ',
+  3:  'bwC63P-LAf4',
+  4:  'ufkLyY1aCJE',
+  5:  's0FjpRg15BM',
+  6:  'Bq3SqD4hno8',
+  7:  '5YI4Kw_L_ww',
+  8:  'dV5hoCR6XBU',
+  9:  '89jJUg67fr0',
+  10: 'xz-k3-WZH1I',
+  11: 'YsTjewlvIO0',
+  12: 'bc5KeWxsdGc',
+  13: 'JYIo93Us9pU',
+  14: '4om5H7h9sZ8',
+  15: 'UxXITnWBGig',
+  16: 'ahGcuS1pToo',
+  17: '-R2h6oSzv58',
+  18: 'A6u0AXBTipM',
+  19: 'xXaEKebY3Q4',
+  20: '4v3L6SpZWOc',
+  21: 'U_2WaUg_IAo',
+  22: 'ePXdDYq23d0',
+  23: 'pgvKa7nyJ7s',
+  24: 'czYBNOOS9Wo',
+  25: '6wYKJJUGWjQ',
+  26: 'fbU-FzvChq4',
+  27: '40Lbqr_scis',
+  28: 'eTWV4mRtuiI',
+  29: 'jlknKx213T8',
+  30: 'YLLRIs0zpmo',
+  31: '6jBqluXdEgQ',
+  32: 'N_jDqtsnuyo',
+  33: 'tfgboOW5C7w',
+  34: 'frrvvCeUiVA',
+  35: 'uEtAH33vG9c',
+};
+
+export function getVideoId(part: number): string | null {
+  return VIDEOS[part] ?? null;
+}
