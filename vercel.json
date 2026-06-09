@@ -6,8 +6,9 @@
       "framework": "nextjs"
     },
     "backend": {
-      "root": "backend",
-      "routePrefix": "/_/backend"
+      "framework": "node",
+      "mount": "backend",
+      "entrypoint": "backend/index.js"
     }
   }
 }
