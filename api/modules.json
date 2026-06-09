@@ -1,0 +1,330 @@
+[
+  {
+    "id": 1,
+    "title": "Foundations",
+    "parts": [
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "notes": [
+      {
+        "part": 2,
+        "title": "Setting Up Python + Why Python Is Your Best Career Move",
+        "importance": "high",
+        "hasFiles": false,
+        "wordCount": 2179
+      },
+      {
+        "part": 3,
+        "title": "The History and Design of Python",
+        "importance": "medium",
+        "hasFiles": false,
+        "wordCount": 2291
+      },
+      {
+        "part": 4,
+        "title": "The Culture of Python + What You Actually Installed",
+        "importance": "medium",
+        "hasFiles": false,
+        "wordCount": 2976
+      },
+      {
+        "part": 5,
+        "title": "Your First Python Code",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 2313
+      },
+      {
+        "part": 6,
+        "title": "How Python Actually Runs Your Code",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 2319
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Core Primitives",
+    "parts": [
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "notes": [
+      {
+        "part": 7,
+        "title": "Memory: Stack and Heap",
+        "importance": "high",
+        "hasFiles": false,
+        "wordCount": 3312
+      },
+      {
+        "part": 8,
+        "title": "Variables, Names, and Objects",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 3608
+      },
+      {
+        "part": 9,
+        "title": "Numbers and Math",
+        "importance": "medium",
+        "hasFiles": true,
+        "wordCount": 3653
+      },
+      {
+        "part": 10,
+        "title": "Strings",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 2707
+      },
+      {
+        "part": 11,
+        "title": "Booleans and Comparison Operators",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 2036
+      },
+      {
+        "part": 12,
+        "title": "Logical Operators and Truthiness",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 2063
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Control Flow & Logic",
+    "parts": [
+      13,
+      14,
+      15,
+      16
+    ],
+    "notes": [
+      {
+        "part": 13,
+        "title": "Conditionals",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 2811
+      },
+      {
+        "part": 14,
+        "title": "Professional Conditional Patterns",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 3017
+      },
+      {
+        "part": 15,
+        "title": "While Loops",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 4954
+      },
+      {
+        "part": 16,
+        "title": "For Loops",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 3025
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Data Structures",
+    "parts": [
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23
+    ],
+    "notes": [
+      {
+        "part": 17,
+        "title": "Lists Part 1 (Foundation)",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 1940
+      },
+      {
+        "part": 18,
+        "title": "Lists Part 2 (Advanced Patterns)",
+        "importance": "high",
+        "hasFiles": false,
+        "wordCount": 2624
+      },
+      {
+        "part": 19,
+        "title": "Tuples and Unpacking",
+        "importance": "medium",
+        "hasFiles": false,
+        "wordCount": 2165
+      },
+      {
+        "part": 20,
+        "title": "Sets",
+        "importance": "medium",
+        "hasFiles": true,
+        "wordCount": 4081
+      },
+      {
+        "part": 21,
+        "title": "Dictionaries Part 1 (Foundation)",
+        "importance": "high",
+        "hasFiles": false,
+        "wordCount": 2809
+      },
+      {
+        "part": 22,
+        "title": "Dictionaries Part 2 (Advanced Patterns)",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 2374
+      },
+      {
+        "part": 23,
+        "title": "Comprehensions",
+        "importance": "high",
+        "hasFiles": false,
+        "wordCount": 1822
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Functions & Functional",
+    "parts": [
+      24,
+      25,
+      26,
+      27,
+      28
+    ],
+    "notes": [
+      {
+        "part": 24,
+        "title": "Functions Part 1 (Foundation)",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 1959
+      },
+      {
+        "part": 25,
+        "title": "Functions Part 2 (Advanced Control)",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 1329
+      },
+      {
+        "part": 26,
+        "title": "Recursion Part 1 (Thinking in Stack Frames)",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 1207
+      },
+      {
+        "part": 27,
+        "title": "Memoization: Don't Compute What You Already Know",
+        "importance": "medium",
+        "hasFiles": true,
+        "wordCount": 867
+      },
+      {
+        "part": 28,
+        "title": "Lambda + Functional Helpers",
+        "importance": "medium",
+        "hasFiles": false,
+        "wordCount": 1289
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Modules & Packages",
+    "parts": [
+      29,
+      30,
+      31,
+      32
+    ],
+    "notes": [
+      {
+        "part": 29,
+        "title": "Modules and Imports",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 1468
+      },
+      {
+        "part": 30,
+        "title": "Third-Party Packages & APIs (The Power of pip)",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 1265
+      },
+      {
+        "part": 31,
+        "title": "Virtual Environments and Modern Dependency Management",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 4506
+      },
+      {
+        "part": 32,
+        "title": "Publishing Your Own Package (To PyPI)",
+        "importance": "medium",
+        "hasFiles": true,
+        "wordCount": 1190
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "title": "Error Handling",
+    "parts": [
+      33,
+      34,
+      35
+    ],
+    "notes": [
+      {
+        "part": 33,
+        "title": "Exceptions Part 1 (Error Handling Mindset)",
+        "importance": "high",
+        "hasFiles": false,
+        "wordCount": 1738
+      },
+      {
+        "part": 34,
+        "title": "Exceptions Part 2 (Professional Error Design)",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 2319
+      },
+      {
+        "part": 35,
+        "title": "Exceptions Part 3 (Hands-On Practice)",
+        "importance": "high",
+        "hasFiles": true,
+        "wordCount": 5622
+      }
+    ]
+  }
+]
