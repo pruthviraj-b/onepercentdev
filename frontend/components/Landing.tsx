@@ -232,6 +232,16 @@ export function Landing({
                   </td>
                 </tr>
                 <tr>
+                  <td className="land-about-key">INSTRUCTOR</td>
+                  <td>
+                    <strong>PRUTHVI RAJ B</strong> — Designed &amp; Built By{' '}
+                    <a href="https://pruthviraj-portfolio-nu.vercel.app/" target="_blank" rel="noopener noreferrer">
+                      PRUTHVI RAJ B
+                    </a>{' '}
+                    . 2026
+                  </td>
+                </tr>
+                <tr>
                   <td className="land-about-key">SERIES</td>
                   <td>Python in Kannada — 77 videos complete</td>
                 </tr>
