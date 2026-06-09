@@ -216,20 +216,19 @@ export function Landing({
               <tbody>
                 <tr>
                   <td className="land-about-key">INSTRUCTOR</td>
-                  <td><strong>shyamiscoding</strong> — Beginner to 1% Developer 🚀</td>
-                </tr>
-                <tr>
-                  <td className="land-about-key">DEVELOPER</td>
                   <td>
-                    DESIGNED &amp; BUILT BY{' '}
-                    <a
-                      href="https://pruthviraj-portfolio-nu.vercel.app/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      PRUTHVI RAJ B
-                    </a>{' '}
-                    . 2026
+                    <strong>shyamiscoding</strong> — Beginner to 1% Developer 🚀
+                    <div style={{ marginTop: '6px', fontSize: '0.75rem' }}>
+                      DESIGNED &amp; BUILT BY{' '}
+                      <a
+                        href="https://pruthviraj-portfolio-nu.vercel.app/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        PRUTHVI RAJ B
+                      </a>{' '}
+                      . 2026
+                    </div>
                   </td>
                 </tr>
                 <tr>
