@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "predev": "node -e \"const fs = require('fs'); if (fs.existsSync('.next')) fs.rmSync('.next', { recursive: true, force: true });\"",
-    "dev": "cross-env NODE_OPTIONS=--max-old-space-size=2048 NEXT_TELEMETRY_DISABLED=1 next dev --port 3000",
+    "dev": "cross-env NODE_OPTIONS=--max-old-space-size=2048 NEXT_TELEMETRY_DISABLED=1 next dev --port 3005",
     "prebuild": "node scripts/export-data.js",
     "build": "next build",
     "deploy": "npm run build && node -e \"require('fs').writeFileSync('out/.nojekyll', '')\" && gh-pages -d out --dotfiles",
