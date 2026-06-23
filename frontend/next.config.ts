@@ -1,0 +1,19 @@
+import type { NextConfig } from "next";
+
+const isGitHubPages = process.env.GITHUB_PAGES === 'true';
+
+const nextConfig: NextConfig = {
+  ...(isGitHubPages && { output: 'export' }),
+  ...(isGitHubPages && { basePath: '/onepercentdev' }),
+  transpilePackages: ['react-markdown', 'rehype-raw', 'remark-gfm', 'rehype-sanitize'],
+  reactStrictMode: true,
+  images: {
+    unoptimized: true,
+  },
+  env: {
+    NEXT_PUBLIC_API_URL: 'http://localhost:3001', // Local dev backend fallback
+    NEXT_PUBLIC_GITHUB_PAGES: isGitHubPages ? 'true' : 'false',
+  },
+};
+
+export default nextConfig;

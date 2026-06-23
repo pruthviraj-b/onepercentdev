@@ -1,0 +1,33 @@
+{
+  "name": "onepercentdev-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "predev": "node -e \"const fs = require('fs'); if (fs.existsSync('.next')) fs.rmSync('.next', { recursive: true, force: true });\" && node scripts/export-data.js",
+    "dev": "cross-env NODE_OPTIONS=--max-old-space-size=2048 NEXT_TELEMETRY_DISABLED=1 next dev --port 3005",
+    "prebuild": "node scripts/export-data.js",
+    "build": "next build",
+    "deploy": "npm run build && node -e \"require('fs').writeFileSync('out/.nojekyll', '')\" && gh-pages -d out --dotfiles",
+    "start": "next start"
+  },
+  "dependencies": {
+    "firebase": "^12.15.0",
+    "highlight.js": "^11.9.0",
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-markdown": "^9.0.0",
+    "rehype-highlight": "^7.0.0",
+    "rehype-raw": "^7.0.0",
+    "rehype-sanitize": "^6.0.0",
+    "remark-gfm": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "cross-env": "^7.0.3",
+    "gh-pages": "^6.3.0",
+    "typescript": "^5.6.0"
+  }
+}

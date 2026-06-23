@@ -1,0 +1,15 @@
+{
+  "name": "onepercentdev-backend",
+  "version": "1.0.0",
+  "description": "1% Developer Academy — API Server",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "sql.js": "^1.12.0",
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

@@ -1,0 +1,359 @@
+{
+  "python": {
+    "title": "Python in Kannada",
+    "description": "Learn Python from scratch to production-grade code — in Kannada.",
+    "tagline": "PYTHON IN KANNADA · BY SHYAMISCODING",
+    "mascot": "snake",
+    "contentDir": "content/python",
+    "dirPattern": "Part-{part}",
+    "playlistUrl": "https://www.youtube.com/playlist?list=PLPzxNCCwS9ww_I4zEH6w9-HN4IKmt7UED",
+    "channelUrl": "https://www.youtube.com/channel/UCT0629rHJIjJWmQj1JyejyA",
+    "discordUrl": "https://discord.gg/A3TVRXf58",
+    "author": "shyamiscoding",
+    "authorTitle": "Beginner to 1% Developer 🚀",
+    "eyebrow": "BEGINNER TO 1% DEVELOPER",
+    "subtitle": "PIZZA BY THE CODE",
+    "target": "BCA/MCA/Engg Students, Freshers, and developers targeting 1% capability",
+    "goal": "Build production-grade development & database architectures",
+    "welcomeParagraphs": [
+      "This is the complete, premium study companion for the popular YouTube series <b>Python in Kannada</b> by <b>shyamiscoding</b>. Every single part is compiled with deep conceptual notes, copyable code blocks, and the exact lesson video — all in one unified, high-contrast dashboard.",
+      "Our core objective: teach Python from fundamental memory models up to professional production code. We focus on teaching you to think like a robust engineer, rather than just memorize syntax to pass exams."
+    ],
+    "modules": [
+      {
+        "id": 1,
+        "title": "Foundations",
+        "parts": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Core Primitives",
+        "parts": [
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Control Flow & Logic",
+        "parts": [
+          13,
+          14,
+          15,
+          16
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Data Structures",
+        "parts": [
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Functions & Functional",
+        "parts": [
+          24,
+          25,
+          26,
+          27,
+          28
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Modules & Packages",
+        "parts": [
+          29,
+          30,
+          31,
+          32
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Error Handling",
+        "parts": [
+          33,
+          34,
+          35
+        ]
+      },
+      {
+        "id": 8,
+        "title": "File Handling & Advanced Data",
+        "parts": [
+          36,
+          37.1,
+          37.2,
+          38,
+          38.1
+        ]
+      },
+      {
+        "id": 9,
+        "title": "source",
+        "parts": []
+      },
+      {
+        "id": 10,
+        "title": "Cloud Diagnostics",
+        "parts": [
+          99
+        ]
+      }
+    ],
+    "importance": {
+      "1": "high",
+      "2": "high",
+      "3": "medium",
+      "4": "medium",
+      "5": "high",
+      "6": "high",
+      "7": "high",
+      "8": "high",
+      "9": "medium",
+      "10": "high",
+      "11": "high",
+      "12": "high",
+      "13": "high",
+      "14": "high",
+      "15": "high",
+      "16": "high",
+      "17": "high",
+      "18": "high",
+      "19": "medium",
+      "20": "medium",
+      "21": "high",
+      "22": "high",
+      "23": "high",
+      "24": "high",
+      "25": "high",
+      "26": "high",
+      "27": "medium",
+      "28": "medium",
+      "29": "high",
+      "30": "high",
+      "31": "high",
+      "32": "medium",
+      "33": "high",
+      "34": "high",
+      "35": "high",
+      "36": "high",
+      "38": "high",
+      "99": "medium",
+      "37.1": "high",
+      "37.2": "high",
+      "38.1": "high"
+    },
+    "videos": {
+      "1": "NZELjoW1q_o",
+      "2": "NUv2HGIuALQ",
+      "3": "bwC63P-LAf4",
+      "4": "ufkLyY1aCJE",
+      "5": "s0FjpRg15BM",
+      "6": "Bq3SqD4hno8",
+      "7": "5YI4Kw_L_ww",
+      "8": "dV5hoCR6XBU",
+      "9": "89jJUg67fr0",
+      "10": "xz-k3-WZH1I",
+      "11": "YsTjewlvIO0",
+      "12": "bc5KeWxsdGc",
+      "13": "JYIo93Us9pU",
+      "14": "4om5H7h9sZ8",
+      "15": "UxXITnWBGig",
+      "16": "ahGcuS1pToo",
+      "17": "-R2h6oSzv58",
+      "18": "A6u0AXBTipM",
+      "19": "xXaEKebY3Q4",
+      "20": "4v3L6SpZWOc",
+      "21": "U_2WaUg_IAo",
+      "22": "ePXdDYq23d0",
+      "23": "pgvKa7nyJ7s",
+      "24": "czYBNOOS9Wo",
+      "25": "6wYKJJUGWjQ",
+      "26": "fbU-FzvChq4",
+      "27": "40Lbqr_scis",
+      "28": "eTWV4mRtuiI",
+      "29": "jlknKx213T8",
+      "30": "YLLRIs0zpmo",
+      "31": "6jBqluXdEgQ",
+      "32": "N_jDqtsnuyo",
+      "33": "tfgboOW5C7w",
+      "34": "frrvvCeUiVA",
+      "35": "uEtAH33vG9c",
+      "36": "TAlZB--vI6g",
+      "38": "OgghR0MEMaA",
+      "99": "",
+      "37.1": "yphkYDzpvCs",
+      "37.2": "Najqw058F8I",
+      "38.1": "aEcpq38MYos"
+    }
+  },
+  "cloud": {
+    "title": "Cloud Computing",
+    "description": "Learn Cloud Computing concepts, architectures, and deployments — in Kannada.",
+    "tagline": "CLOUD COMPUTING · BY SHYAMISCODING",
+    "mascot": "cloud",
+    "contentDir": "content/cloud",
+    "dirPattern": "Part-{part}",
+    "playlistUrl": "",
+    "channelUrl": "https://www.youtube.com/channel/UCT0629rHJIjJWmQj1JyejyA",
+    "discordUrl": "https://discord.gg/A3TVRXf58",
+    "author": "shyamiscoding",
+    "authorTitle": "Master in Engineering 🚀",
+    "eyebrow": "PRODUCTION-GRADE INFRASTRUCTURE",
+    "subtitle": "UNDER THE HOOD PLUMBING",
+    "target": "SysAdmins, DevOps Engineers, and developers targeting cloud mastery",
+    "goal": "Master virtualization, container orchestration, and elastic infrastructures",
+    "welcomeParagraphs": [
+      "This is the companion learning dashboard for the **Cloud Computing** course by **shyamiscoding**.",
+      "Master the engineering principles of virtual machines, hypervisors, VPC networks, serverless paradigms, and container orchestration.",
+      "We dive beneath cloud control panels to understand how the plumbing actually operates. You will learn to orchestrate reliable, elastic, and secure infrastructures."
+    ],
+    "modules": [
+      {
+        "id": 1,
+        "title": "Master IT & Cloud Fundamentals",
+        "parts": [1, 9, 10, 11, 12]
+      },
+      {
+        "id": 2,
+        "title": "Select a Cloud Platform",
+        "parts": [2, 13, 14, 15, 16]
+      },
+      {
+        "id": 3,
+        "title": "Develop Systems Thinking",
+        "parts": [3, 17, 18, 19, 20]
+      },
+      {
+        "id": 4,
+        "title": "Learn Essential Automation",
+        "parts": [4, 21, 22, 23, 24]
+      },
+      {
+        "id": 5,
+        "title": "Adopt Infrastructure as Code",
+        "parts": [5, 25, 26, 27, 28]
+      },
+      {
+        "id": 6,
+        "title": "Master DevOps Pipelines",
+        "parts": [6, 29, 30, 31, 32]
+      },
+      {
+        "id": 7,
+        "title": "Build Strategic Projects",
+        "parts": [7, 33, 34, 35, 36]
+      },
+      {
+        "id": 8,
+        "title": "Build Professional Presence",
+        "parts": [8, 37, 38, 39, 40]
+      }
+    ],
+    "importance": {
+      "1": "high",
+      "2": "high",
+      "3": "high",
+      "4": "high",
+      "5": "high",
+      "6": "high",
+      "7": "high",
+      "8": "high",
+      "9": "medium",
+      "10": "high",
+      "11": "high",
+      "12": "high",
+      "13": "medium",
+      "14": "medium",
+      "15": "medium",
+      "16": "medium",
+      "17": "high",
+      "18": "medium",
+      "19": "medium",
+      "20": "medium",
+      "21": "medium",
+      "22": "medium",
+      "23": "medium",
+      "24": "medium",
+      "25": "high",
+      "26": "high",
+      "27": "medium",
+      "28": "medium",
+      "29": "medium",
+      "30": "high",
+      "31": "high",
+      "32": "medium",
+      "33": "high",
+      "34": "high",
+      "35": "high",
+      "36": "medium",
+      "37": "medium",
+      "38": "medium",
+      "39": "medium",
+      "40": "medium"
+    },
+    "videos": {
+      "1": "d86ws7mQYIg",
+      "2": "OYM-Wjs-Gbw",
+      "3": "",
+      "4": "",
+      "5": "",
+      "6": "",
+      "7": "",
+      "8": "",
+      "9": "s_Ntt6eTn94",
+      "10": "qBliAq7oRSo",
+      "11": "UBVVq-xz5i0",
+      "12": "_a6us8kaq0g",
+      "13": "",
+      "14": "",
+      "15": "",
+      "16": "",
+      "17": "",
+      "18": "",
+      "19": "",
+      "20": "",
+      "21": "",
+      "22": "",
+      "23": "",
+      "24": "",
+      "25": "",
+      "26": "",
+      "27": "",
+      "28": "",
+      "29": "",
+      "30": "",
+      "31": "",
+      "32": "",
+      "33": "",
+      "34": "",
+      "35": "",
+      "36": "",
+      "37": "",
+      "38": "",
+      "39": "",
+      "40": ""
+    }
+  }
+}
