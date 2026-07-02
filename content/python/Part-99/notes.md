@@ -1,2 +1,3 @@
-# Test Lesson Notes
-This is a test lesson note for part 99.
+# Part 99
+
+This chapter is currently under construction.

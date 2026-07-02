@@ -1,5 +1,8 @@
 # Dependencies
 node_modules/
 
-# Local databases
+# Local databases (kept for local dev reference but not used in production)
 # academy.db
+
+# Environment secrets — NEVER commit this
+.env

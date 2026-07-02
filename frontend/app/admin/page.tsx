@@ -37,7 +37,7 @@ interface CourseConfig {
   welcomeParagraphs: string[];
   modules: Module[];
   importance: Record<string, string>;
-  videos: Record<string, string>;
+  videos: Record<string, string | string[]>;
 }
 
 interface Config {
@@ -76,11 +76,12 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
   const [isDirty, setIsDirty] = useState<boolean>(false);
+  const [viewMode, setViewMode] = useState<'modules' | 'settings'>('modules');
 
   // Expanded Part Content Management
   const [expandedPartNum, setExpandedPartNum] = useState<number | null>(null);
   const [expandedNotes, setExpandedNotes] = useState<string>('');
-  const [expandedFiles, setExpandedFiles] = useState<Array<{ path: string; content?: string }>>([]);
+  const [expandedFiles, setExpandedFiles] = useState<Array<{ path: string; content?: string | null; url?: string; isBinary?: boolean }>>([]);
   const [contentLoading, setContentLoading] = useState<boolean>(false);
   const [contentMessage, setContentMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
@@ -355,6 +356,54 @@ export default function AdminDashboard() {
     }
   };
 
+  // ── Course Actions ──────────────────────────────────────────────────────────
+  const handleAddCourse = () => {
+    const newCourseId = prompt('Enter a unique ID for the new course (e.g. "golang", "aptitude"):');
+    if (!newCourseId) return;
+    const cleanId = newCourseId.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+    if (!cleanId) return;
+    if (config && config[cleanId]) {
+      alert('A course with that ID already exists.');
+      return;
+    }
+
+    const newCourse: CourseConfig = {
+      title: 'New Course',
+      description: '',
+      tagline: 'NEW COURSE TAGLINE',
+      mascot: '🚀',
+      contentDir: `content/${cleanId}`,
+      dirPattern: 'Part-{part}',
+      playlistUrl: '',
+      channelUrl: '',
+      discordUrl: '',
+      author: 'Author Name',
+      authorTitle: 'Instructor',
+      eyebrow: 'NEW COURSE',
+      subtitle: '',
+      target: '',
+      goal: '',
+      welcomeParagraphs: ['Welcome to the new course!'],
+      modules: [],
+      importance: {},
+      videos: {}
+    };
+
+    const updated = { ...config, [cleanId]: newCourse };
+    setConfig(updated);
+    setSelectedCourse(cleanId);
+    setSelectedModuleId(null);
+    setViewMode('settings');
+    setIsDirty(true);
+  };
+
+  const handleUpdateCourseField = (field: keyof CourseConfig, value: any) => {
+    const updated = { ...config };
+    (updated[selectedCourse] as any)[field] = value;
+    setConfig(updated);
+    setIsDirty(true);
+  };
+
   // ── Module Actions ──────────────────────────────────────────────────────────
   const handleAddModule = () => {
     const newId = course.modules.length ? Math.max(...course.modules.map((m) => m.id)) + 1 : 1;
@@ -481,7 +530,54 @@ export default function AdminDashboard() {
   const handleUpdatePartVideo = (partNum: number, value: string) => {
     const updated = { ...config };
     const cleanVideoId = extractYoutubeId(value);
-    updated[selectedCourse].videos[partNum.toString()] = cleanVideoId;
+    // Keep as array if course already uses array format, otherwise string for compat
+    const existing = updated[selectedCourse].videos[partNum.toString()];
+    if (Array.isArray(existing)) {
+      // Replace first entry only when called from single-field legacy path
+      updated[selectedCourse].videos[partNum.toString()] = [cleanVideoId, ...existing.slice(1)].filter(Boolean);
+    } else {
+      updated[selectedCourse].videos[partNum.toString()] = cleanVideoId;
+    }
+    setConfig(updated);
+    setIsDirty(true);
+  };
+
+  const handleAddVideoTopart = (partNum: number) => {
+    const value = prompt('Paste YouTube URL or video ID for the new video:');
+    if (!value?.trim()) return;
+    const cleanId = extractYoutubeId(value.trim());
+    if (!cleanId) return;
+    const updated = { ...config };
+    const existing = updated[selectedCourse].videos[partNum.toString()];
+    const current: string[] = Array.isArray(existing)
+      ? existing
+      : existing?.trim() ? [existing.trim()] : [];
+    updated[selectedCourse].videos[partNum.toString()] = [...current, cleanId];
+    setConfig(updated);
+    setIsDirty(true);
+  };
+
+  const handleRemoveVideoFromPart = (partNum: number, idx: number) => {
+    const updated = { ...config };
+    const existing = updated[selectedCourse].videos[partNum.toString()];
+    const current: string[] = Array.isArray(existing)
+      ? existing
+      : existing?.trim() ? [existing.trim()] : [];
+    const next = current.filter((_, i) => i !== idx);
+    updated[selectedCourse].videos[partNum.toString()] = next.length === 1 ? next[0] : next;
+    setConfig(updated);
+    setIsDirty(true);
+  };
+
+  const handleUpdateVideoAtIndex = (partNum: number, idx: number, value: string) => {
+    const cleanId = extractYoutubeId(value.trim());
+    const updated = { ...config };
+    const existing = updated[selectedCourse].videos[partNum.toString()];
+    const current: string[] = Array.isArray(existing)
+      ? [...existing]
+      : existing?.trim() ? [existing.trim()] : [];
+    current[idx] = cleanId;
+    updated[selectedCourse].videos[partNum.toString()] = current.length === 1 ? current[0] : current;
     setConfig(updated);
     setIsDirty(true);
   };
@@ -544,6 +640,43 @@ export default function AdminDashboard() {
       .finally(() => setContentLoading(false));
   };
 
+  const handleImportDocument = (partNum: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setContentLoading(true);
+    setContentMessage({ text: 'Importing document and extracting text...', type: 'success' });
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    fetch(`${API_BASE}/api/admin/import-notes/${selectedCourse}/${partNum}`, {
+      method: 'POST',
+      headers: {
+        'X-Admin-Password': sessionStorage.getItem('admin_pwd') || '',
+      },
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.ok) {
+          setExpandedNotes(data.text);
+          setContentMessage({ text: 'Document imported successfully!', type: 'success' });
+        } else {
+          setContentMessage({ text: data.error || 'Failed to import document.', type: 'error' });
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+        setContentMessage({ text: 'Network error during import.', type: 'error' });
+      })
+      .finally(() => {
+        setContentLoading(false);
+        // Clear the input so the same file can be uploaded again if needed
+        e.target.value = '';
+      });
+  };
+
   const handleUploadFile = (partNum: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -551,41 +684,39 @@ export default function AdminDashboard() {
     setContentLoading(true);
     setContentMessage(null);
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64String = (reader.result as string).split(',')[1];
-      
-      fetch(`${API_BASE}/api/admin/upload/${selectedCourse}/${partNum}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Admin-Password': sessionStorage.getItem('admin_pwd') || '',
-        },
-        body: JSON.stringify({
-          filename: file.name,
-          content: base64String,
-        }),
+    // Use FormData multipart upload — faster, no size limits, streams directly to Cloudinary
+    const formData = new FormData();
+    formData.append('file', file);
+
+    fetch(`${API_BASE}/api/admin/upload/${selectedCourse}/${partNum}`, {
+      method: 'POST',
+      headers: {
+        'X-Admin-Password': sessionStorage.getItem('admin_pwd') || '',
+        // NOTE: Do NOT set Content-Type here — browser sets it automatically with the correct boundary for multipart
+      },
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.ok) {
+          setContentMessage({ text: `✅ "${file.name}" uploaded to Cloudinary!`, type: 'success' });
+          // Refresh files list with the Cloudinary URL if returned
+          setExpandedFiles(prev => [
+            ...prev.filter(f => f.path !== file.name),
+            { path: file.name, url: data.url },
+          ]);
+        } else {
+          setContentMessage({ text: data.error || 'Failed to upload file.', type: 'error' });
+        }
       })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.ok) {
-            setContentMessage({ text: `File "${file.name}" uploaded successfully.`, type: 'success' });
-            // Refresh files list
-            setExpandedFiles(prev => [...prev.filter(f => f.path !== file.name), { path: file.name }]);
-          } else {
-            setContentMessage({ text: 'Failed to upload asset file.', type: 'error' });
-          }
-        })
-        .catch((e) => {
-          console.error(e);
-          setContentMessage({ text: 'Network error uploading asset.', type: 'error' });
-        })
-        .finally(() => {
-          setContentLoading(false);
-          e.target.value = ''; // clear picker
-        });
-    };
-    reader.readAsDataURL(file);
+      .catch((e) => {
+        console.error(e);
+        setContentMessage({ text: 'Network error uploading file.', type: 'error' });
+      })
+      .finally(() => {
+        setContentLoading(false);
+        e.target.value = ''; // clear picker so same file can be re-uploaded
+      });
   };
 
   const handleDeleteFile = (partNum: number, filename: string) => {
@@ -620,7 +751,8 @@ export default function AdminDashboard() {
     <div className="admin-container">
       <style>{`
         .admin-container {
-          min-height: 100vh;
+          height: 100vh;
+          overflow-y: auto;
           background: #f4f1ea;
           color: #000000;
           font-family: 'Space Grotesk', -apple-system, sans-serif;
@@ -1012,6 +1144,9 @@ export default function AdminDashboard() {
         <aside className="module-pane">
           <div className="pane-header">
             <span>Course Setup</span>
+            <button onClick={handleAddCourse} className="neo-btn primary mini">
+              + New Course
+            </button>
           </div>
           <div className="mb-2" style={{ border: '2px solid #000000', padding: '0.75rem', background: '#fff9db', boxShadow: '2px 2px 0px #000000' }}>
             <span style={{ fontSize: '0.75rem', fontWeight: 'bold', display: 'block', textTransform: 'uppercase', marginBottom: '0.4rem', color: '#555555' }}>
@@ -1023,13 +1158,22 @@ export default function AdminDashboard() {
                 setSelectedCourse(e.target.value);
                 const firstMod = config[e.target.value]?.modules?.[0];
                 setSelectedModuleId(firstMod ? firstMod.id : null);
+                setViewMode('modules');
               }}
               className="select-field"
               style={{ background: '#ffffff', color: '#000000', border: '2px solid #000000', padding: '0.5rem', fontWeight: 'bold', width: '100%' }}
             >
-              <option value="python">🐍 Python in Kannada</option>
-              <option value="cloud">☁️ Cloud Computing</option>
+              {Object.keys(config).map(key => (
+                <option key={key} value={key}>{config[key].mascot || '📘'} {config[key].title}</option>
+              ))}
             </select>
+            <button 
+              onClick={() => setViewMode(viewMode === 'settings' ? 'modules' : 'settings')}
+              className="neo-btn outline mini"
+              style={{ marginTop: '10px', width: '100%', background: viewMode === 'settings' ? '#f1be3e' : '#fff' }}
+            >
+              {viewMode === 'settings' ? 'View Modules' : 'Edit Course Settings'}
+            </button>
           </div>
 
           <div className="pane-header mt-4">
@@ -1159,7 +1303,47 @@ export default function AdminDashboard() {
 
         {/* Right Column: Selected Module & its Parts */}
         <main className="details-pane">
-          {selectedModule ? (
+          {viewMode === 'settings' ? (
+            <>
+              <div className="pane-header">
+                <span>Course Metadata Settings</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label className="input-label" style={{marginBottom:'0.25rem', display:'block'}}>Course Title</label>
+                  <input type="text" className="text-input-field" value={course?.title || ''} onChange={(e) => handleUpdateCourseField('title', e.target.value)} />
+                </div>
+                <div>
+                  <label className="input-label" style={{marginBottom:'0.25rem', display:'block'}}>Tagline</label>
+                  <input type="text" className="text-input-field" value={course?.tagline || ''} onChange={(e) => handleUpdateCourseField('tagline', e.target.value)} />
+                </div>
+                <div>
+                  <label className="input-label" style={{marginBottom:'0.25rem', display:'block'}}>Description</label>
+                  <input type="text" className="text-input-field" value={course?.description || ''} onChange={(e) => handleUpdateCourseField('description', e.target.value)} />
+                </div>
+                <div>
+                  <label className="input-label" style={{marginBottom:'0.25rem', display:'block'}}>Mascot (Emoji)</label>
+                  <input type="text" className="text-input-field" value={course?.mascot || ''} onChange={(e) => handleUpdateCourseField('mascot', e.target.value)} />
+                </div>
+                <div>
+                  <label className="input-label" style={{marginBottom:'0.25rem', display:'block'}}>Author Name</label>
+                  <input type="text" className="text-input-field" value={course?.author || ''} onChange={(e) => handleUpdateCourseField('author', e.target.value)} />
+                </div>
+                <div>
+                  <label className="input-label" style={{marginBottom:'0.25rem', display:'block'}}>Author Title</label>
+                  <input type="text" className="text-input-field" value={course?.authorTitle || ''} onChange={(e) => handleUpdateCourseField('authorTitle', e.target.value)} />
+                </div>
+                <div>
+                  <label className="input-label" style={{marginBottom:'0.25rem', display:'block'}}>Target Audience</label>
+                  <input type="text" className="text-input-field" value={course?.target || ''} onChange={(e) => handleUpdateCourseField('target', e.target.value)} />
+                </div>
+                <div>
+                  <label className="input-label" style={{marginBottom:'0.25rem', display:'block'}}>Goal</label>
+                  <input type="text" className="text-input-field" value={course?.goal || ''} onChange={(e) => handleUpdateCourseField('goal', e.target.value)} />
+                </div>
+              </div>
+            </>
+          ) : selectedModule ? (
             <>
               <div className="pane-header" style={{ borderBottom: 'none' }}>
                 <div style={{ flex: 1 }}>
@@ -1190,26 +1374,68 @@ export default function AdminDashboard() {
                   <>
                     <div className="lessons-header">
                       <div>Lesson</div>
-                      <div>Paste Link or YouTube Video ID</div>
+                      <div>YouTube Videos</div>
                       <div>Importance</div>
                       <div style={{ textAlign: 'center' }}>Notes & Files</div>
                       <div style={{ textAlign: 'right' }}>Action</div>
                     </div>
                     {selectedModule.parts.map((partNum) => {
-                      const videoId = course?.videos?.[partNum.toString()] || '';
+                      const rawVideo = course?.videos?.[partNum.toString()];
+                      const videoList: string[] = Array.isArray(rawVideo)
+                        ? rawVideo
+                        : rawVideo?.trim() ? [rawVideo.trim()] : [];
                       const isExpanded = expandedPartNum === partNum;
                       return (
                         <div key={partNum} style={{ display: 'contents' }}>
                           <div className="lesson-card">
                             <div className="part-label">Part {partNum}</div>
-                            <div>
-                              <input
-                                type="text"
-                                placeholder="Paste full URL or video ID"
-                                value={videoId}
-                                onChange={(e) => handleUpdatePartVideo(partNum, e.target.value)}
-                                className="text-input-field"
-                              />
+
+                            {/* ── Multi-video editor ── */}
+                            <div style={{ display:'flex', flexDirection:'column', gap:4 }}>
+                              {videoList.length === 0 && (
+                                <div style={{ fontSize:'0.72rem', color:'#999', fontStyle:'italic', padding:'4px 0' }}>
+                                  No videos yet
+                                </div>
+                              )}
+                              {videoList.map((vid, idx) => (
+                                <div key={idx} style={{ display:'flex', gap:4, alignItems:'center' }}>
+                                  <span style={{ fontSize:'0.65rem', fontWeight:800, color:'#555',
+                                    minWidth:16, textAlign:'right', fontFamily:'monospace' }}>
+                                    {idx + 1}.
+                                  </span>
+                                  <input
+                                    type="text"
+                                    placeholder="URL or video ID"
+                                    value={vid}
+                                    onChange={e => handleUpdateVideoAtIndex(partNum, idx, e.target.value)}
+                                    className="text-input-field"
+                                    style={{ flex:1, fontSize:'0.78rem', padding:'4px 6px' }}
+                                  />
+                                  <a
+                                    href={`https://www.youtube.com/watch?v=${vid}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    title="Preview"
+                                    style={{ fontSize:'0.8rem', textDecoration:'none',
+                                      opacity: vid.length === 11 ? 1 : 0.3,
+                                      pointerEvents: vid.length === 11 ? 'auto' : 'none' }}>
+                                    ▶️
+                                  </a>
+                                  <button
+                                    onClick={() => handleRemoveVideoFromPart(partNum, idx)}
+                                    className="neo-btn danger mini"
+                                    title="Remove this video"
+                                    style={{ padding:'2px 6px', fontSize:'0.7rem' }}>
+                                    ✕
+                                  </button>
+                                </div>
+                              ))}
+                              <button
+                                onClick={() => handleAddVideoTopart(partNum)}
+                                className="neo-btn mini outline"
+                                style={{ fontSize:'0.72rem', padding:'3px 8px', marginTop:2 }}>
+                                + Add Video
+                              </button>
                             </div>
                             <div>
                               <select
@@ -1301,13 +1527,24 @@ export default function AdminDashboard() {
                                         </div>
                                       </div>
                                     </div>
-                                    <button
-                                      onClick={() => handleSaveNotes(partNum)}
-                                      className="neo-btn primary mini"
-                                      style={{ marginTop: '0.75rem' }}
-                                    >
-                                      Save notes.md
-                                    </button>
+                                    <div style={{ display: 'flex', gap: '8px', marginTop: '0.75rem', alignItems: 'center' }}>
+                                      <button
+                                        onClick={() => handleSaveNotes(partNum)}
+                                        className="neo-btn primary mini"
+                                      >
+                                        Save notes.md
+                                      </button>
+                                      
+                                      <label className="neo-btn outline mini" style={{ cursor: 'pointer', margin: 0, padding: '4px 12px' }}>
+                                        📥 Import PDF/DOCX
+                                        <input
+                                          type="file"
+                                          accept=".pdf,.docx,.txt,.md"
+                                          onChange={(e) => handleImportDocument(partNum, e)}
+                                          style={{ display: 'none' }}
+                                        />
+                                      </label>
+                                    </div>
                                   </div>
 
                                   {/* Assets Manager */}
@@ -1333,7 +1570,19 @@ export default function AdminDashboard() {
                                       <div className="attached-files-list">
                                         {expandedFiles.map((file) => (
                                           <div key={file.path} className="file-chip">
-                                            <span>📄 {file.path}</span>
+                                            {file.url ? (
+                                              <a
+                                                href={file.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                style={{ color: '#000', textDecoration: 'underline', fontWeight: 'bold' }}
+                                                title="Open Cloudinary URL"
+                                              >
+                                                ☁️ {file.path}
+                                              </a>
+                                            ) : (
+                                              <span>📄 {file.path}</span>
+                                            )}
                                             <button
                                               onClick={() => handleDeleteFile(partNum, file.path)}
                                               style={{ background: 'none', border: 'none', color: '#e03131', cursor: 'pointer', fontWeight: 'bold' }}

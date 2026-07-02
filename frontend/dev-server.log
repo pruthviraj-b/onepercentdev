@@ -1,0 +1,67 @@
+
+> onepercentdev-frontend@0.1.0 predev
+> node -e "const fs = require('fs'); if (fs.existsSync('.next')) fs.rmSync('.next', { recursive: true, force: true });" && node scripts/export-data.js
+
+Exporting courses metadata...
+Exported courses.json successfully.
+Exported videos.json successfully.
+  Loaded 1 Cloudinary file(s) from Supabase.
+Compiling course: Python in Kannada...
+  Exported modules-python.json
+  Exported part notes for python.
+Compiling course: Cloud Computing...
+  Exported modules-cloud.json
+  Exported part notes for cloud.
+Compiling course: Data Analyst (Telugu)...
+  Exported modules-data-analyst-te.json
+  Exported part notes for data-analyst-te.
+Compiling course: Data Analyst (English)...
+  Exported modules-data-analyst-en.json
+  Exported part notes for data-analyst-en.
+
+Data export complete!
+
+> onepercentdev-frontend@0.1.0 dev
+> cross-env NODE_OPTIONS=--max-old-space-size=2048 NEXT_TELEMETRY_DISABLED=1 next dev --port 3005
+
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3005
+   - Network:      http://10.254.138.59:3005
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 23.6s
+ ○ Compiling / ...
+ ✓ Compiled / in 26.6s (1398 modules)
+ GET /?course=python&part=41 200 in 28619ms
+ GET /?course=python&part=41 200 in 185ms
+ ✓ Compiled in 21s (568 modules)
+ ✓ Compiled in 1574ms (568 modules)
+ ✓ Compiled in 687ms (568 modules)
+ ✓ Compiled in 1476ms (568 modules)
+ ✓ Compiled in 706ms (568 modules)
+ ✓ Compiled in 1224ms (568 modules)
+ ✓ Compiled in 875ms (568 modules)
+ ✓ Compiled in 922ms (568 modules)
+ ✓ Compiled in 748ms (568 modules)
+ ✓ Compiled in 612ms (568 modules)
+ ✓ Compiled in 786ms (568 modules)
+ ✓ Compiled in 799ms (568 modules)
+ ✓ Compiled in 740ms (568 modules)
+ ✓ Compiled in 2.6s (582 modules)
+ ✓ Compiled in 659ms (582 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 15.8s (816 modules)
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 30s (1731 modules)
+ GET /?course=python 500 in 55872ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 4.5s (1027 modules)
+ GET /favicon.ico 500 in 5590ms
+ ✓ Compiled in 29s (924 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 20.1s (1010 modules)
+ ✓ Compiled in 18.1s (924 modules)
+ ✓ Compiled in 1883ms (735 modules)
+ ✓ Compiled in 775ms (735 modules)
+ ✓ Compiled in 16.9s (721 modules)

@@ -1,0 +1,143 @@
+ ⨯ Error: Could not find the module "F:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>) {
+  digest: '3217939706'
+}
+ ⨯ Error: Could not find the module "F:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '1407749694'
+}
+ ⨯ Error: Could not find the module "F:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '1407749694'
+}
+ ⨯ Error: Could not find the module "F:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '1407749694'
+}
+ ⨯ Error: Could not find the module "F:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>) {
+  digest: '3217939706'
+}
+ ⨯ Error: Could not find the module "F:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>) {
+  digest: '3217939706'
+}
+ ⨯ [TypeError: Cannot read properties of undefined (reading 'call')] {
+  digest: '3670225950'
+}
+ ⨯ Error: Could not find the module "F:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>) {
+  digest: '3217939706'
+}
+[TypeError: Cannot read properties of undefined (reading 'call')]
+ ⨯ [TypeError: Cannot read properties of undefined (reading 'call')]
+ ⨯ [TypeError: Cannot read properties of undefined (reading 'call')] {
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'F:\onepercentdev-main\frontend\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\onepercentdev-main\\frontend\\.next\\routes-manifest.json',
+  page: '/favicon.ico'
+}
+[Error: ENOENT: no such file or directory, stat 'F:\onepercentdev-main\frontend\.next\cache\webpack\server-development\0.pack.gz'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: 'F:\\onepercentdev-main\\frontend\\.next\\cache\\webpack\\server-development\\0.pack.gz'
+}
+ ⨯ unhandledRejection: [Error: ENOENT: no such file or directory, stat 'F:\onepercentdev-main\frontend\.next\cache\webpack\server-development\0.pack.gz'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: 'F:\\onepercentdev-main\\frontend\\.next\\cache\\webpack\\server-development\\0.pack.gz'
+}
+ ⨯ unhandledRejection:  [Error: ENOENT: no such file or directory, stat 'F:\onepercentdev-main\frontend\.next\cache\webpack\server-development\0.pack.gz'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: 'F:\\onepercentdev-main\\frontend\\.next\\cache\\webpack\\server-development\\0.pack.gz'
+}
+[Error: ENOENT: no such file or directory, stat 'F:\onepercentdev-main\frontend\.next\cache\webpack\server-development\1.pack.gz'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: 'F:\\onepercentdev-main\\frontend\\.next\\cache\\webpack\\server-development\\1.pack.gz'
+}
+ ⨯ unhandledRejection: [Error: ENOENT: no such file or directory, stat 'F:\onepercentdev-main\frontend\.next\cache\webpack\server-development\1.pack.gz'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: 'F:\\onepercentdev-main\\frontend\\.next\\cache\\webpack\\server-development\\1.pack.gz'
+}
+ ⨯ unhandledRejection:  [Error: ENOENT: no such file or directory, stat 'F:\onepercentdev-main\frontend\.next\cache\webpack\server-development\1.pack.gz'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: 'F:\\onepercentdev-main\\frontend\\.next\\cache\\webpack\\server-development\\1.pack.gz'
+}
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, stat 'F:\onepercentdev-main\frontend\.next\cache\webpack\server-development\0.pack.gz'
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: EPERM: operation not permitted, rename 'F:\onepercentdev-main\frontend\.next\cache\webpack\server-development\0.pack.gz_' -> 'F:\onepercentdev-main\frontend\.next\cache\webpack\server-development\0.pack.gz'
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: Could not find the module "F:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>) {
+  digest: '3217939706'
+}
+ ⨯ Error: Could not find the module "F:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '1407749694'
+}
+ ⨯ Error: Could not find the module "F:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '1407749694'
+}
+ ⨯ Error: Could not find the module "F:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '1407749694'
+}
+ ⨯ Error: Could not find the module "F:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>) {
+  digest: '3217939706'
+}
+ ⨯ Error: Could not find the module "F:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>) {
+  digest: '3217939706'
+}
+ ⨯ [TypeError: Cannot read properties of undefined (reading 'call')] {
+  digest: '3670225950'
+}
+ ⨯ Error: Could not find the module "F:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>) {
+  digest: '3217939706'
+}
+[TypeError: Cannot read properties of undefined (reading 'call')]
+ ⨯ [TypeError: Cannot read properties of undefined (reading 'call')]
+ ⨯ [TypeError: Cannot read properties of undefined (reading 'call')] {
+  page: '/'
+}
+ ⨯ Error: Cannot find module './611.js'
+Require stack:
+- F:\onepercentdev-main\frontend\.next\server\webpack-runtime.js
+- F:\onepercentdev-main\frontend\.next\server\app\page.js
+- F:\onepercentdev-main\frontend\node_modules\next\dist\server\require.js
+- F:\onepercentdev-main\frontend\node_modules\next\dist\server\load-components.js
+- F:\onepercentdev-main\frontend\node_modules\next\dist\build\utils.js
+- F:\onepercentdev-main\frontend\node_modules\next\dist\build\swc\options.js
+- F:\onepercentdev-main\frontend\node_modules\next\dist\build\swc\index.js
+- F:\onepercentdev-main\frontend\node_modules\next\dist\build\next-config-ts\transpile-config.js
+- F:\onepercentdev-main\frontend\node_modules\next\dist\server\config.js
+- F:\onepercentdev-main\frontend\node_modules\next\dist\server\next.js
+- F:\onepercentdev-main\frontend\node_modules\next\dist\server\lib\start-server.js
+    at <unknown> (F:\onepercentdev-main\frontend\.next\server\pages\_document.js:1:325)
+    at Object.<anonymous> (F:\onepercentdev-main\frontend\.next\server\pages\_document.js:1:371) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'F:\onepercentdev-main\frontend\.next\cache\webpack\client-development\1.pack.gz_' -> 'F:\onepercentdev-main\frontend\.next\cache\webpack\client-development\1.pack.gz'

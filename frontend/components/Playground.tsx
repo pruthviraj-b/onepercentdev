@@ -26,6 +26,25 @@ async function getPyodide() {
   return pyodideReady;
 }
 
+// ── SQL.js Loader ────────────────────────────────────────────────
+let sqlPromise: Promise<any> | null = null;
+async function getSQL() {
+  if (sqlPromise) return sqlPromise;
+  sqlPromise = (async () => {
+    if (!(window as any).initSqlJs) {
+      await new Promise<void>((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js';
+        s.onload = () => res();
+        s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+    return (window as any).initSqlJs({ locateFile: (f: string) => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${f}` });
+  })();
+  return sqlPromise;
+}
+
 // ── Web Audio Synth Sounds ────────────────────────────────────────
 let audioCtx: AudioContext | null = null;
 function getAudioContext() {
@@ -98,6 +117,48 @@ async function runWorkspace(files: Record<string, string>, activeFile: string): 
 
   if (stdout.trim()) stdout.trim().split('\n').forEach(t => lines.push({ text: t, type: 'out' }));
   if (stderr.trim()) stderr.trim().split('\n').forEach(t => lines.push({ text: t, type: 'err' }));
+  if (lines.length === 0) lines.push({ text: '(no output)', type: 'info' });
+  return lines;
+}
+
+// ── SQL Execution Helper ──────────────────────────────────────────
+async function runSQLWorkspace(code: string): Promise<OutputLine[]> {
+  const SQL = await getSQL();
+  const db = new SQL.Database();
+  const lines: OutputLine[] = [];
+  
+  // Pre-load mock data
+  db.run("CREATE TABLE employees (employee_id INTEGER PRIMARY KEY, name TEXT, department TEXT, salary INTEGER, hire_date DATE);");
+  db.run("INSERT INTO employees VALUES (1, 'Alice', 'Sales', 60000, '2019-01-15'), (2, 'Bob', 'Engineering', 90000, '2021-03-22'), (3, 'Charlie', 'Sales', 65000, '2022-11-01');");
+  db.run("CREATE TABLE sales (order_id INTEGER PRIMARY KEY, employee_id INTEGER, amount DECIMAL(10,2), order_date DATE);");
+  db.run("INSERT INTO sales VALUES (101, 1, 1500.00, '2023-01-10'), (102, 1, 2000.50, '2023-02-15'), (103, 3, 1200.00, '2023-03-01');");
+
+  try {
+    // Basic multiple statement split
+    const statements = code.split(';').map(s => s.trim()).filter(s => s.length > 0);
+    for (const stmt of statements) {
+      lines.push({ text: `> ${stmt};`, type: 'info' });
+      const results = db.exec(stmt + ';');
+      if (results.length === 0) {
+        lines.push({ text: 'Query executed successfully (no results).', type: 'info' });
+      } else {
+        results.forEach((res: any) => {
+          const cols = res.columns.join(' | ');
+          lines.push({ text: cols, type: 'out' });
+          lines.push({ text: '-'.repeat(cols.length), type: 'out' });
+          res.values.forEach((row: any[]) => {
+            lines.push({ text: row.map((v: any) => v === null ? 'NULL' : v).join(' | '), type: 'out' });
+          });
+        });
+      }
+      lines.push({ text: '', type: 'out' });
+    }
+  } catch (err: any) {
+    lines.push({ text: String(err), type: 'err' });
+  } finally {
+    db.close();
+  }
+  
   if (lines.length === 0) lines.push({ text: '(no output)', type: 'info' });
   return lines;
 }
@@ -234,13 +295,18 @@ print("---TRACE_DATA_END---")
 
 interface Props {
   prefilledCode?: string | null;
-  isCloud?: boolean;
+  courseId?: string;
 }
 
-export function Playground({ prefilledCode, isCloud }: Props) {
+export function Playground({ prefilledCode, courseId }: Props) {
+  const isCloud = courseId === 'cloud';
+  const isDataAnalyst = courseId?.startsWith('data-analyst');
+
   // ── Workspace State ──
+  const [activeLang, setActiveLang] = useState<'python' | 'sql'>('python');
   const [files, setFiles] = useState<Record<string, string>>({
-    'main.py': '# Write Python here and press ▶ Run (Ctrl+Enter)\nprint("Hello from 1% Dev Academy!")\nx = [1, 2]\ny = x\ny.append(3)\nprint("x =", x)\n'
+    'main.py': '# Write Python here and press ▶ Run (Ctrl+Enter)\nprint("Hello from 1% Dev Academy!")\nx = [1, 2]\ny = x\ny.append(3)\nprint("x =", x)\n',
+    'query.sql': '-- Write SQL here and press ▶ Run (Ctrl+Enter)\n-- A mock database (employees, sales) is pre-loaded for you!\nSELECT * FROM employees;\n'
   });
   const [activeFile, setActiveFile] = useState('main.py');
   const [newFileName, setNewFileName] = useState('');
@@ -443,10 +509,15 @@ export function Playground({ prefilledCode, isCloud }: Props) {
     setIsTracing(false);
     setRunning(true);
     setLoading(true);
-    setOutput([{ text: '⚡ Initializing Hacker Environment...', type: 'info' }]);
+    setOutput([{ text: activeLang === 'sql' ? '⚡ Initializing SQL Engine...' : '⚡ Initializing Hacker Environment...', type: 'info' }]);
 
     try {
-      const result = await runWorkspace(files, activeFile);
+      let result;
+      if (activeLang === 'sql') {
+        result = await runSQLWorkspace(files[activeFile] || '');
+      } else {
+        result = await runWorkspace(files, activeFile);
+      }
       setOutput(result);
       setRunCount(c => c + 1);
 
@@ -458,13 +529,13 @@ export function Playground({ prefilledCode, isCloud }: Props) {
         playSuccessBeep();
       }
     } catch (e: any) {
-      setOutput([{ text: `Compilation Error: ${e.message}`, type: 'err' }]);
+      setOutput([{ text: `Execution Error: ${e.message}`, type: 'err' }]);
       playErrorBeep();
     } finally {
       setRunning(false);
       setLoading(false);
     }
-  }, [files, activeFile, running]);
+  }, [files, activeFile, running, activeLang]);
 
   // ── Trace Command ──
   const runTrace = async () => {
@@ -607,6 +678,25 @@ export function Playground({ prefilledCode, isCloud }: Props) {
           display: flex !important;
           align-items: center !important;
           gap: 6px !important;
+        }
+        .lang-switcher {
+          display: flex;
+          background: #222;
+          border-radius: 4px;
+          overflow: hidden;
+          margin-left: 10px;
+        }
+        .lang-tab {
+          padding: 2px 10px;
+          font-size: 0.7rem;
+          cursor: pointer;
+          font-family: 'Space Mono', monospace;
+          color: #888;
+          transition: 0.2s;
+        }
+        .lang-tab.active {
+          background: #444;
+          color: #fff;
         }
         .playground-controls {
           display: flex !important;
@@ -916,10 +1006,30 @@ export function Playground({ prefilledCode, isCloud }: Props) {
         </div>
       ) : (
         <>
-          {/* Header */}
-          <div className="playground-header hacker-header">
-            <div className="playground-title">
-              <span className="playground-icon hacker-title-text">⚡ HACKER SHELL 🟩</span>
+          {/* ── HEADER ── */}
+          <div className="hacker-header">
+            <div className="hacker-title-text">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+              1% DEV PLAYGROUND
+              
+              {isDataAnalyst && (
+                <div className="lang-switcher">
+                  <div 
+                    className={`lang-tab ${activeLang === 'python' ? 'active' : ''}`}
+                    onClick={() => { setActiveLang('python'); setActiveFile('main.py'); }}
+                  >
+                    Python
+                  </div>
+                  <div 
+                    className={`lang-tab ${activeLang === 'sql' ? 'active' : ''}`}
+                    onClick={() => { setActiveLang('sql'); setActiveFile('query.sql'); }}
+                  >
+                    SQL
+                  </div>
+                </div>
+              )}
             </div>
             <div className="playground-controls">
               <button
@@ -982,7 +1092,7 @@ export function Playground({ prefilledCode, isCloud }: Props) {
               </button>
               <button
                 className="hacker-btn active-run"
-                onClick={run}
+                onClick={() => run()}
                 disabled={running}
                 title="Run active script (Ctrl+Enter)"
               >
@@ -1006,7 +1116,7 @@ export function Playground({ prefilledCode, isCloud }: Props) {
                     }}
                   >
                     <span>📄 {name}</span>
-                    {name !== 'main.py' && (
+                    {name !== 'main.py' && name !== 'query.sql' && (
                       <button className="w-tab-close" onClick={(e) => deleteFile(name, e)}>
                         ×
                       </button>

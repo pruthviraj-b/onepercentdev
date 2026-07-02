@@ -1,12 +1,14 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { onAuthStateChanged, User, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  signingIn: boolean;
+  authError: string | null;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -14,6 +16,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
+  signingIn: false,
+  authError: null,
   loginWithGoogle: async () => {},
   logout: async () => {},
 });
@@ -21,6 +25,9 @@ const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [signingIn, setSigningIn] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const popupInFlightRef = useRef(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -32,11 +39,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const loginWithGoogle = async () => {
+    if (popupInFlightRef.current) return;
+    popupInFlightRef.current = true;
+    setSigningIn(true);
+    setAuthError(null);
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-    } catch (error) {
-      console.error('Login Failed:', error);
+    } catch (error: any) {
+      const code = error?.code || '';
+      if (code === 'auth/cancelled-popup-request' || code === 'auth/popup-closed-by-user') {
+        setAuthError('Google sign-in was cancelled. Try once more when ready.');
+      } else if (code === 'auth/popup-blocked') {
+        setAuthError('Popup was blocked. Please allow popups for this site and try again.');
+      } else {
+        setAuthError('Could not sign in with Google. Please try again.');
+        console.error('Login Failed:', error);
+      }
+    } finally {
+      popupInFlightRef.current = false;
+      setSigningIn(false);
     }
   };
 
@@ -49,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, loginWithGoogle, logout }}>
+    <AuthContext.Provider value={{ user, loading, signingIn, authError, loginWithGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   );

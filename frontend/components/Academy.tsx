@@ -17,8 +17,9 @@ import { Dashboard } from './Dashboard';
 import { TypingView } from './TypingView';
 import { AptitudeView } from './AptitudeView';
 import { ErrorBoundary } from './ErrorBoundary';
+import { TaskHub } from './TaskHub';
 
-type View = 'login' | 'dashboard' | 'landing' | 'reader' | 'typing' | 'aptitude';
+type View = 'login' | 'dashboard' | 'landing' | 'reader' | 'typing' | 'aptitude' | 'taskhub';
 
 export function Academy() {
   const { user, loading: authLoading } = useAuth();
@@ -340,6 +341,9 @@ export function Academy() {
         setVideoPlaygroundMode(prev => !prev);
         setNotesExpanded(false);
       }
+      if (e.key === 's' && view === 'reader') {
+        setSidebarOpen(o => !o);
+      }
       if (e.key === 'b' && view === 'reader') handleToggleBookmark(currentPart);
       if (e.key === 'c' && view === 'reader') handleToggleComplete(currentPart);
       if (e.key === 'Escape') {
@@ -355,9 +359,10 @@ export function Academy() {
 
   if (authLoading) {
     return (
-      <div className="boot-screen">
-        <div className="loader" />
-        <p className="boot-text">AUTHENTICATING...</p>
+      <div className="boot-screen" role="status" aria-label="Authenticating">
+        <div className="boot-logo"><span aria-hidden="true">1%</span> Dev Academy</div>
+        <div className="loader" aria-hidden="true" />
+        <p className="boot-text">Authenticating...</p>
       </div>
     );
   }
@@ -372,12 +377,17 @@ export function Academy() {
         <ErrorBoundary name="Dashboard">
           <Dashboard 
             onNavigate={(mod) => {
-              if (mod === 'course_python') {
-                const course = courses.find(c => c.id.includes('python'));
+              if (mod.startsWith('resume_')) {
+                const parts = mod.split('_');
+                const courseId = parts[1];
+                const partId = parts[2];
+                window.location.href = `/?course=${courseId}&part=${partId}`;
+              } else if (mod.startsWith('course_')) {
+                const courseId = mod.replace('course_', '');
+                const course = courses.find(c => c.id === courseId);
                 if (course) handleSelectCourse(course.id, true);
-              } else if (mod === 'course_cloud') {
-                const course = courses.find(c => c.id.includes('cloud'));
-                if (course) handleSelectCourse(course.id, true);
+              } else if (mod === 'academy') {
+                handleChangeCourse();
               } else if (mod === 'typing') {
                 setView('typing');
                 setActiveCourseId(null);
@@ -386,6 +396,36 @@ export function Academy() {
                 setView('aptitude');
                 setActiveCourseId(null);
                 updateURL(null, null);
+              }
+            }}
+            onOpenTaskHub={() => setView('taskhub')}
+          />
+        </ErrorBoundary>
+      </div>
+    );
+  }
+
+  if (view === 'taskhub') {
+    return (
+      <div style={{ position: 'fixed', inset: 0, overflowY: 'auto', zIndex: 0 }}>
+        <ErrorBoundary name="Task Hub">
+          <TaskHub
+            onBack={() => setView('dashboard')}
+            courses={courses}
+            onNavigateInternal={(target, id) => {
+              if (target === 'lesson' || target === 'course') {
+                const courseId = target === 'course' ? id : activeCourseId || id;
+                if (target === 'lesson') {
+                  const partNum = parseFloat(id);
+                  if (!isNaN(partNum) && courseId) {
+                    window.location.href = `/?course=${courseId}&part=${partNum}`;
+                  }
+                } else {
+                  handleSelectCourse(id, true);
+                  setView('landing');
+                }
+              } else {
+                setView('dashboard');
               }
             }}
           />
@@ -416,8 +456,10 @@ export function Academy() {
 
   if (booting) {
     return (
-      <div className="boot-screen">
-        <div className="loader" />
+      <div className="boot-screen" role="status" aria-label="Loading course">
+        <div className="boot-logo"><span aria-hidden="true">1%</span> Dev Academy</div>
+        <div className="loader" aria-hidden="true" />
+        <p className="boot-text">Loading...</p>
       </div>
     );
   }
@@ -425,115 +467,134 @@ export function Academy() {
   return (
     <ErrorBoundary name="Course Reader">
     <>
-      <div className={`app-shell ${view === 'landing' ? 'landing-view' : ''} ${!sidebarOpen && view === 'reader' ? 'sidebar-collapsed' : ''} ${!activeCourseId ? 'no-active-course' : ''}`}>
+      {/* Skip to main content — keyboard/screen reader navigation */}
+      <a href="#main-content" className="skip-to-main">Skip to main content</a>
+      <div className={`app-shell ${view === 'landing' ? 'landing-view' : ''} ${!sidebarOpen && view === 'reader' ? 'sidebar-collapsed' : ''} ${sidebarOpen && view === 'reader' ? 'mobile-sidebar-open' : ''} ${!activeCourseId ? 'no-active-course' : ''}`}>
         {/* Header */}
-        <header className="header">
+        <header className="header" role="banner">
           <div className="header-left">
-            {/* Left panel (Video & Playground) toggle — only in reader */}
-            {view === 'reader' && (
+            {/* Sidebar toggle — only visible in reader (left side now) */}
+            {view === 'reader' && activeCourseId && (
               <button
-                className={`icon-btn left-panel-toggle-btn${notesExpanded ? ' active' : ''}`}
-                title={notesExpanded ? 'Show Video & Playground' : 'Hide Video & Playground'}
-                onClick={() => setNotesExpanded(prev => !prev)}
+                className={`icon-btn sidebar-toggle-btn${sidebarOpen ? ' active' : ''}`}
+                title={sidebarOpen ? 'Close Sidebar [s]' : 'Open Sidebar [s]'}
+                aria-label={sidebarOpen ? 'Close course navigation' : 'Open course navigation'}
+                aria-expanded={sidebarOpen}
+                onClick={() => setSidebarOpen(o => !o)}
               >
-                {notesExpanded ? (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2"/>
-                    <line x1="9" y1="3" x2="9" y2="21"/>
-                    <polyline points="12 9 15 12 12 15"/>
-                  </svg>
-                ) : (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                {sidebarOpen ? (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                     <rect x="3" y="3" width="18" height="18" rx="2"/>
                     <line x1="9" y1="3" x2="9" y2="21"/>
                     <polyline points="6 9 3 12 6 15"/>
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <line x1="9" y1="3" x2="9" y2="21"/>
+                    <polyline points="12 9 15 12 12 15"/>
                   </svg>
                 )}
               </button>
             )}
 
-            <div className="header-logo" onClick={handleChangeCourse} style={{ cursor: 'pointer' }}>
-              <span className="logo-badge">1%</span>
+            <div className="header-logo" onClick={handleChangeCourse} style={{ cursor: 'pointer' }} role="button" tabIndex={0} aria-label="Go to course selection" onKeyDown={e => e.key === 'Enter' && handleChangeCourse()}>
+              <span className="logo-badge" aria-hidden="true">1%</span>
               <span className="logo-name">Dev Academy</span>
             </div>
 
             {activeCourseId && (
-              <nav className="breadcrumb">
-                <span className="breadcrumb-sep">/</span>
-                <span className="breadcrumb-link" onClick={handleChangeCourse}>Academy</span>
+              <nav className="breadcrumb" aria-label="Page breadcrumb">
+                <span className="breadcrumb-sep" aria-hidden="true">/</span>
+                <span className="breadcrumb-link" onClick={handleChangeCourse} role="button" tabIndex={0} onKeyDown={e => e.key === 'Enter' && handleChangeCourse()}>Academy</span>
                 {view === 'reader' && noteData ? (
                   <>
-                    <span className="breadcrumb-sep">/</span>
-                    <span className="breadcrumb-link" onClick={handleGoHome}>{activeCourse?.title || 'Course'}</span>
-                    <span className="breadcrumb-sep">/</span>
-                    <span>{noteData.module}</span>
-                    <span className="breadcrumb-sep">/</span>
-                    <span className="breadcrumb-active">Part {noteData.part}</span>
+                    <span className="breadcrumb-sep" aria-hidden="true">/</span>
+                    <span className="breadcrumb-link" onClick={handleGoHome} role="button" tabIndex={0} onKeyDown={e => e.key === 'Enter' && handleGoHome()}>{activeCourse?.title || 'Course'}</span>
+                    <span className="breadcrumb-sep" aria-hidden="true">/</span>
+                    <span aria-hidden="true">{noteData.module}</span>
+                    <span className="breadcrumb-sep" aria-hidden="true">/</span>
+                    <span className="breadcrumb-active" aria-current="page">Part {noteData.part}</span>
                   </>
                 ) : activeCourse ? (
                   <>
-                    <span className="breadcrumb-sep">/</span>
-                    <span className="breadcrumb-active">{activeCourse?.title}</span>
+                    <span className="breadcrumb-sep" aria-hidden="true">/</span>
+                    <span className="breadcrumb-active" aria-current="page">{activeCourse?.title}</span>
                   </>
                 ) : null}
               </nav>
             )}
           </div>
 
-          <div className="header-right">
+          <div className="header-right" role="toolbar" aria-label="Reader actions">
             {view === 'reader' && activeCourseId && (
               <>
+                {/* Left panel toggle — Notes expand */}
                 <button
-                  className={`icon-btn${completedParts.includes(currentPart) ? ' active' : ''}`}
-                  title={`${completedParts.includes(currentPart) ? 'Mark Incomplete' : 'Mark Complete'} [c]`}
-                  onClick={() => handleToggleComplete(currentPart)}
+                  className={`icon-btn left-panel-toggle-btn${notesExpanded ? ' active' : ''}`}
+                  title={notesExpanded ? 'Show Video & Playground' : 'Expand notes full width'}
+                  aria-label={notesExpanded ? 'Show video and playground panel' : 'Expand notes to full width'}
+                  aria-pressed={notesExpanded}
+                  onClick={() => setNotesExpanded(prev => !prev)}
                 >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                </button>
-                <button
-                  className={`icon-btn${bookmarkedParts.includes(currentPart) ? ' active' : ''}`}
-                  title="Bookmark [b]"
-                  onClick={() => handleToggleBookmark(currentPart)}
-                >
-                  <svg viewBox="0 0 24 24" fill={bookmarkedParts.includes(currentPart) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                  </svg>
-                </button>
-                <button
-                  className={`icon-btn${sidebarOpen ? ' active' : ''}`}
-                  title={sidebarOpen ? 'Close Sidebar' : 'Open Sidebar'}
-                  onClick={() => setSidebarOpen(o => !o)}
-                >
-                  {sidebarOpen ? (
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  {notesExpanded ? (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                       <rect x="3" y="3" width="18" height="18" rx="2"/>
-                      <line x1="15" y1="3" x2="15" y2="21"/>
-                      <polyline points="18 9 21 12 18 15"/>
+                      <line x1="9" y1="3" x2="9" y2="21"/>
+                      <polyline points="12 9 15 12 12 15"/>
                     </svg>
                   ) : (
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                       <rect x="3" y="3" width="18" height="18" rx="2"/>
-                      <line x1="15" y1="3" x2="15" y2="21"/>
-                      <polyline points="12 9 9 12 12 15"/>
+                      <line x1="9" y1="3" x2="9" y2="21"/>
+                      <polyline points="6 9 3 12 6 15"/>
                     </svg>
                   )}
                 </button>
+
+                {/* Video+Playground split mode */}
                 <button
-                  className={`icon-btn${videoPlaygroundMode ? ' active' : ''}`}
-                  title={videoPlaygroundMode ? 'Show Notes' : 'Split Video & Playground [v]'}
+                  className={`icon-btn video-playground-toggle-btn${videoPlaygroundMode ? ' active' : ''}`}
+                  title={videoPlaygroundMode ? 'Show Notes [v]' : 'Split: Video & Playground [v]'}
+                  aria-label={videoPlaygroundMode ? 'Show notes panel' : 'Split screen: video and playground'}
+                  aria-pressed={videoPlaygroundMode}
                   onClick={() => {
                     setVideoPlaygroundMode(prev => !prev);
                     if (notesExpanded) setNotesExpanded(false);
                   }}
                 >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <rect x="3" y="3" width="18" height="18" rx="2" />
                     <line x1="12" y1="3" x2="12" y2="21" />
                     <polygon points="7 9 10 12 7 15" fill="currentColor" />
                     <path d="M15 8l2 2-2 2" />
                     <line x1="15" y1="14" x2="19" y2="14" />
+                  </svg>
+                </button>
+
+                {/* Mark Complete */}
+                <button
+                  className={`icon-btn${completedParts.includes(currentPart) ? ' active' : ''}`}
+                  title={`${completedParts.includes(currentPart) ? 'Mark Incomplete' : 'Mark Complete'} [c]`}
+                  aria-label={completedParts.includes(currentPart) ? 'Mark part incomplete' : 'Mark part complete'}
+                  aria-pressed={completedParts.includes(currentPart)}
+                  onClick={() => handleToggleComplete(currentPart)}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </button>
+
+                {/* Bookmark */}
+                <button
+                  className={`icon-btn${bookmarkedParts.includes(currentPart) ? ' active' : ''}`}
+                  title="Bookmark [b]"
+                  aria-label={bookmarkedParts.includes(currentPart) ? 'Remove bookmark' : 'Bookmark this part'}
+                  aria-pressed={bookmarkedParts.includes(currentPart)}
+                  onClick={() => handleToggleBookmark(currentPart)}
+                >
+                  <svg viewBox="0 0 24 24" fill={bookmarkedParts.includes(currentPart) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                   </svg>
                 </button>
               </>
@@ -544,9 +605,10 @@ export function Academy() {
               <button
                 className="icon-btn"
                 title="Go to Dashboard [Esc]"
+                aria-label="Go to Dashboard"
                 onClick={handleGoHome}
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                   <polyline points="9 22 9 12 15 12 15 22"/>
                 </svg>
@@ -556,9 +618,10 @@ export function Academy() {
             <button
               className="icon-btn"
               title="Keyboard Shortcuts [?]"
+              aria-label="Show keyboard shortcuts"
               onClick={() => setShowShortcuts(true)}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <rect x="2" y="4" width="20" height="16" rx="2"/>
                 <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"/>
               </svg>
@@ -566,9 +629,10 @@ export function Academy() {
           </div>
         </header>
 
-        {/* Sidebar - only render if course selected */}
+        {/* Sidebar - LEFT side, only render when course is selected */}
         {activeCourseId && (
           <Sidebar
+            courseId={activeCourseId}
             modules={modules}
             currentPart={currentPart}
             completedParts={completedParts}
@@ -582,8 +646,8 @@ export function Academy() {
           />
         )}
 
-        {/* Main */}
-        <main className="main">
+        {/* Main content */}
+        <main className="main" id="main-content" tabIndex={-1}>
           {view === 'landing' ? (
             <Landing
               courses={courses}
@@ -628,6 +692,15 @@ export function Academy() {
           )}
         </main>
       </div>
+
+      {/* Mobile sidebar overlay — close when clicking outside */}
+      {sidebarOpen && view === 'reader' && (
+        <div
+          className="sidebar-overlay visible"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
 
       {/* Shortcuts modal */}
       <ShortcutsModal open={showShortcuts} onClose={() => setShowShortcuts(false)} />

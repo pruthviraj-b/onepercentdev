@@ -1,5 +1,7 @@
 // Task & Streak API — syncs to backend with localStorage fallback
 
+import { auth } from './firebase';
+
 const LS_TASKS = 'opd_dashboard_tasks';
 const LS_STREAK = 'opd_streak_dates';
 
@@ -7,6 +9,17 @@ const getApiBase = () =>
   typeof window !== 'undefined'
     ? process.env.NEXT_PUBLIC_API_URL || window.location.origin
     : 'http://localhost:3001';
+
+// Helper to get auth header
+const getAuthHeaders = (extraHeaders: Record<string, string> = {}) => {
+  const headers: Record<string, string> = { ...extraHeaders };
+  if (auth.currentUser) {
+    headers['X-User-Id'] = auth.currentUser.uid;
+  } else {
+    headers['X-User-Id'] = 'local';
+  }
+  return headers;
+};
 
 export interface Task {
   id: number;
@@ -42,7 +55,10 @@ function lsSetTasks(tasks: Task[]) {
 
 export async function fetchTasks(): Promise<Task[]> {
   try {
-    const res = await fetch(`${getApiBase()}/api/tasks`, { cache: 'no-store' });
+    const res = await fetch(`${getApiBase()}/api/tasks`, { 
+      cache: 'no-store',
+      headers: getAuthHeaders()
+    });
     if (res.ok) {
       const data: Task[] = await res.json();
       lsSetTasks(data);
@@ -62,7 +78,7 @@ export async function createTask(text: string, due_date?: string): Promise<Task 
   try {
     const res = await fetch(`${getApiBase()}/api/tasks`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ text, due_date: due_date || null }),
     });
     if (res.ok) {
@@ -84,7 +100,7 @@ export async function updateTask(id: number, patch: Partial<Task>): Promise<void
   try {
     await fetch(`${getApiBase()}/api/tasks/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(patch),
     });
   } catch {}
@@ -95,7 +111,10 @@ export async function deleteTask(id: number): Promise<void> {
   lsSetTasks(current.filter(t => t.id !== id));
 
   try {
-    await fetch(`${getApiBase()}/api/tasks/${id}`, { method: 'DELETE' });
+    await fetch(`${getApiBase()}/api/tasks/${id}`, { 
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
   } catch {}
 }
 
@@ -109,7 +128,10 @@ export async function pingStreak(): Promise<void> {
   sessionStorage.setItem('opd_streak_pinged', today);
 
   try {
-    await fetch(`${getApiBase()}/api/streak/ping`, { method: 'POST' });
+    await fetch(`${getApiBase()}/api/streak/ping`, { 
+      method: 'POST',
+      headers: getAuthHeaders()
+    });
   } catch {}
 
   // Also update localStorage dates for offline use
@@ -124,7 +146,10 @@ export async function pingStreak(): Promise<void> {
 
 export async function fetchStreak(): Promise<StreakInfo> {
   try {
-    const res = await fetch(`${getApiBase()}/api/streak`, { cache: 'no-store' });
+    const res = await fetch(`${getApiBase()}/api/streak`, { 
+      cache: 'no-store',
+      headers: getAuthHeaders()
+    });
     if (res.ok) return res.json();
   } catch {}
 
@@ -162,7 +187,7 @@ export async function submitTypingScore(wpm: number, accuracy: number, duration:
   try {
     await fetch(`${getApiBase()}/api/typing/score`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ wpm, accuracy, duration }),
     });
   } catch {}
@@ -172,7 +197,7 @@ export async function submitAptitudeScore(category: string, score: number, total
   try {
     await fetch(`${getApiBase()}/api/aptitude/score`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ category, score, total, time_taken }),
     });
   } catch {}

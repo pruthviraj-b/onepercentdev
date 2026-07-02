@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 
-interface Question {
+import { quizDatabase } from '../lib/quizDatabase';
+
+export interface Question {
   question: string;
   options: string[];
   correctIndex: number;
@@ -16,94 +18,40 @@ interface CodexQuizProps {
 }
 
 export function CodexQuiz({ courseId, part, onComplete }: CodexQuizProps) {
+  const [currentQIdx, setCurrentQIdx] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [quizState, setQuizState] = useState<'unanswered' | 'correct' | 'wrong'>('unanswered');
 
-  const quizDatabase: Record<string, Record<number, Question>> = {
-    cloud: {
-      7: {
-        question: "What is the primary function of a network router?",
-        options: [
-          "To translate HTML files into visual interfaces",
-          "To inspect destination IP addresses and direct packets across networks",
-          "To host relational SQL database records",
-          "To write code snippets into a browser scratchpad"
-        ],
-        correctIndex: 1,
-        explanation: "Correct! Routers act as postal sorters, looking at destination IP addresses to decide the next hop for each packet."
-      },
-      14: {
-        question: "In the client-server pattern, who initiates the connection?",
-        options: [
-          "The server, polling clients for work",
-          "The database, checking for queries",
-          "The client, sending an outbound request",
-          "The firewall, authorizing incoming users"
-        ],
-        correctIndex: 2,
-        explanation: "Correct! The client is the initiator, sending requests to which the server responds."
-      },
-      19: {
-        question: "What is the role of a hypervisor in virtualization?",
-        options: [
-          "It accelerates graphic card render times",
-          "It distributes requests evenly across multi-region servers",
-          "It creates and manages guest Virtual Machines on top of physical host hardware",
-          "It minifies JavaScript bundles for fast transfers"
-        ],
-        correctIndex: 2,
-        explanation: "Correct! The hypervisor isolates physical resources and slices them up into independent virtual environments."
-      },
-      23: {
-        question: "Which of the following is a core characteristic of Cloud Computing?",
-        options: [
-          "Requiring manual server rack installation by the user",
-          "On-demand self-service resources over the internet with pay-as-you-go pricing",
-          "Single-tenant physical server allocation only",
-          "Proprietary local offline storage databases"
-        ],
-        correctIndex: 1,
-        explanation: "Correct! Cloud computing provides elastic, on-demand resources over a network with pay-per-use metrics."
-      }
-    },
-    python: {
-      4: {
-        question: "What is the purpose of a variable in Python?",
-        options: [
-          "To execute loops repeatedly",
-          "To reference a value stored in memory with a descriptive name",
-          "To write output comments to stdout",
-          "To speed up execution of mathematical operators"
-        ],
-        correctIndex: 1,
-        explanation: "Correct! A variable labels a memory address so you can store and retrieve data easily."
-      }
-    }
-  };
-
-  // Fallback general question if specific one is missing
-  const getQuestion = (): Question => {
-    const courseQuizzes = quizDatabase[courseId];
+  const getQuestions = (): Question[] => {
+    let baseCourseId = courseId;
+    if (courseId.startsWith('data-analyst')) baseCourseId = 'data-analyst';
+    
+    const courseQuizzes = quizDatabase[baseCourseId];
     if (courseQuizzes && courseQuizzes[part]) {
       return courseQuizzes[part];
     }
-    return {
-      question: `Review: Which element makes up the core processing power of a virtual machine?`,
+    // Fallback
+    return [{
+      question: `Review: What is a primary key in a database?`,
       options: [
-        "A virtual network interface card (vNIC)",
-        "Virtualized CPU allocations managed by a hypervisor",
-        "The static HTML template database",
-        "The user browser cookies"
+        "A password used to access the database",
+        "A unique identifier for each record in a table",
+        "The most important column in a spreadsheet",
+        "A script that runs every night at midnight"
       ],
       correctIndex: 1,
-      explanation: "Correct! A VM's processing power relies on the hypervisor scheduling CPU slices from the physical host."
-    };
+      explanation: "A primary key ensures that every row in a table can be uniquely identified, preventing duplicate records."
+    }];
   };
 
-  const activeQuestion = getQuestion();
+  const activeQuestions = getQuestions();
+  const safeIdx = Math.min(currentQIdx, activeQuestions.length - 1);
+  const activeQuestion = activeQuestions[safeIdx];
+
 
   // Reset quiz state when part changes
   useEffect(() => {
+    setCurrentQIdx(0);
     setSelectedAnswer(null);
     setQuizState('unanswered');
   }, [part, courseId]);
@@ -113,9 +61,19 @@ export function CodexQuiz({ courseId, part, onComplete }: CodexQuizProps) {
     setSelectedAnswer(index);
     if (index === activeQuestion.correctIndex) {
       setQuizState('correct');
-      onComplete(); // Mark lesson progress or trigger success callback
+      if (currentQIdx === activeQuestions.length - 1) {
+        onComplete();
+      }
     } else {
       setQuizState('wrong');
+    }
+  };
+
+  const handleNextQuestion = () => {
+    if (currentQIdx < activeQuestions.length - 1) {
+      setCurrentQIdx(prev => prev + 1);
+      setSelectedAnswer(null);
+      setQuizState('unanswered');
     }
   };
 
@@ -123,7 +81,7 @@ export function CodexQuiz({ courseId, part, onComplete }: CodexQuizProps) {
     <div className="codex-quiz raised">
       <div className="quiz-scroll-header">
         <span className="quiz-badge">📜 Codex Quiz</span>
-        <h4 className="quiz-part-title">Test of Mastery — Chapter {part}</h4>
+        <h4 className="quiz-part-title">Test of Mastery — Chapter {part} <span style={{fontSize: '0.8rem', opacity: 0.8}}>(Q{currentQIdx + 1}/{activeQuestions.length})</span></h4>
       </div>
 
       <div className="quiz-scroll-content">
@@ -155,6 +113,14 @@ export function CodexQuiz({ courseId, part, onComplete }: CodexQuizProps) {
               {quizState === 'correct' ? '🎉 Mechanical Design Confirmed!' : '⚠️ Gears Jammed!'}
             </div>
             <p className="feedback-explanation">{activeQuestion.explanation}</p>
+            {quizState === 'correct' && currentQIdx < activeQuestions.length - 1 && (
+              <button 
+                className="next-question-btn" 
+                onClick={handleNextQuestion}
+              >
+                Next Question →
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -286,6 +252,22 @@ export function CodexQuiz({ courseId, part, onComplete }: CodexQuizProps) {
         .feedback-explanation {
           font-size: 0.85rem;
           line-height: 1.4;
+        }
+
+        .next-question-btn {
+          margin-top: 12px;
+          padding: 6px 16px;
+          background: #28a745;
+          color: white;
+          border: none;
+          font-family: 'Cinzel', serif;
+          font-weight: bold;
+          font-size: 0.9rem;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+        .next-question-btn:hover {
+          background: #218838;
         }
 
         /* Spinning gears */

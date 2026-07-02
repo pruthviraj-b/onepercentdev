@@ -1,8 +1,0 @@
-README.md
-pyproject.toml
-src/onepercentutils/__init__.py
-src/onepercentutils/text_utils.py
-src/onepercentutils_shyam.egg-info/PKG-INFO
-src/onepercentutils_shyam.egg-info/SOURCES.txt
-src/onepercentutils_shyam.egg-info/dependency_links.txt
-src/onepercentutils_shyam.egg-info/top_level.txt

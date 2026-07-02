@@ -32,15 +32,61 @@ export function InteractiveBlueprint({ courseId, part }: InteractiveBlueprintPro
   const [isPythonRunning, setIsPythonRunning] = useState<boolean>(false);
   const [pythonLog, setPythonLog] = useState<string[]>([]);
 
-  // Auto-select node based on cloud chapters
+const isDataAnalyst = courseId.startsWith('data-analyst');
+
+  // Auto-select node based on chapters
   useEffect(() => {
     if (courseId === 'cloud') {
-      if (part === 7) setSelectedNode('router'); // Networking
-      else if (part === 14) setSelectedNode('server'); // Client-Server
-      else if (part === 19) setSelectedNode('server'); // Virtualization / Hypervisor
-      else if (part === 23) setSelectedNode('loadbalancer'); // Cloud
+      if (part === 7) setSelectedNode('router');
+      else if (part === 14) setSelectedNode('server');
+      else if (part === 19) setSelectedNode('server');
+      else if (part === 23) setSelectedNode('loadbalancer');
+    } else if (isDataAnalyst) {
+      if (part <= 7) setSelectedNode('datasource'); // Excel
+      else if (part <= 19) setSelectedNode('python'); // Python/Pandas
+      else if (part <= 27) setSelectedNode('sql'); // SQL
+      else setSelectedNode('tableau'); // Tableau
     }
-  }, [courseId, part]);
+  }, [courseId, part, isDataAnalyst]);
+
+  const dataNodes: Record<string, NodeDetail> = {
+    datasource: {
+      id: 'datasource',
+      name: 'Raw Data Source',
+      role: 'Stores unstructured or messy raw data from the real world.',
+      ports: 'N/A',
+      protocols: 'CSV, JSON, APIs',
+      physicalVsVirtual: 'Often unoptimized flat files sitting on a hard drive.',
+      description: 'The beginning of the data pipeline. Data here is chaotic, containing nulls and errors that must be cleaned.'
+    },
+    python: {
+      id: 'python',
+      name: 'Python (Pandas ETL)',
+      role: 'Extracts, Transforms, and Loads (ETL) the messy data into a clean structure.',
+      ports: 'Local Memory',
+      protocols: 'C-optimized NumPy Arrays',
+      physicalVsVirtual: 'Runs in RAM using contiguous memory allocation for speed.',
+      description: 'The engine room. Python scripts clean missing values, merge datasets, and prepare the data for long-term relational storage.'
+    },
+    sql: {
+      id: 'sql',
+      name: 'Data Warehouse (SQL)',
+      role: 'Stores clean, structured data in a strict relational schema.',
+      ports: '5432, 3306',
+      protocols: 'TCP, SQL',
+      physicalVsVirtual: 'A massive relational database server (PostgreSQL, Snowflake).',
+      description: 'The fortress of truth. Data here is perfectly typed and normalized to prevent update anomalies.'
+    },
+    tableau: {
+      id: 'tableau',
+      name: 'BI Dashboard (Tableau)',
+      role: 'Visualizes the data for executive decision making.',
+      ports: '443',
+      protocols: 'HTTP, WebSockets',
+      physicalVsVirtual: 'A web-based interface sitting on top of the SQL database.',
+      description: 'The broadcast layer. Converts complex SQL aggregations into interactive charts that drive business value.'
+    }
+  };
 
   // Cloud network node definitions
   const cloudNodes: Record<string, NodeDetail> = {
@@ -89,6 +135,32 @@ export function InteractiveBlueprint({ courseId, part }: InteractiveBlueprintPro
       physicalVsVirtual: 'Runs on dedicated storage-optimized virtual machines or managed serverless DB clusters.',
       description: 'The memory bank. Backends ask the database for state, fetch rows, or insert new records. Typically sealed inside a private subnet for security.'
     }
+  };
+
+const handleSendDataPacket = () => {
+    if (packetState !== 'idle') return;
+    setPacketState('traveling');
+    setPacketPosition({ x: 70, y: 150 });
+    setPacketLog(['[Data Source] Extracting raw CSV file (1.2GB)...']);
+    
+    setTimeout(() => {
+      setPacketPosition({ x: 260, y: 150 });
+      setPacketLog(prev => [...prev, '[Python] Loading into Pandas DataFrame.', '[Python] Dropping NaN values and normalizing text.']);
+      
+      setTimeout(() => {
+        setPacketPosition({ x: 450, y: 150 });
+        setPacketState('processing');
+        setPacketLog(prev => [...prev, '[SQL] Inserting clean data into Relational Tables.', '[SQL] Building B-Tree Indexes for fast querying.']);
+        
+        setTimeout(() => {
+          setPacketPosition({ x: 640, y: 150 });
+          setPacketLog(prev => [...prev, '[Tableau] Executing dynamic SELECT and GROUP BY query.', '[Tableau] Rendering Executive Dashboard View.']);
+          setPacketState('done');
+          
+          setTimeout(() => { setPacketState('idle'); }, 3000);
+        }, 1200);
+      }, 1200);
+    }, 1200);
   };
 
   const handleSendPacket = () => {
@@ -206,15 +278,25 @@ export function InteractiveBlueprint({ courseId, part }: InteractiveBlueprintPro
             <polyline points="2 17 12 22 22 17"/>
             <polyline points="2 12 12 17 22 12"/>
           </svg>
-          {courseId === 'cloud' ? 'Interactive Cloud Infrastructure Blueprint' : 'Interactive CPU & Memory Execution Simulator'}
+          {courseId === 'cloud' ? 'Interactive Cloud Infrastructure Blueprint' : isDataAnalyst ? 'Interactive Data Engineering Pipeline' : 'Interactive CPU & Memory Execution Simulator'}
         </h4>
         {courseId === 'cloud' ? (
+
+
           <button 
             className="blueprint-btn" 
             disabled={packetState !== 'idle'} 
             onClick={handleSendPacket}
           >
             {packetState === 'idle' ? '⚡ Send HTTP Request' : '📡 Traversing Stack...'}
+          </button>
+        ) : isDataAnalyst ? (
+          <button 
+            className="blueprint-btn" 
+            disabled={packetState !== 'idle'} 
+            onClick={handleSendDataPacket}
+          >
+            {packetState === 'idle' ? '⚡ Run Data Pipeline' : '📡 Processing Data...'}
           </button>
         ) : (
           <div style={{ display: 'flex', gap: 6 }}>
@@ -238,6 +320,8 @@ export function InteractiveBlueprint({ courseId, part }: InteractiveBlueprintPro
 
       <div className="blueprint-body">
         {courseId === 'cloud' ? (
+
+
           /* =========================================================================
              CLOUD TOPOLOGY SVG
              ========================================================================= */
@@ -382,7 +466,97 @@ export function InteractiveBlueprint({ courseId, part }: InteractiveBlueprintPro
               )}
             </svg>
           </div>
-        ) : (
+        ) : isDataAnalyst ? (
+          /* =========================================================================
+             DATA ANALYTICS PIPELINE SVG
+             ========================================================================= */
+          <div className="blueprint-canvas-wrap">
+            <svg viewBox="0 0 700 300" className="blueprint-svg">
+              <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 2 L 10 5 L 0 8 z" fill="var(--border)" />
+                </marker>
+                <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                  <feDropShadow dx="3" dy="3" stdDeviation="0" floodColor="var(--win-shadow)" />
+                </filter>
+              </defs>
+
+              {/* Connecting Paths */}
+              <line x1="70" y1="150" x2="260" y2="150" stroke="var(--border)" strokeWidth="2" strokeDasharray="4 4" markerEnd="url(#arrow)" />
+              <line x1="260" y1="150" x2="450" y2="150" stroke="var(--border)" strokeWidth="2" strokeDasharray="4 4" markerEnd="url(#arrow)" />
+              <line x1="450" y1="150" x2="640" y2="150" stroke="var(--border)" strokeWidth="2" strokeDasharray="4 4" markerEnd="url(#arrow)" />
+
+              {/* 1. Data Source Node */}
+              <g 
+                className={`node-group ${selectedNode === 'datasource' ? 'selected' : ''}`}
+                onClick={() => setSelectedNode('datasource')}
+                transform="translate(70, 150)"
+                cursor="pointer"
+              >
+                <rect x="-40" y="-35" width="80" height="70" rx="4" fill="var(--win-light)" stroke="var(--border)" strokeWidth="2" filter="url(#shadow)" />
+                <rect x="-20" y="-20" width="40" height="30" fill="none" stroke="var(--border)" strokeWidth="1.5" />
+                <line x1="-20" y1="-10" x2="20" y2="-10" stroke="var(--border)" strokeWidth="1.5" />
+                <line x1="-20" y1="0" x2="20" y2="0" stroke="var(--border)" strokeWidth="1.5" />
+                <text x="0" y="27" textAnchor="middle" fontSize="10" fontWeight="bold" fill="var(--page-text)">Raw Data</text>
+              </g>
+
+              {/* 2. Python / Pandas Node */}
+              <g 
+                className={`node-group ${selectedNode === 'python' ? 'selected' : ''}`}
+                onClick={() => setSelectedNode('python')}
+                transform="translate(260, 150)"
+                cursor="pointer"
+              >
+                <rect x="-40" y="-35" width="80" height="70" rx="4" fill="var(--win-light)" stroke="var(--border)" strokeWidth="2" filter="url(#shadow)" />
+                <circle cx="0" cy="-5" r="15" fill="none" stroke="var(--border)" strokeWidth="2" />
+                <path d="M -5 -5 L 5 0 L -5 5 Z" fill="var(--border)" />
+                <text x="0" y="27" textAnchor="middle" fontSize="10" fontWeight="bold" fill="var(--page-text)">Python (ETL)</text>
+              </g>
+
+              {/* 3. SQL Data Warehouse Node */}
+              <g 
+                className={`node-group ${selectedNode === 'sql' ? 'selected' : ''}`}
+                onClick={() => setSelectedNode('sql')}
+                transform="translate(450, 150)"
+                cursor="pointer"
+              >
+                <rect x="-40" y="-35" width="80" height="70" rx="4" fill="var(--win-light)" stroke="var(--border)" strokeWidth="2" filter="url(#shadow)" />
+                <ellipse cx="0" cy="-15" rx="20" ry="6" fill="none" stroke="var(--border)" strokeWidth="1.5" />
+                <path d="M -20 -15 L -20 0 A 20 6 0 0 0 20 0 L 20 -15" fill="none" stroke="var(--border)" strokeWidth="1.5" />
+                <path d="M -20 0 L -20 15 A 20 6 0 0 0 20 15 L 20 0" fill="none" stroke="var(--border)" strokeWidth="1.5" />
+                <text x="0" y="29" textAnchor="middle" fontSize="10" fontWeight="bold" fill="var(--page-text)">SQL Warehouse</text>
+              </g>
+
+              {/* 4. Tableau BI Node */}
+              <g 
+                className={`node-group ${selectedNode === 'tableau' ? 'selected' : ''}`}
+                onClick={() => setSelectedNode('tableau')}
+                transform="translate(640, 150)"
+                cursor="pointer"
+              >
+                <rect x="-40" y="-35" width="80" height="70" rx="4" fill="var(--win-light)" stroke="var(--border)" strokeWidth="2" filter="url(#shadow)" />
+                <rect x="-20" y="-5" width="8" height="15" fill="none" stroke="var(--border)" strokeWidth="1.5" />
+                <rect x="-5" y="-20" width="8" height="30" fill="none" stroke="var(--border)" strokeWidth="1.5" />
+                <rect x="10" y="-12" width="8" height="22" fill="none" stroke="var(--border)" strokeWidth="1.5" />
+                <text x="0" y="27" textAnchor="middle" fontSize="10" fontWeight="bold" fill="var(--page-text)">Tableau (BI)</text>
+              </g>
+
+              {/* Traveling Packet Animation */}
+              {packetState !== 'idle' && (
+                <circle 
+                  cx={packetPosition.x} 
+                  cy={packetPosition.y} 
+                  r="6" 
+                  fill="var(--link)" 
+                  stroke="var(--win-light)" 
+                  strokeWidth="2"
+                  style={{ transition: 'all 1.1s cubic-bezier(0.25, 0.46, 0.45, 0.94)' }}
+                />
+              )}
+            </svg>
+          </div>
+
+) : ( 
           /* =========================================================================
              PYTHON CPU-RAM EXECUTION SIMULATOR
              ========================================================================= */
@@ -457,6 +631,8 @@ export function InteractiveBlueprint({ courseId, part }: InteractiveBlueprintPro
       {/* Blueprint Footer logs/details */}
       <div className="blueprint-footer">
         {courseId === 'cloud' ? (
+
+
           <div className="inspection-grid">
             <div className="node-details">
               <div className="detail-row">
