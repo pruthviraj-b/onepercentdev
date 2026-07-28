@@ -1,4 +1,8 @@
 {
+  "env": {
+    "VERCEL_SUPPORT_LARGE_FUNCTIONS": "1",
+    "VERCEL_ANALYZE_BUILD_OUTPUT": "1"
+  },
   "experimentalServices": {
     "frontend": {
       "root": "frontend",
