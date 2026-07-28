@@ -29,6 +29,7 @@ const F = {
   coldiac:   "'Cormorant Garamond', 'Georgia', serif",
   roxie:     "'Cormorant', 'Palatino Linotype', serif",
   molani:    "'DM Sans', 'Inter', sans-serif",
+  jimNightshade: "'Jim Nightshade', cursive",
 };
 
 // ── Brand tokens ─────────────────────────────────────────────────────────────
@@ -120,6 +121,7 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
   const [courseProgress, setCourseProgress] = useState<CourseProgress[]>([]);
   const [coursesList, setCoursesList] = useState<Course[]>([]);
   const [statsLoading, setStatsLoading] = useState(true);
+  const [displayStreak, setDisplayStreak] = useState(0);
   const [recentActivity, setRecentActivity] = useState<{ courseId: string; partId: number } | null>(null);
 
   useEffect(() => {
@@ -141,6 +143,23 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
       setStatsLoading(false);
     }).catch(() => setStatsLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (statsLoading) return;
+    const target = Math.max(0, streak.current);
+    let current = 0;
+    const increment = target > 0 ? Math.max(1, Math.ceil(target / 16)) : 1;
+    const intervalId = window.setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        setDisplayStreak(target);
+        window.clearInterval(intervalId);
+      } else {
+        setDisplayStreak(current);
+      }
+    }, 45);
+    return () => window.clearInterval(intervalId);
+  }, [statsLoading, streak.current]);
 
   useEffect(() => {
     const h = (e: MouseEvent) => { if (profileRef.current && !profileRef.current.contains(e.target as Node)) setProfileMenuOpen(false); };
@@ -294,70 +313,74 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px',
         }}>
           <div>
-            <span style={{ fontFamily: F.body, fontSize: '0.68rem', fontWeight: 700, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{greeting}</span>
-            <h2 style={{ fontFamily: F.tapestry, fontWeight: 400, fontSize: '2.8rem', color: C.ink, margin: '0 0 0', lineHeight: 1, letterSpacing: '-0.02em' }}>
+            <span style={{ fontFamily: F.times, fontSize: '0.68rem', fontWeight: 700, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{greeting}</span>
+            <h2 style={{ fontFamily: F.jimNightshade, fontWeight: 400, fontSize: '2.8rem', color: C.ink, margin: '0 0 0', lineHeight: 1, letterSpacing: '-0.02em' }}>
               {firstName}
-              <span style={{ fontFamily: F.tapestry, fontStyle: 'normal', fontWeight: 400, fontSize: '1.6rem', color: C.accentDk, marginLeft: '14px' }}>Developer Student</span>
+              <span style={{ fontFamily: F.jimNightshade, fontStyle: 'normal', fontWeight: 400, fontSize: '1.6rem', color: C.accentDk, marginLeft: '14px' }}>Developer Student</span>
             </h2>
-            <p style={{ fontFamily: F.body, fontSize: '0.8rem', color: C.muted, margin: '4px 0 0' }}>Here's your daily progress overview.</p>
+            <p style={{ fontFamily: F.times, fontSize: '0.8rem', color: C.muted, margin: '4px 0 0' }}>Here's your daily progress overview.</p>
           </div>
-          {/* Streak badge — premium editorial card */}
+          {/* Streak badge — compact horizontal digital counter */}
           <div style={{
-            position: 'relative',
-            padding: '18px 18px 16px',
-            width: '124px',
-            minWidth: '124px',
+            padding: '5px 6px',
             background: C.accent,
-            border: `4px solid ${C.rule}`,
-            boxShadow: `8px 8px 0 ${C.rule}`,
+            border: `1.5px solid ${C.rule}`,
+            boxShadow: `3px 3px 0 ${C.rule}`,
             color: C.ink,
-            textAlign: 'center',
+            minWidth: '150px',
+            maxWidth: '150px',
             flexShrink: 0,
           }}>
             <div style={{
-              position: 'absolute',
-              top: '-12px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              background: C.paper,
-              border: `2px solid ${C.rule}`,
-              padding: '4px 10px',
               fontFamily: F.editorial,
-              fontSize: '0.65rem',
+              fontSize: '0.55rem',
               fontWeight: 900,
-              letterSpacing: '0.16em',
               textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              color: C.ink,
+              marginBottom: '4px',
             }}>
               Day Streak
             </div>
-            <div style={{ marginTop: '18px', marginBottom: '12px', position: 'relative', width: '70px', height: '70px', marginLeft: 'auto', marginRight: 'auto' }}>
-              <svg width="70" height="70" viewBox="0 0 70 70">
-                <circle cx="35" cy="35" r="30" fill="none" stroke={C.rule} strokeWidth="5" opacity="0.2" />
-                <circle cx="35" cy="35" r="30" fill="none" stroke={C.ink} strokeWidth="5"
-                  strokeDasharray={`${Math.PI * 60 * Math.min(Math.max(streak.current, 0) / 30, 1)} ${Math.PI * 60}`}
-                  strokeLinecap="round" transform="rotate(-90 35 35)" />
-              </svg>
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontFamily: F.tapestry,
-                fontSize: '1.75rem',
-                fontWeight: 900,
-                lineHeight: 1,
-                color: C.ink,
-              }}>
-                {statsLoading ? '…' : streak.current}
-              </div>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '2px',
+              marginBottom: '4px',
+            }}>
+              {(statsLoading ? ['…'] : String(displayStreak).padStart(2, '0').split('')).map((digit, index) => (
+                <div key={index} style={{
+                  width: '22px',
+                  height: '34px',
+                  background: '#111',
+                  border: `1px solid ${C.rule}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: '"Caesar Dressing", serif',
+                  fontSize: '1.05rem',
+                  fontWeight: 900,
+                  color: '#f8e75c',
+                  textShadow: '0 0 4px rgba(241,190,62,0.9)',
+                  boxShadow: 'inset 0 -2px 0 rgba(0,0,0,0.25)',
+                  borderRadius: '3px',
+                  transition: 'transform 0.14s ease',
+                  transform: streak.current === displayStreak ? 'translateY(0)' : 'translateY(-2px)',
+                }}>
+                  {digit}
+                </div>
+              ))}
             </div>
-            {!statsLoading && (
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: '10px',
+            }}>
               <div style={{
-                marginTop: '4px',
-                fontFamily: F.editorial,
-                fontSize: '0.78rem',
+                fontFamily: F.body,
+                fontSize: '0.64rem',
                 fontWeight: 700,
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase',
@@ -365,17 +388,15 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
               }}>
                 Best {streak.longest}
               </div>
-            )}
-            <div style={{
-              marginTop: '12px',
-              borderTop: `1px solid ${C.rule}`,
-              paddingTop: '10px',
-              fontFamily: F.body,
-              fontSize: '0.68rem',
-              color: C.ink,
-              lineHeight: 1.4,
-            }}>
-              Keep the streak alive.
+              <div style={{
+                fontFamily: F.body,
+                fontSize: '0.62rem',
+                color: C.muted,
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+              }}>
+                Keep it moving
+              </div>
             </div>
           </div>
         </div>
@@ -619,13 +640,13 @@ function NavTab({ icon, label, onClick, active = false }: { icon: string; label:
         height: '36px', padding: '0 14px',
         display: 'flex', alignItems: 'center', gap: '5px',
         cursor: 'pointer', fontSize: '0.72rem', flexShrink: 0,
-        fontFamily: "'Tapestry', cursive",
+        fontFamily: F.times,
         fontWeight: active ? 700 : 500,
         textTransform: 'uppercase', letterSpacing: '0.06em',
         transition: 'background 100ms',
       }}>
-      <span>{icon}</span>
-      <span>{label}</span>
+      <span style={{ fontFamily: F.times }}>{icon}</span>
+      <span style={{ fontFamily: F.times }}>{label}</span>
     </button>
   );
 }
@@ -642,14 +663,14 @@ function NavTabLogo({ mascot, courseId, label, onClick }: { mascot?: string; cou
         height: '36px', padding: '0 14px',
         display: 'flex', alignItems: 'center', gap: '5px',
         cursor: 'pointer', fontSize: '0.72rem', flexShrink: 0,
-        fontFamily: "'Tapestry', cursive", fontWeight: 500,
+        fontFamily: F.times, fontWeight: 500,
         textTransform: 'uppercase', letterSpacing: '0.06em',
         transition: 'background 100ms',
       }}>
       {url
         ? <img src={url} alt={label} style={{ width: 18, height: 18, objectFit: 'contain', borderRadius: 2 }} />
-        : <span>{getCourseEmoji(mascot, courseId)}</span>}
-      <span>{label}</span>
+        : <span style={{ fontFamily: F.times }}>{getCourseEmoji(mascot, courseId)}</span>}
+      <span style={{ fontFamily: F.times }}>{label}</span>
     </button>
   );
 }
