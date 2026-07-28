@@ -3437,9 +3437,9 @@
     }
   },
   "sql": {
-    "title": "SQL in Kannada",
+    "title": "SQL",
     "description": "Master SQL & Relational Databases from scratch to production-grade — in Kannada.",
-    "tagline": "SQL IN KANNADA - BY SHYAMISCODING",
+    "tagline": "SQL - BY SHYAMISCODING",
     "mascot": "database",
     "contentDir": "content/sql",
     "dirPattern": "Part-{part}",
