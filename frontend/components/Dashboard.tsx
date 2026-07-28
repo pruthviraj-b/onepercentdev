@@ -23,6 +23,7 @@ const F = {
   editorial: "'Playfair Display', 'Georgia', serif",
   deck:      "'Cormorant Garamond', 'Georgia', serif",
   body:      "'DM Sans', 'Inter', sans-serif",
+  tapestry:  "'Tapestry', cursive",
   // keep legacy aliases so sub-components still work
   coldiac:   "'Cormorant Garamond', 'Georgia', serif",
   roxie:     "'Cormorant', 'Palatino Linotype', serif",
