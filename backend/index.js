@@ -4,9 +4,6 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
-const _pdfParseModule = require('pdf-parse');
-const pdfParse = _pdfParseModule.default || _pdfParseModule;
-const mammoth = require('mammoth');
 const { exec } = require('child_process');
 const { createClient } = require('@supabase/supabase-js');
 const cloudinary = require('cloudinary').v2;
@@ -508,10 +505,11 @@ app.post('/api/admin/import-notes/:course/:part', upload.single('file'), async (
   let text = '';
   try {
     const ext = path.extname(file.originalname).toLowerCase();
-    if (ext === '.pdf') text = (await pdfParse(file.buffer)).text;
-    else if (ext === '.docx') text = (await mammoth.extractRawText({ buffer: file.buffer })).value;
-    else if (ext === '.txt' || ext === '.md') text = file.buffer.toString('utf-8');
-    else return res.status(400).json({ error: 'Unsupported file type' });
+    if (ext === '.txt' || ext === '.md') {
+      text = file.buffer.toString('utf-8');
+    } else {
+      return res.status(400).json({ error: 'Unsupported file type. Only .txt and .md are accepted.' });
+    }
     let finalNotes = text.trim();
     if (!finalNotes.startsWith('# ')) finalNotes = `# Part ${part}\n\n` + finalNotes;
     fs.writeFileSync(path.join(dir, 'notes.md'), finalNotes, 'utf-8');
