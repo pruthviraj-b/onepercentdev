@@ -76,6 +76,7 @@ export interface NoteData {
   notes: string;
   files: { path: string; content: string | null; isBinary?: boolean; url?: string }[];
   importance: string;
+  difficulty?: string;
   module: string;
   module_id: number;
 }
