@@ -23,6 +23,7 @@ const F = {
   editorial: "'Playfair Display', 'Georgia', serif",
   deck:      "'Cormorant Garamond', 'Georgia', serif",
   body:      "'DM Sans', 'Inter', sans-serif",
+  times:     "'Times New Roman', 'Georgia', serif",
   tapestry:  "'Tapestry', cursive",
   // keep legacy aliases so sub-components still work
   coldiac:   "'Cormorant Garamond', 'Georgia', serif",
@@ -194,12 +195,12 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '6px 24px', borderBottom: `1px solid ${C.rule}`,
-          fontFamily: F.body, fontSize: '0.68rem', color: C.muted,
+          fontFamily: F.times, fontSize: '0.68rem', color: C.muted,
           letterSpacing: '0.07em', textTransform: 'uppercase',
         }}>
-          <span>{mastheadDate()}</span>
+          <span style={{ fontFamily: F.times }}>{mastheadDate()}</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ color: C.muted }}>VOL. I &nbsp;·&nbsp; DAILY EDITION</span>
+            <span style={{ color: C.muted, fontFamily: F.times }}>VOL. I &nbsp;·&nbsp; DAILY EDITION</span>
             {/* Notification */}
             <button aria-label="Notifications" style={{ background: 'none', border: `1.5px solid ${C.rule}`, borderRadius: '4px', width: '28px', height: '28px', cursor: 'pointer', fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🔔</button>
             {/* Profile */}
