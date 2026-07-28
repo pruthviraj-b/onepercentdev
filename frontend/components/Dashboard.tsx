@@ -301,25 +301,82 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
             </h2>
             <p style={{ fontFamily: F.body, fontSize: '0.8rem', color: C.muted, margin: '4px 0 0' }}>Here's your daily progress overview.</p>
           </div>
-          {/* Streak badge — editorial stamp style */}
+          {/* Streak badge — premium editorial card */}
           <div style={{
-            border: `3px solid ${C.rule}`, padding: '12px 20px', textAlign: 'center',
-            background: isActiveToday ? C.accent : C.paper,
-            boxShadow: `4px 4px 0 ${C.rule}`, minWidth: '100px', flexShrink: 0,
+            position: 'relative',
+            padding: '18px 18px 16px',
+            width: '124px',
+            minWidth: '124px',
+            background: C.accent,
+            border: `4px solid ${C.rule}`,
+            boxShadow: `8px 8px 0 ${C.rule}`,
+            color: C.ink,
+            textAlign: 'center',
+            flexShrink: 0,
           }}>
-            <div style={{ position: 'relative', width: '48px', height: '48px', margin: '0 auto 6px' }}>
-              <svg width="48" height="48" viewBox="0 0 48 48">
-                <circle cx="24" cy="24" r="20" fill="none" stroke={C.hairline} strokeWidth="3.5" />
-                <circle cx="24" cy="24" r="20" fill="none" stroke={C.rule} strokeWidth="3.5"
-                  strokeDasharray={`${Math.PI * 40 * Math.min(Math.max(streak.current, 0) / 30, 1)} ${Math.PI * 40}`}
-                  strokeLinecap="butt" transform="rotate(-90 24 24)" />
+            <div style={{
+              position: 'absolute',
+              top: '-12px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              background: C.paper,
+              border: `2px solid ${C.rule}`,
+              padding: '4px 10px',
+              fontFamily: F.editorial,
+              fontSize: '0.65rem',
+              fontWeight: 900,
+              letterSpacing: '0.16em',
+              textTransform: 'uppercase',
+            }}>
+              Day Streak
+            </div>
+            <div style={{ marginTop: '18px', marginBottom: '12px', position: 'relative', width: '70px', height: '70px', marginLeft: 'auto', marginRight: 'auto' }}>
+              <svg width="70" height="70" viewBox="0 0 70 70">
+                <circle cx="35" cy="35" r="30" fill="none" stroke={C.rule} strokeWidth="5" opacity="0.2" />
+                <circle cx="35" cy="35" r="30" fill="none" stroke={C.ink} strokeWidth="5"
+                  strokeDasharray={`${Math.PI * 60 * Math.min(Math.max(streak.current, 0) / 30, 1)} ${Math.PI * 60}`}
+                  strokeLinecap="round" transform="rotate(-90 35 35)" />
               </svg>
-              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.editorial, fontWeight: 900, fontSize: '1.2rem', color: C.ink }}>
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontFamily: F.tapestry,
+                fontSize: '1.75rem',
+                fontWeight: 900,
+                lineHeight: 1,
+                color: C.ink,
+              }}>
                 {statsLoading ? '…' : streak.current}
               </div>
             </div>
-            <div style={{ fontFamily: F.body, fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: C.ink }}>Day Streak</div>
-            {!statsLoading && <div style={{ fontFamily: F.body, fontSize: '0.58rem', color: C.muted, marginTop: '2px' }}>Best: {streak.longest}</div>}
+            {!statsLoading && (
+              <div style={{
+                marginTop: '4px',
+                fontFamily: F.editorial,
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                color: C.ink,
+              }}>
+                Best {streak.longest}
+              </div>
+            )}
+            <div style={{
+              marginTop: '12px',
+              borderTop: `1px solid ${C.rule}`,
+              paddingTop: '10px',
+              fontFamily: F.body,
+              fontSize: '0.68rem',
+              color: C.ink,
+              lineHeight: 1.4,
+            }}>
+              Keep the streak alive.
+            </div>
           </div>
         </div>
 

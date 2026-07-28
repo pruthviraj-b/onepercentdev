@@ -126,8 +126,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setAuthError('Google sign-in was cancelled. Try once more when ready.');
       } else if (code === 'auth/popup-blocked') {
         setAuthError('Popup was blocked. Please allow popups for this site and try again.');
+      } else if (code === 'auth/unauthorized-domain') {
+        setAuthError('Firebase blocked sign-in because this site is not authorized. Add your localhost and deployment domains in Firebase Auth settings.');
+      } else if (code === 'auth/invalid-api-key' || code === 'auth/invalid-app-id') {
+        setAuthError('Firebase configuration is invalid. Verify your NEXT_PUBLIC_FIREBASE_* values.');
       } else {
-        setAuthError('Could not sign in with Google. Please check your Firebase setup.');
+        setAuthError(`Could not sign in with Google. (${code}) ${error?.message || 'Check your Firebase setup.'}`);
         console.error('Login Failed:', error);
       }
     } finally {
