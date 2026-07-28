@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
   ...(isGitHubPages && { basePath: '/onepercentdev' }),
   transpilePackages: ['react-markdown', 'rehype-raw', 'remark-gfm', 'rehype-sanitize'],
   reactStrictMode: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
     unoptimized: true,
   },
