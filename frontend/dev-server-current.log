@@ -1,0 +1,114 @@
+
+> onepercentdev-frontend@0.1.0 predev
+> node -e "const fs = require('fs'); if (fs.existsSync('.next')) fs.rmSync('.next', { recursive: true, force: true });" && node scripts/export-data.js
+
+Exporting courses metadata...
+Exported courses.json successfully.
+Exported videos.json successfully.
+  (Supabase not configured — skipping Cloudinary file merge)
+Compiling course: Python for Data Analysis — Industry Master Program...
+  Exported modules-python.json
+  Exported part notes for python.
+Compiling course: Cloud Computing...
+  Exported modules-cloud.json
+  Exported part notes for cloud.
+Compiling course: Data Analyst (Telugu)...
+  Exported modules-data-analyst-te.json
+  Exported part notes for data-analyst-te.
+Compiling course: Data Analyst (English)...
+  Exported modules-data-analyst-en.json
+  Exported part notes for data-analyst-en.
+Compiling course: Excel Mastery...
+  Exported modules-excel.json
+  Exported part notes for excel.
+Compiling course: SQL...
+  Exported modules-sql.json
+  Exported part notes for sql.
+
+Data export complete!
+
+> onepercentdev-frontend@0.1.0 dev
+> cross-env NODE_OPTIONS=--max-old-space-size=4096 NEXT_TELEMETRY_DISABLED=1 next dev --port 3005
+
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3005
+   - Network:      http://192.168.25.194:3005
+   - Experiments (use with caution):
+     · cpus: 1
+
+ ✓ Starting...
+ ✓ Ready in 3.4s
+ ○ Compiling / ...
+ ✓ Compiled / in 6.2s (1395 modules)
+ GET /?view=dashboard 200 in 7432ms
+ GET /?view=dashboard 200 in 76ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 683ms (832 modules)
+ GET /favicon.ico 200 in 867ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 538ms (1403 modules)
+ GET /api/modules-data-analyst.json 404 in 1170ms
+ GET /api/modules-data-analyst.json 404 in 68ms
+ GET / 200 in 993ms
+ GET /favicon.ico 200 in 58ms
+ GET /api/modules-data-analyst.json 404 in 272ms
+ GET /api/modules-data-analyst.json 404 in 115ms
+ GET / 200 in 95ms
+ GET /favicon.ico 200 in 36ms
+ GET /api/modules-data-analyst.json 404 in 102ms
+ GET /api/modules-data-analyst.json 404 in 46ms
+ ✓ Compiled in 1089ms (1403 modules)
+ GET / 200 in 1407ms
+ GET /favicon.ico 200 in 56ms
+ GET /api/modules-data-analyst.json 404 in 152ms
+ GET /api/modules-data-analyst.json 404 in 61ms
+ ✓ Compiled in 2.9s (1381 modules)
+ GET / 200 in 1257ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 637ms (832 modules)
+ GET /favicon.ico 200 in 867ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 612ms (1403 modules)
+ GET /api/modules-data-analyst.json 404 in 1131ms
+ GET /api/modules-data-analyst.json 404 in 93ms
+ ✓ Compiled in 1306ms (1381 modules)
+ GET / 200 in 4837ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 719ms (832 modules)
+ GET /favicon.ico 200 in 1042ms
+ ✓ Compiled in 1521ms (1398 modules)
+ ✓ Compiled /_not-found in 425ms (1403 modules)
+ GET /api/modules-data-analyst.json 404 in 1077ms
+ GET /api/modules-data-analyst.json 404 in 69ms
+ GET / 200 in 695ms
+ GET /favicon.ico 200 in 239ms
+ GET /api/modules-data-analyst.json 404 in 182ms
+ GET /api/modules-data-analyst.json 404 in 83ms
+ ✓ Compiled in 3.3s (1381 modules)
+ GET / 200 in 1201ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 648ms (832 modules)
+ GET /favicon.ico 200 in 888ms
+ ✓ Compiled /_not-found in 448ms (1403 modules)
+ GET /api/modules-data-analyst.json 404 in 861ms
+ GET /api/modules-data-analyst.json 404 in 67ms
+ GET /?view=dashboard 200 in 232ms
+ GET /favicon.ico 200 in 34ms
+ GET /api/modules-data-analyst.json 404 in 138ms
+ GET /api/modules-data-analyst.json 404 in 70ms
+ ✓ Compiled in 1195ms (1381 modules)
+ ✓ Compiled in 893ms (1381 modules)
+ GET /?view=dashboard 200 in 1211ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 844ms (832 modules)
+ GET /favicon.ico 200 in 1081ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 855ms (1403 modules)
+ GET /api/modules-data-analyst.json 404 in 1389ms
+ GET /api/modules-data-analyst.json 404 in 62ms
+ GET / 200 in 1894ms
+ GET / 200 in 628ms
+ GET /api/modules-data-analyst.json 404 in 207ms
+ GET /api/modules-data-analyst.json 404 in 85ms
+ GET /api/modules-data-analyst.json 404 in 139ms
+ GET /api/modules-data-analyst.json 404 in 75ms

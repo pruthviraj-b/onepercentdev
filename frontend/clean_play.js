@@ -1,0 +1,18 @@
+const fs = require('fs');
+let code = fs.readFileSync('components/Playground.tsx', 'utf-8');
+code = code.replace(/#00ff00/gi, '#ffffff');
+code = code.replace(/#00ffff/gi, '#a3b2be');
+code = code.replace(/#050a05/gi, '#000000');
+code = code.replace(/#030603/gi, '#000000');
+code = code.replace(/#ff3333/gi, '#ff4444');
+code = code.replace(/#004400/gi, '#666666');
+code = code.replace(/#008800/gi, '#666666');
+code = code.replace(/#88ff88/gi, '#dddddd');
+code = code.replace(/#001a00/gi, '#111111');
+code = code.replace(/#003300/gi, '#333333');
+code = code.replace(/#002200/gi, '#222222');
+code = code.replace(/#008888/gi, '#555555');
+code = code.replace(/text-shadow:[^;]+;/gi, 'textShadow: "none",');
+code = code.replace(/text-shadow\s*:\s*0 0 [0-9]+px #[a-f0-9]+;/gi, '');
+fs.writeFileSync('components/Playground.tsx', code);
+console.log('Colors cleaned.');
