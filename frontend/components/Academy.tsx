@@ -15,13 +15,14 @@ import { ShortcutsModal } from './ShortcutsModal';
 import { useAuth } from './AuthProvider';
 import { Login } from './Login';
 import { Dashboard } from './Dashboard';
+import { TargetRoom } from './TargetRoom';
 import { TypingView } from './TypingView';
 import { AptitudeView } from './AptitudeView';
 import { ErrorBoundary } from './ErrorBoundary';
 import { TaskHub } from './TaskHub';
 import { AchievementShare } from './AchievementShare';
 
-type View = 'login' | 'dashboard' | 'landing' | 'reader' | 'typing' | 'aptitude' | 'taskhub';
+type View = 'login' | 'dashboard' | 'landing' | 'reader' | 'typing' | 'aptitude' | 'taskhub' | 'targetroom';
 
 function escapeHtml(str: string): string {
   return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
@@ -992,6 +993,10 @@ export function Academy() {
                 setView('aptitude');
                 setActiveCourseId(null);
                 updateURL(null, null);
+              } else if (mod === 'targetroom') {
+                setView('targetroom');
+                setActiveCourseId(null);
+                updateURL(null, null);
               }
             }}
             onOpenTaskHub={() => setView('taskhub')}
@@ -1035,6 +1040,16 @@ export function Academy() {
       <div style={{ position: 'fixed', inset: 0, overflowY: 'auto', zIndex: 0 }}>
         <ErrorBoundary name="Typing Practice">
           <TypingView onBack={() => setView('dashboard')} />
+        </ErrorBoundary>
+      </div>
+    );
+  }
+
+  if (view === 'targetroom') {
+    return (
+      <div style={{ position: 'fixed', inset: 0, overflowY: 'auto', zIndex: 0 }}>
+        <ErrorBoundary name="Target Room">
+          <TargetRoom onBack={() => setView('dashboard')} />
         </ErrorBoundary>
       </div>
     );

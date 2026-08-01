@@ -519,6 +519,7 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
                   {onOpenTaskHub && (
                     <button className="btn btn-ghost" onClick={onOpenTaskHub}>Open Task Hub →</button>
                   )}
+                  <button className="btn btn-ghost" onClick={() => onNavigate('targetroom')}>Target</button>
                 </div>
               </div>
               <div style={{ display: 'flex', gap: '22px', marginTop: '24px', paddingTop: '16px', borderTop: `1px solid ${C.border}`, flexWrap: 'wrap' }}>
@@ -606,6 +607,55 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
                 })}
               </div>
             )}
+          </section>
+
+          {/* Tracker */}
+          <section style={{ marginBottom: '22px' }}>
+            <SectionHeader title="Tracker" />
+            <div className="card" style={{ padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '20px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1, minWidth: 0 }}>
+                {activeCourse && <CourseLogoImg mascot={activeCourse.mascot} id={activeCourse.id} size={42} />}
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontFamily: F.mono, fontSize: '0.62rem', color: C.cyan, letterSpacing: '0.1em', marginBottom: '4px' }}>CURRENT COURSE</div>
+                  <div style={{ fontFamily: F.display, fontWeight: 700, fontSize: '1.05rem', color: C.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {activeCourse ? activeCourse.title : 'No course started'}
+                  </div>
+                  <div style={{ fontFamily: F.mono, fontSize: '0.72rem', color: C.textDim, marginTop: '3px' }}>
+                    {activeCourseProgress
+                      ? `${activeCourseProgress.completed} / ${activeCourseProgress.total} lessons complete · ${activeCourseProgress.total > 0 ? Math.round((activeCourseProgress.completed / activeCourseProgress.total) * 100) : 0}%`
+                      : 'Pick a course to begin tracking'}
+                  </div>
+                </div>
+              </div>
+              {activeCourseProgress && (
+                <div style={{ width: '180px', flexShrink: 0 }}>
+                  <div style={{ height: '6px', background: C.border, borderRadius: '3px', overflow: 'hidden', marginBottom: '12px' }}>
+                    <div style={{
+                      height: '100%',
+                      width: `${activeCourseProgress.total > 0 ? Math.round((activeCourseProgress.completed / activeCourseProgress.total) * 100) : 0}%`,
+                      background: C.cyan,
+                      borderRadius: '3px',
+                      transition: 'width 0.4s ease',
+                    }} />
+                  </div>
+                </div>
+              )}
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  if (recentActivity) {
+                    onNavigate(`resume_${recentActivity.courseId}_${recentActivity.partId}`);
+                  } else if (activeCourse) {
+                    onNavigate(`course_${activeCourse.id}`);
+                  } else {
+                    onNavigate('academy');
+                  }
+                }}
+                style={{ flexShrink: 0, fontSize: '0.82rem', padding: '10px 22px' }}
+              >
+                Next →
+              </button>
+            </div>
           </section>
 
           {/* Tasks + Quick access */}
