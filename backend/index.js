@@ -112,18 +112,23 @@ function adminAuthMiddleware(req, res, next) {
 }
 
 // ── Load Central Config ──────────────────────────────────────────────────────
-// On Vercel the file is copied into the backend root via the prebuild script.
+// REPO_ROOT can be set by the Vercel build to point to the repo root so the
+// backend service can find shared files without the static file tracer
+// following '..' paths into the entire content/ tree.
+const REPO_ROOT = process.env.REPO_ROOT || path.join(__dirname, '..');
+
+// On Vercel the file is copied into the backend root via the build script.
 // Locally it lives one level up in the repo root.
 const CONFIG_PATH = fs.existsSync(path.join(__dirname, 'courses.config.json'))
   ? path.join(__dirname, 'courses.config.json')
-  : path.join(__dirname, '..', 'courses.config.json');
+  : path.join(REPO_ROOT, 'courses.config.json');
 const COURSES_CONFIG = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf-8'));
 
 const COURSES_DATA = {};
 for (const [courseId, cfg] of Object.entries(COURSES_CONFIG)) {
   COURSES_DATA[courseId] = {
     ...cfg,
-    contentRoot: path.join(__dirname, '..', cfg.contentDir),
+    contentRoot: path.join(REPO_ROOT, cfg.contentDir),
     dirPattern: (p) => cfg.dirPattern.replace('{part}', p),
   };
 }
@@ -138,7 +143,7 @@ function writeConfig(newConfig) {
   for (const [, cfg] of Object.entries(COURSES_CONFIG)) {
     for (const mod of cfg.modules || []) {
       for (const part of mod.parts || []) {
-        const dir = path.join(__dirname, '..', cfg.contentDir, cfg.dirPattern.replace('{part}', part));
+        const dir = path.join(REPO_ROOT, cfg.contentDir, cfg.dirPattern.replace('{part}', part));
         if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
         const notesPath = path.join(dir, 'notes.md');
         if (!fs.existsSync(notesPath)) {
@@ -151,12 +156,12 @@ function writeConfig(newConfig) {
   for (const [courseId, cfg] of Object.entries(COURSES_CONFIG)) {
     COURSES_DATA[courseId] = {
       ...cfg,
-      contentRoot: path.join(__dirname, '..', cfg.contentDir),
+      contentRoot: path.join(REPO_ROOT, cfg.contentDir),
       dirPattern: (p) => cfg.dirPattern.replace('{part}', p),
     };
   }
 
-  const scriptPath = path.join(__dirname, '..', 'frontend', 'scripts', 'export-data.js');
+  const scriptPath = path.join(REPO_ROOT, 'frontend', 'scripts', 'export-data.js');
   exec(`node "${scriptPath}"`, (err, stdout) => {
     if (err) console.error('Failed to run export-data.js:', err);
     else console.log('Static course data exported:', stdout);
@@ -284,7 +289,7 @@ app.get('/api/files/:course/:part/*', (req, res) => {
   const { course, part } = req.params;
   const cfg = COURSES_CONFIG[course];
   if (!cfg) return res.status(404).send('Course not found');
-  const root = path.resolve(__dirname, '..', cfg.contentDir, cfg.dirPattern.replace('{part}', part));
+  const root = path.resolve(REPO_ROOT, cfg.contentDir, cfg.dirPattern.replace('{part}', part));
   const absolutePath = path.resolve(root, req.params[0]);
   if ((absolutePath === root || absolutePath.startsWith(`${root}${path.sep}`)) && fs.existsSync(absolutePath) && fs.statSync(absolutePath).isFile()) {
     res.sendFile(absolutePath);
@@ -548,11 +553,11 @@ app.post('/api/admin/notes/:course/:part', (req, res) => {
   if (!/^\d+(\.\d+)?$/.test(part)) return res.status(400).json({ error: 'Invalid part' });
   const cfg = COURSES_CONFIG[course];
   if (!cfg) return res.status(404).json({ error: 'Course not found' });
-  const dir = path.join(__dirname, '..', cfg.contentDir, cfg.dirPattern.replace('{part}', part));
+  const dir = path.join(REPO_ROOT, cfg.contentDir, cfg.dirPattern.replace('{part}', part));
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   try {
     fs.writeFileSync(path.join(dir, 'notes.md'), notes, 'utf-8');
-    const scriptPath = path.join(__dirname, '..', 'frontend', 'scripts', 'export-data.js');
+    const scriptPath = path.join(REPO_ROOT, 'frontend', 'scripts', 'export-data.js');
     exec(`node "${scriptPath}"`, (err) => { if (err) console.error('export failed:', err); });
     res.json({ ok: true });
   } catch (e) { res.status(500).json({ error: 'Failed to write notes' }); }
@@ -567,7 +572,7 @@ app.post('/api/admin/import-notes/:course/:part', upload.single('file'), async (
   if (!/^\d+(\.\d+)?$/.test(part)) return res.status(400).json({ error: 'Invalid part' });
   const cfg = COURSES_CONFIG[course];
   if (!cfg) return res.status(404).json({ error: 'Course not found' });
-  const dir = path.join(__dirname, '..', cfg.contentDir, cfg.dirPattern.replace('{part}', part));
+  const dir = path.join(REPO_ROOT, cfg.contentDir, cfg.dirPattern.replace('{part}', part));
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   let text = '';
   try {
@@ -580,7 +585,7 @@ app.post('/api/admin/import-notes/:course/:part', upload.single('file'), async (
     let finalNotes = text.trim();
     if (!finalNotes.startsWith('# ')) finalNotes = `# Part ${part}\n\n` + finalNotes;
     fs.writeFileSync(path.join(dir, 'notes.md'), finalNotes, 'utf-8');
-    const scriptPath = path.join(__dirname, '..', 'frontend', 'scripts', 'export-data.js');
+    const scriptPath = path.join(REPO_ROOT, 'frontend', 'scripts', 'export-data.js');
     exec(`node "${scriptPath}"`, (err) => { if (err) console.error('export failed:', err); });
     res.json({ ok: true, text: finalNotes });
   } catch (e) { res.status(500).json({ error: 'Failed to extract text' }); }
@@ -646,7 +651,7 @@ app.post('/api/admin/upload/:course/:part', upload.single('file'), async (req, r
     );
 
     // Run export to refresh static JSON
-    const scriptPath = path.join(__dirname, '..', 'frontend', 'scripts', 'export-data.js');
+    const scriptPath = path.join(REPO_ROOT, 'frontend', 'scripts', 'export-data.js');
     exec(`node "${scriptPath}"`, (err) => { if (err) console.error('export failed:', err); });
 
     res.json({ ok: true, url: uploadResult.secure_url });
@@ -681,7 +686,7 @@ app.delete('/api/admin/files/:course/:part/:filename', async (req, res) => {
     if (fs.existsSync(localPath)) { try { fs.unlinkSync(localPath); } catch {} }
   }
 
-  const scriptPath = path.join(__dirname, '..', 'frontend', 'scripts', 'export-data.js');
+  const scriptPath = path.join(REPO_ROOT, 'frontend', 'scripts', 'export-data.js');
   exec(`node "${scriptPath}"`, (err) => { if (err) console.error('export failed:', err); });
   res.json({ ok: true });
 });

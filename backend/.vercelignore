@@ -1,0 +1,6 @@
+# Exclude local SQLite database
+academy.db
+*.db
+
+# Exclude SQL migration scripts (not needed at runtime)
+*.sql
