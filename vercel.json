@@ -16,7 +16,15 @@
     },
     "backend": {
       "root": "backend",
-      "framework": "express"
+      "entrypoint": "index.js",
+      "framework": "express",
+      "includeFiles": [
+        "index.js",
+        "package.json",
+        "../courses.config.json",
+        "../content/**"
+      ],
+      "excludeFiles": ["academy.db", "*.db", "*.sql", "node_modules/**"]
     }
   }
 }
