@@ -19,7 +19,9 @@ const nextConfig: NextConfig = {
     cpus: 1,
   },
   env: {
-    NEXT_PUBLIC_API_URL: 'http://localhost:3001', // Local dev backend fallback
+    // In production (Vercel), the backend is mounted at /api via experimentalServices.
+    // Locally the Express server runs on port 3001.
+    NEXT_PUBLIC_API_URL: process.env.VERCEL ? '/api' : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'),
     NEXT_PUBLIC_GITHUB_PAGES: isGitHubPages ? 'true' : 'false',
   },
 };

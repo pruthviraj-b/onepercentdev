@@ -5,14 +5,14 @@
   },
   "experimentalServices": {
     "frontend": {
-      "root": "frontend",
+      "entrypoint": "frontend",
       "routePrefix": "/",
       "framework": "nextjs"
     },
     "backend": {
-      "framework": "node",
-      "mount": "backend",
-      "entrypoint": "backend/index.js"
+      "entrypoint": "backend/index.js",
+      "routePrefix": "/api",
+      "framework": "express"
     }
   }
 }
