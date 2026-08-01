@@ -24,10 +24,9 @@ const getAuthHeaders = () => {
 };
 
 const getApiBase = () => {
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL;
-  }
-  return 'http://localhost:3001';
+  // NEXT_PUBLIC_API_URL is '' on Vercel (same-origin, /api/* rewrites to backend service)
+  // and 'http://localhost:3001' for local dev.
+  return process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 };
 const API_BASE = getApiBase();
 

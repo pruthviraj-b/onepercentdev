@@ -1,17 +1,21 @@
 {
-  "env": {
-    "VERCEL_SUPPORT_LARGE_FUNCTIONS": "1",
-    "VERCEL_ANALYZE_BUILD_OUTPUT": "1"
-  },
-  "experimentalServices": {
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": { "service": "backend" }
+    },
+    {
+      "source": "/(.*)",
+      "destination": { "service": "frontend" }
+    }
+  ],
+  "services": {
     "frontend": {
-      "entrypoint": "frontend",
-      "routePrefix": "/",
+      "root": "frontend",
       "framework": "nextjs"
     },
     "backend": {
-      "entrypoint": "backend/index.js",
-      "routePrefix": "/api",
+      "root": "backend",
       "framework": "express"
     }
   }
