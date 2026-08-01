@@ -112,7 +112,11 @@ function adminAuthMiddleware(req, res, next) {
 }
 
 // ── Load Central Config ──────────────────────────────────────────────────────
-const CONFIG_PATH = path.join(__dirname, '..', 'courses.config.json');
+// On Vercel the file is copied into the backend root via the prebuild script.
+// Locally it lives one level up in the repo root.
+const CONFIG_PATH = fs.existsSync(path.join(__dirname, 'courses.config.json'))
+  ? path.join(__dirname, 'courses.config.json')
+  : path.join(__dirname, '..', 'courses.config.json');
 const COURSES_CONFIG = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf-8'));
 
 const COURSES_DATA = {};
