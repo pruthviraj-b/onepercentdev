@@ -2,11 +2,11 @@
   "name": "onepercentdev-backend",
   "version": "1.0.0",
   "description": "1% Developer Academy — API Server",
-  "main": "index.js",
+  "main": "src/app/server.js",
   "scripts": {
     "build": "node -e \"const fs=require('fs'),path=require('path');const src=path.join(__dirname,'..','courses.config.json');if(fs.existsSync(src))fs.copyFileSync(src,path.join(__dirname,'courses.config.json'));\"",
-    "start": "node index.js",
-    "dev": "node --watch index.js"
+    "start": "node src/app/server.js",
+    "dev": "node --watch src/app/server.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.0",
