@@ -1,0 +1,1 @@
+export const gradients = { brand: 'linear-gradient(135deg, #f98012 0%, #ea6a05 100%)', brandSoft: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)', dark: 'linear-gradient(135deg, #27272a 0%, #09090b 100%)', achievement: 'linear-gradient(135deg, #facc15 0%, #f98012 100%)', glass: 'linear-gradient(135deg, rgb(255 255 255 / 0.24), rgb(255 255 255 / 0.08))' } as const;

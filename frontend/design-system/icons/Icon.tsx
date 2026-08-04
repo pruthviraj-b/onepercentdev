@@ -1,0 +1,6 @@
+import type { SVGProps } from 'react';
+
+export const iconNames = ['dashboard', 'courses', 'reader', 'lesson', 'video', 'quiz', 'marketplace', 'payments', 'profile', 'analytics', 'notifications', 'community', 'career', 'certificates', 'settings', 'admin', 'teacher', 'student', 'enterprise', 'search', 'menu', 'close', 'check', 'arrow-right', 'chevron-down', 'play', 'star', 'lock', 'ai'] as const;
+export type IconName = (typeof iconNames)[number];
+const paths: Partial<Record<IconName, string>> = { check: 'M5 12l4 4L19 6', close: 'M6 6l12 12M18 6L6 18', search: 'M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm6-2 4 4', 'arrow-right': 'M5 12h14m-6-6 6 6-6 6', star: 'm12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3' };
+export function Icon({ name, size = 20, title, ...props }: SVGProps<SVGSVGElement> & { name: IconName; size?: number; title?: string }) { return <svg aria-hidden={title ? undefined : true} aria-label={title} fill="none" height={size} viewBox="0 0 24 24" width={size} xmlns="http://www.w3.org/2000/svg" {...props}><title>{title}</title><path d={paths[name] ?? 'M12 4v16M4 12h16'} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" /></svg>; }

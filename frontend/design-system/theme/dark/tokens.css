@@ -1,0 +1,9 @@
+[data-theme='dark'] {
+  color-scheme: dark;
+  --ds-color-bg: #09090b; --ds-color-surface: #18181b; --ds-color-surface-raised: #27272a;
+  --ds-color-text: #fafafa; --ds-color-text-muted: #d4d4d8; --ds-color-text-subtle: #a1a1aa;
+  --ds-color-border: #3f3f46; --ds-color-border-strong: #52525b;
+  --ds-color-brand: #fb923c; --ds-color-brand-hover: #fdba74; --ds-color-brand-soft: #431407;
+  --ds-color-success: #4ade80; --ds-color-warning: #fbbf24; --ds-color-error: #f87171; --ds-color-info: #38bdf8;
+  --ds-focus-ring: 0 0 0 3px rgb(251 146 60 / 0.4);
+}

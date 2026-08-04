@@ -1,0 +1,1 @@
+export function StatusBar() { return <div className="shell-statusbar" role="status"><span><i className="shell-statusbar__dot" />All systems operational</span><span className="shell-statusbar__shortcut">⌘ K for commands</span></div>; }

@@ -3,9 +3,9 @@
 import { useEffect, useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
 
-const MarkdownRenderer = dynamic(() => import('../../components/MarkdownRenderer'), { ssr: false });
+const MarkdownRenderer = dynamic(() => import('../../components/reader/MarkdownRenderer'), { ssr: false });
 const StudentAnalyticsModule = dynamic(
-  () => import('../../components/admin/StudentAnalytics').then(m => ({ default: m.StudentAnalyticsModule })),
+  () => import('../../components/analytics/StudentAnalytics').then(m => ({ default: m.StudentAnalyticsModule })),
   { ssr: false }
 );
 
@@ -202,19 +202,19 @@ export default function AdminDashboard() {
             min-height: 100vh;
             align-items: center;
             justify-content: center;
-            background: #f4f1ea;
-            font-family: 'Google Sans Flex', -apple-system, sans-serif;
+            background: #FFFFFF;
+            font-family: 'Google Sans Flex', sans-serif;
             padding: 1rem;
           }
           .login-card {
             background: #ffffff;
-            border: 3px solid #000000;
-            box-shadow: 6px 6px 0px #000000;
+            border: 3px solid #1F2937;
+            box-shadow: 6px 6px 0px #1F2937;
             padding: 2.5rem;
             max-width: 420px;
             width: 100%;
             border-radius: 0px;
-            color: #000000;
+            color: #1F2937;
           }
           .login-title {
             font-size: 1.5rem;
@@ -222,10 +222,10 @@ export default function AdminDashboard() {
             text-transform: uppercase;
             letter-spacing: -0.05em;
             margin-bottom: 0.5rem;
-            border-bottom: 2px solid #000000;
+            border-bottom: 2px solid #1F2937;
             padding-bottom: 0.5rem;
-            color: #f1be3e;
-            -webkit-text-stroke: 1px #000;
+            color: #F59E0B;
+            -webkit-text-stroke: 1px #1F2937;
           }
           .login-subtitle {
             font-size: 0.9rem;
@@ -247,37 +247,37 @@ export default function AdminDashboard() {
             width: 100%;
             padding: 0.75rem;
             background: #ffffff;
-            border: 2px solid #000000;
-            color: #000000;
+            border: 2px solid #1F2937;
+            color: #1F2937;
             font-family: inherit;
             outline: none;
             box-shadow: inset 2px 2px 0px rgba(0,0,0,0.1);
           }
           .text-input:focus {
-            border-color: #f1be3e;
+            border-color: #F59E0B;
           }
           .login-btn {
             width: 100%;
-            background: #f1be3e;
-            color: #000000;
+            background: #F59E0B;
+            color: #1F2937;
             font-weight: bold;
             text-transform: uppercase;
             padding: 0.75rem;
-            border: 2px solid #000000;
+            border: 2px solid #1F2937;
             cursor: pointer;
-            box-shadow: 3px 3px 0px #000000;
+            box-shadow: 3px 3px 0px #1F2937;
             transition: transform 0.1s, box-shadow 0.1s;
           }
           .login-btn:hover {
             transform: translate(-1px, -1px);
-            box-shadow: 4px 4px 0px #000000;
+            box-shadow: 4px 4px 0px #1F2937;
           }
           .login-btn:active {
             transform: translate(2px, 2px);
-            box-shadow: 0px 0px 0px #000000;
+            box-shadow: 0px 0px 0px #1F2937;
           }
           .error-msg {
-            color: #e03131;
+            color: #EF4444;
             font-size: 0.85rem;
             margin-top: 0.75rem;
             font-weight: bold;
@@ -308,7 +308,7 @@ export default function AdminDashboard() {
 
   if (!config) {
     return (
-      <div style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f4f1ea', fontFamily: "'Google Sans Flex', sans-serif", color: '#000000' }}>
+      <div style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF', fontFamily: "'Google Sans Flex', sans-serif", color: '#1F2937' }}>
         Authenticating and loading configurations...
       </div>
     );
@@ -757,9 +757,9 @@ export default function AdminDashboard() {
         .admin-container {
           height: 100vh;
           overflow-y: auto;
-          background: #f4f1ea;
-          color: #000000;
-          font-family: 'Google Sans Flex', -apple-system, sans-serif;
+          background: #FFFFFF;
+          color: #1F2937;
+          font-family: 'Google Sans Flex', sans-serif;
           padding: 2rem;
           display: flex;
           flex-direction: column;
@@ -767,10 +767,10 @@ export default function AdminDashboard() {
         }
         /* Titlebar */
         .titlebar {
-          background: #f1be3e;
-          border: 3px solid #000000;
-          box-shadow: 4px 4px 0px #000000;
-          color: #000000;
+          background: #F59E0B;
+          border: 3px solid #1F2937;
+          box-shadow: 4px 4px 0px #1F2937;
+          color: #1F2937;
           padding: 1rem 1.5rem;
           display: flex;
           justify-content: space-between;
@@ -792,16 +792,16 @@ export default function AdminDashboard() {
           font-weight: bold;
           text-transform: uppercase;
           padding: 0.25rem 0.5rem;
-          border: 1px solid #000000;
+          border: 1px solid #1F2937;
           background: #ffffff;
-          color: #000000;
+          color: #1F2937;
         }
         .badge.dirty {
-          background: #e03131;
+          background: #EF4444;
           color: #ffffff;
         }
         .badge.clean {
-          background: #2b8a3e;
+          background: #22C55E;
           color: #ffffff;
         }
         
@@ -816,8 +816,8 @@ export default function AdminDashboard() {
         /* Sidebar Module Manager */
         .module-pane {
           background: #ffffff;
-          border: 3px solid #000000;
-          box-shadow: 4px 4px 0px #000000;
+          border: 3px solid #1F2937;
+          box-shadow: 4px 4px 0px #1F2937;
           padding: 1.5rem;
           display: flex;
           flex-direction: column;
@@ -827,12 +827,12 @@ export default function AdminDashboard() {
           font-size: 1.1rem;
           font-weight: bold;
           text-transform: uppercase;
-          border-bottom: 2px solid #000000;
+          border-bottom: 2px solid #1F2937;
           padding-bottom: 0.5rem;
           display: flex;
           justify-content: space-between;
           align-items: center;
-          color: #000000;
+          color: #1F2937;
         }
 
         /* Module Item cards */
@@ -846,7 +846,7 @@ export default function AdminDashboard() {
         }
         .module-item {
           background: #fdfdfd;
-          border: 2px solid #000000;
+          border: 2px solid #1F2937;
           padding: 0.75rem;
           cursor: pointer;
           transition: background 0.1s;
@@ -855,12 +855,12 @@ export default function AdminDashboard() {
           align-items: center;
         }
         .module-item.active {
-          border-color: #f1be3e;
-          background: #fff9db;
-          box-shadow: 2px 2px 0px #000;
+          border-color: #F59E0B;
+          background: #FFFBEB;
+          box-shadow: 2px 2px 0px #1F2937;
         }
         .module-item:hover {
-          background: #f1f3f5;
+          background: #FFFFFF;
         }
         .module-name {
           font-weight: bold;
@@ -875,8 +875,8 @@ export default function AdminDashboard() {
         .select-field {
           padding: 0.5rem;
           background: #ffffff;
-          border: 2px solid #000000;
-          color: #000000;
+          border: 2px solid #1F2937;
+          color: #1F2937;
           font-family: inherit;
           font-weight: bold;
           outline: none;
@@ -885,24 +885,24 @@ export default function AdminDashboard() {
         .text-input-field {
           padding: 0.5rem;
           background: #ffffff;
-          border: 2px solid #000000;
-          color: #000000;
+          border: 2px solid #1F2937;
+          color: #1F2937;
           font-family: inherit;
           outline: none;
           width: 100%;
         }
         .text-input-field:focus {
-          border-color: #f1be3e;
+          border-color: #F59E0B;
         }
 
         /* Neo buttons */
         .neo-btn {
           background: #ffffff;
-          color: #000000;
+          color: #1F2937;
           font-weight: bold;
           padding: 0.5rem 1rem;
-          border: 2px solid #000000;
-          box-shadow: 2px 2px 0px #000000;
+          border: 2px solid #1F2937;
+          box-shadow: 2px 2px 0px #1F2937;
           cursor: pointer;
           text-transform: uppercase;
           font-size: 0.85rem;
@@ -913,50 +913,50 @@ export default function AdminDashboard() {
         }
         .neo-btn:hover {
           transform: translate(-1px, -1px);
-          box-shadow: 3px 3px 0px #000000;
+          box-shadow: 3px 3px 0px #1F2937;
         }
         .neo-btn:active {
           transform: translate(1px, 1px);
-          box-shadow: 1px 1px 0px #000000;
+          box-shadow: 1px 1px 0px #1F2937;
         }
         .neo-btn.primary {
-          background: #f1be3e;
+          background: #F59E0B;
         }
         .neo-btn.primary.pulse {
           animation: pulse-border 1.5s infinite;
-          background: #f1be3e;
-          border-color: #000000;
+          background: #F59E0B;
+          border-color: #1F2937;
         }
         @keyframes pulse-border {
           0% {
-            box-shadow: 2px 2px 0px #000000;
+            box-shadow: 2px 2px 0px #1F2937;
             transform: scale(1);
           }
           50% {
-            box-shadow: 4px 4px 0px #000000;
+            box-shadow: 4px 4px 0px #1F2937;
             transform: scale(1.02);
-            background: #ffd43b;
+            background: #F59E0B;
           }
           100% {
-            box-shadow: 2px 2px 0px #000000;
+            box-shadow: 2px 2px 0px #1F2937;
             transform: scale(1);
           }
         }
         .neo-btn.danger {
-          background: #ff6b6b;
+          background: #EF4444;
           color: #ffffff;
         }
         .neo-btn.outline {
           background: transparent;
-          color: #000000;
-          border-color: #000000;
-          box-shadow: 2px 2px 0px #000000;
+          color: #1F2937;
+          border-color: #1F2937;
+          box-shadow: 2px 2px 0px #1F2937;
         }
         .neo-btn.outline:hover {
-          box-shadow: 3px 3px 0px #000000;
+          box-shadow: 3px 3px 0px #1F2937;
         }
         .neo-btn.outline:active {
-          box-shadow: 1px 1px 0px #000000;
+          box-shadow: 1px 1px 0px #1F2937;
         }
         .neo-btn.mini {
           padding: 0.25rem 0.5rem;
@@ -966,8 +966,8 @@ export default function AdminDashboard() {
         /* Details Pane */
         .details-pane {
           background: #ffffff;
-          border: 3px solid #000000;
-          box-shadow: 4px 4px 0px #000000;
+          border: 3px solid #1F2937;
+          box-shadow: 4px 4px 0px #1F2937;
           padding: 1.5rem;
           display: flex;
           flex-direction: column;
@@ -989,11 +989,11 @@ export default function AdminDashboard() {
           text-transform: uppercase;
           font-size: 0.75rem;
           color: #555555;
-          border-bottom: 2px solid #000000;
+          border-bottom: 2px solid #1F2937;
         }
         .lesson-card {
           background: #fdfdfd;
-          border: 2px solid #000000;
+          border: 2px solid #1F2937;
           padding: 0.6rem 1rem;
           display: grid;
           grid-template-columns: 80px 1.5fr 1fr 100px 100px;
@@ -1003,14 +1003,14 @@ export default function AdminDashboard() {
         .part-label {
           font-weight: 800;
           font-size: 1rem;
-          color: #000000;
+          color: #1F2937;
         }
         
         /* Expandable content drawer */
         .content-drawer {
           grid-column: 1 / -1;
-          background: #fffdf6;
-          border: 2px dashed #000000;
+          background: #FFFBEB;
+          border: 2px dashed #1F2937;
           padding: 1.25rem;
           margin-top: -0.25rem;
           margin-bottom: 0.5rem;
@@ -1022,7 +1022,7 @@ export default function AdminDashboard() {
           width: 100%;
           height: 220px;
           background: #ffffff;
-          border: 2px solid #000000;
+          border: 2px solid #1F2937;
           padding: 0.75rem;
           font-family: 'Google Sans Flex', sans-serif;
           font-size: 0.85rem;
@@ -1030,7 +1030,7 @@ export default function AdminDashboard() {
           resize: vertical;
         }
         .notes-textarea:focus {
-          border-color: #f1be3e;
+          border-color: #F59E0B;
         }
         .editor-split {
           display: grid;
@@ -1047,30 +1047,30 @@ export default function AdminDashboard() {
           display: flex;
           flex-wrap: wrap;
           gap: 0.25rem;
-          background: #f8f9fa;
+          background: #FFFFFF;
           padding: 0.4rem;
-          border: 2px solid #000000;
+          border: 2px solid #1F2937;
           border-bottom: none;
         }
         .toolbar-btn {
           background: #ffffff;
-          border: 1px solid #000000;
+          border: 1px solid #1F2937;
           padding: 0.2rem 0.5rem;
           font-size: 0.75rem;
           font-weight: bold;
           cursor: pointer;
           font-family: inherit;
-          box-shadow: 1px 1px 0px #000000;
+          box-shadow: 1px 1px 0px #1F2937;
           transition: background 0.1s;
         }
         .toolbar-btn:hover {
-          background: #e9ecef;
+          background: #FFFFFF;
           transform: translate(-0.5px, -0.5px);
-          box-shadow: 1.5px 1.5px 0px #000000;
+          box-shadow: 1.5px 1.5px 0px #1F2937;
         }
         .preview-pane {
           background: #ffffff;
-          border: 2px solid #000000;
+          border: 2px solid #1F2937;
           padding: 1rem;
           height: 258px;
           overflow-y: auto;
@@ -1086,27 +1086,27 @@ export default function AdminDashboard() {
         }
         .file-chip {
           background: #ffffff;
-          border: 1px solid #000000;
+          border: 1px solid #1F2937;
           padding: 0.25rem 0.5rem;
           font-size: 0.8rem;
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
-          box-shadow: 1px 1px 0px #000000;
+          box-shadow: 1px 1px 0px #1F2937;
         }
 
         /* Alerts */
         .alert-banner {
-          border: 2px solid #000000;
+          border: 2px solid #1F2937;
           padding: 0.75rem 1rem;
           font-weight: bold;
         }
         .alert-banner.success {
-          background: #51cf66;
-          color: #000000;
+          background: #22C55E;
+          color: #1F2937;
         }
         .alert-banner.error {
-          background: #ff6b6b;
+          background: #EF4444;
           color: #ffffff;
         }
       `}</style>
@@ -1134,7 +1134,7 @@ export default function AdminDashboard() {
           <button
             onClick={() => setViewMode(viewMode === 'students' ? 'modules' : 'students')}
             className="neo-btn outline mini"
-            style={{ background: viewMode === 'students' ? '#f1be3e' : '#fff' }}>
+            style={{ background: viewMode === 'students' ? '#F59E0B' : '#fff' }}>
             👥 Students
           </button>
         </div>
@@ -1163,7 +1163,7 @@ export default function AdminDashboard() {
               + New Course
             </button>
           </div>
-          <div className="mb-2" style={{ border: '2px solid #000000', padding: '0.75rem', background: '#fff9db', boxShadow: '2px 2px 0px #000000' }}>
+          <div className="mb-2" style={{ border: '2px solid #1F2937', padding: '0.75rem', background: '#FFFBEB', boxShadow: '2px 2px 0px #1F2937' }}>
             <span style={{ fontSize: '0.75rem', fontWeight: 'bold', display: 'block', textTransform: 'uppercase', marginBottom: '0.4rem', color: '#555555' }}>
               Active Course Configuration
             </span>
@@ -1176,7 +1176,7 @@ export default function AdminDashboard() {
                 setViewMode('modules');
               }}
               className="select-field"
-              style={{ background: '#ffffff', color: '#000000', border: '2px solid #000000', padding: '0.5rem', fontWeight: 'bold', width: '100%' }}
+              style={{ background: '#ffffff', color: '#1F2937', border: '2px solid #1F2937', padding: '0.5rem', fontWeight: 'bold', width: '100%' }}
             >
               {Object.keys(config).map(key => (
                 <option key={key} value={key}>{config[key].mascot || '📘'} {config[key].title}</option>
@@ -1185,7 +1185,7 @@ export default function AdminDashboard() {
             <button 
               onClick={() => setViewMode(viewMode === 'settings' ? 'modules' : 'settings')}
               className="neo-btn outline mini"
-              style={{ marginTop: '10px', width: '100%', background: viewMode === 'settings' ? '#f1be3e' : '#fff' }}
+              style={{ marginTop: '10px', width: '100%', background: viewMode === 'settings' ? '#F59E0B' : '#fff' }}
             >
               {viewMode === 'settings' ? 'View Modules' : 'Edit Course Settings'}
             </button>
@@ -1208,8 +1208,8 @@ export default function AdminDashboard() {
                     display: 'flex',
                     flexDirection: 'column',
                     background: '#ffffff',
-                    border: '2px solid #000000',
-                    boxShadow: isActive ? '3px 3px 0px #000000' : '1px 1px 0px #000000',
+                    border: '2px solid #1F2937',
+                    boxShadow: isActive ? '3px 3px 0px #1F2937' : '1px 1px 0px #1F2937',
                     transition: 'box-shadow 0.1s',
                   }}
                 >
@@ -1218,8 +1218,8 @@ export default function AdminDashboard() {
                     onClick={() => setSelectedModuleId(mod.id)}
                     style={{
                       padding: '0.6rem 0.75rem',
-                      background: isActive ? '#fff9db' : '#f8f9fa',
-                      borderBottom: '2px solid #000000',
+                      background: isActive ? '#FFFBEB' : '#FFFFFF',
+                      borderBottom: '2px solid #1F2937',
                       cursor: 'pointer',
                       display: 'flex',
                       justifyContent: 'space-between',
@@ -1258,7 +1258,7 @@ export default function AdminDashboard() {
                           handleDeleteModule(mod.id);
                         }}
                         className="neo-btn danger mini"
-                        style={{ padding: '2px 6px', background: '#ff6b6b' }}
+                        style={{ padding: '2px 6px', background: '#EF4444' }}
                       >
                         ×
                       </button>
@@ -1289,13 +1289,13 @@ export default function AdminDashboard() {
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
                                 padding: '0.35rem 0.5rem',
-                                border: '1px solid #000000',
-                                background: partIsExpanded ? '#f1be3e' : '#f8f9fa',
-                                color: '#000000',
+                                border: '1px solid #1F2937',
+                                background: partIsExpanded ? '#F59E0B' : '#FFFFFF',
+                                color: '#1F2937',
                                 cursor: 'pointer',
                                 fontSize: '0.8rem',
                                 fontWeight: 'bold',
-                                boxShadow: partIsExpanded ? '1px 1px 0px #000000' : 'none',
+                                boxShadow: partIsExpanded ? '1px 1px 0px #1F2937' : 'none',
                               }}
                             >
                               <span>Part {partNum}</span>
@@ -1408,13 +1408,13 @@ export default function AdminDashboard() {
                             {/* ── Multi-video editor ── */}
                             <div style={{ display:'flex', flexDirection:'column', gap:4 }}>
                               {videoList.length === 0 && (
-                                <div style={{ fontSize:'0.72rem', color:'#999', fontStyle:'italic', padding:'4px 0' }}>
+                                <div style={{ fontSize:'0.72rem', color:'#9CA3AF', fontStyle:'italic', padding:'4px 0' }}>
                                   No videos yet
                                 </div>
                               )}
                               {videoList.map((vid, idx) => (
                                 <div key={idx} style={{ display:'flex', gap:4, alignItems:'center' }}>
-                                  <span style={{ fontSize:'0.65rem', fontWeight:800, color:'#555',
+                                  <span style={{ fontSize:'0.65rem', fontWeight:800, color:'#6B7280',
                                     minWidth:16, textAlign:'right' }}>
                                     {idx + 1}.
                                   </span>
@@ -1525,7 +1525,7 @@ export default function AdminDashboard() {
 
                                       {/* Right side: Real-time Prose Preview */}
                                       <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                        <div className="toolbar-row" style={{ background: '#e9ecef', justifyContent: 'center' }}>
+                                        <div className="toolbar-row" style={{ background: '#FFFFFF', justifyContent: 'center' }}>
                                           <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#495057', textTransform: 'uppercase' }}>Live Reader Preview</span>
                                         </div>
                                         <div className="preview-pane prose">
@@ -1563,7 +1563,7 @@ export default function AdminDashboard() {
                                   </div>
 
                                   {/* Assets Manager */}
-                                  <div style={{ marginTop: '0.5rem', borderTop: '1px dashed #ccc', paddingTop: '1rem' }}>
+                                  <div style={{ marginTop: '0.5rem', borderTop: '1px dashed #D1D5DB', paddingTop: '1rem' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                       <span style={{ fontSize: '0.85rem', fontWeight: 'bold' }}>Lesson Downloads & PDF Assets</span>
                                       <label className="neo-btn primary mini" style={{ cursor: 'pointer' }}>
@@ -1590,7 +1590,7 @@ export default function AdminDashboard() {
                                                 href={file.url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                style={{ color: '#000', textDecoration: 'underline', fontWeight: 'bold' }}
+                                                style={{ color: '#1F2937', textDecoration: 'underline', fontWeight: 'bold' }}
                                                 title="Open Cloudinary URL"
                                               >
                                                 ☁️ {file.path}
@@ -1600,7 +1600,7 @@ export default function AdminDashboard() {
                                             )}
                                             <button
                                               onClick={() => handleDeleteFile(partNum, file.path)}
-                                              style={{ background: 'none', border: 'none', color: '#e03131', cursor: 'pointer', fontWeight: 'bold' }}
+                                              style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', fontWeight: 'bold' }}
                                               title="Delete permanently"
                                             >
                                               ×

@@ -1,0 +1,7 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
+import { Icon } from '@/design-system/icons/Icon';
+import { useNavigation } from './NavigationProvider';
+const commands = [{ label: 'Continue learning', icon: 'play' as const }, { label: 'Open Reader', icon: 'reader' as const }, { label: 'Search courses', icon: 'courses' as const }, { label: 'Open AI mentor', icon: 'ai' as const }, { label: 'Create a note', icon: 'lesson' as const }, { label: 'Toggle theme', icon: 'settings' as const }, { label: 'Open settings', icon: 'settings' as const }];
+export function CommandPalette() { const { commandOpen, setCommandOpen } = useNavigation(); const inputRef = useRef<HTMLInputElement>(null); useEffect(() => { if (commandOpen) inputRef.current?.focus(); }, [commandOpen]); if (!commandOpen) return null; return <div className="shell-overlay" role="dialog" aria-modal="true" aria-label="Command palette" onMouseDown={(e) => { if (e.target === e.currentTarget) setCommandOpen(false); }}><div className="shell-command-panel"><div className="shell-modal-search"><Icon name="search" /><input ref={inputRef} placeholder="Type a command or search..." aria-label="Command" /><kbd>ESC</kbd></div><div className="shell-command-list" role="menu">{commands.map((command) => <button type="button" role="menuitem" key={command.label} onClick={() => setCommandOpen(false)}><Icon name={command.icon} /><span>{command.label}</span><kbd>↵</kbd></button>)}</div><div className="shell-command-footer"><span>↑↓ Navigate</span><span>↵ Select</span><span>ESC Close</span></div></div></div>; }

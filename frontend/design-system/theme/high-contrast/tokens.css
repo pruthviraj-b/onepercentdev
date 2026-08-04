@@ -1,0 +1,9 @@
+[data-theme='high-contrast'] {
+  color-scheme: light;
+  --ds-color-bg: #ffffff; --ds-color-surface: #ffffff; --ds-color-surface-raised: #ffffff;
+  --ds-color-text: #000000; --ds-color-text-muted: #000000; --ds-color-text-subtle: #000000;
+  --ds-color-border: #000000; --ds-color-border-strong: #000000;
+  --ds-color-brand: #a33d00; --ds-color-brand-hover: #7c2d12; --ds-color-brand-soft: #fff7ed;
+  --ds-color-success: #005a1b; --ds-color-warning: #713f12; --ds-color-error: #8b0000; --ds-color-info: #003b66;
+  --ds-focus-ring: 0 0 0 4px #000000;
+}

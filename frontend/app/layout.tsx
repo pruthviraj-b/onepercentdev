@@ -18,7 +18,8 @@ export const metadata: Metadata = {
   }
 };
 
-import { AuthProvider } from '@/components/AuthProvider';
+import { AuthProvider } from '@/features/authentication/AuthProvider';
+import { IdentityProvider } from '@/features/authentication/providers/IdentityProvider';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -27,11 +28,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Viewport meta for proper mobile scaling */}
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         {/* Theme color for mobile browser chrome */}
-        <meta name="theme-color" content="#1E1E1E" />
-        {/* Site-wide typography is Google Sans Flex; code/editor surfaces keep their technical mono styles. */}
+        <meta name="theme-color" content="#FFFFFF" />
+        {/* Site-wide typography uses Google Sans Flex. */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wdth,wght@6..144,75..100,400..700&family=Markazi+Text:wght@400..700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300..700&family=Jacquard+12+Charted&family=Tilt+Prism&family=Jim+Nightshade:wght@400&family=Tapestry&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wdth,wght@6..144,25..100,100..900&display=swap" rel="stylesheet" />
       </head>
       <body>
         <script dangerouslySetInnerHTML={{__html: `
@@ -50,9 +51,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   el.style.top = '8px';
                   el.style.maxHeight = '60vh';
                   el.style.overflow = 'auto';
-                  el.style.background = '#1E1E1E';
-                  el.style.color = '#F44747';
-                  el.style.border = '2px solid #3C3C3C';
+                  el.style.background = '#FFFFFF';
+                  el.style.color = '#EF4444';
+                  el.style.border = '2px solid #E5E7EB';
                   el.style.padding = '12px';
                   el.style.fontSize = '12px';
                   el.style.fontFamily = "'Google Sans Flex', sans-serif";
@@ -97,7 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           })();
         `}} />
         <AuthProvider>
-          {children}
+          <IdentityProvider>{children}</IdentityProvider>
         </AuthProvider>
       </body>
     </html>

@@ -1,0 +1,2 @@
+import type { ReactNode } from 'react';
+export function Tabs({ items, active, onChange }: { items: { id: string; label: ReactNode }[]; active: string; onChange: (id: string) => void }) { return <div className="ds-tabs" role="tablist">{items.map((item) => <button key={item.id} type="button" role="tab" aria-selected={item.id === active} className={`ds-tab ${item.id === active ? 'ds-tab--active' : ''}`} onClick={() => onChange(item.id)}>{item.label}</button>)}</div>; }

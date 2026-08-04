@@ -1,0 +1,15 @@
+@import './light/tokens.css';
+@import './dark/tokens.css';
+@import './high-contrast/tokens.css';
+
+:root {
+  --ds-font-sans: 'Google Sans Flex', ui-sans-serif, system-ui, sans-serif;
+  --ds-font-mono: "SFMono-Regular", Consolas, monospace;
+  --ds-radius-sm: 8px; --ds-radius-md: 12px; --ds-radius-lg: 16px; --ds-radius-xl: 20px; --ds-radius-full: 9999px;
+  --ds-shadow-card: 0 8px 24px rgb(31 41 55 / 0.07); --ds-shadow-modal: 0 24px 64px rgb(31 41 55 / 0.18);
+  --ds-duration-fast: 120ms; --ds-duration-normal: 200ms; --ds-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 1ms !important; }
+}

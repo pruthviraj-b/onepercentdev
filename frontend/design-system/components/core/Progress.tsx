@@ -1,0 +1,1 @@
+export function Progress({ value, label, className = '' }: { value: number; label?: string; className?: string }) { const safe = Math.max(0, Math.min(100, value)); return <div className={`ds-progress ${className}`} role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={safe}><span style={{ width: `${safe}%` }} /></div>; }

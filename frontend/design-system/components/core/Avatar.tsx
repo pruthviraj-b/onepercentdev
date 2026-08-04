@@ -1,0 +1,1 @@
+export function Avatar({ src, name, size = 'md' }: { src?: string; name: string; size?: 'sm' | 'md' | 'lg' }) { return src ? <img className={`ds-avatar ds-avatar--${size}`} src={src} alt={name} /> : <span className={`ds-avatar ds-avatar--${size}`} aria-label={name}>{name.trim().charAt(0).toUpperCase()}</span>; }

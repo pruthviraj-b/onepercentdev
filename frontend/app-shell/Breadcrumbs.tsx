@@ -1,0 +1,2 @@
+import type { BreadcrumbItem } from './types';
+export function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) { return <nav className="shell-breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a>{items.map((item, index) => <span key={`${item.label}-${index}`}><span aria-hidden="true">/</span>{item.href ? <a href={item.href}>{item.label}</a> : <span aria-current={index === items.length - 1 ? 'page' : undefined}>{item.label}</span>}</span>)}</nav>; }
