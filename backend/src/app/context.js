@@ -35,10 +35,11 @@ cloudinary.config({
 });
 
 // ── Middleware ───────────────────────────────────────────────────────────────
-const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:3005,http://localhost:3000')
-  .split(',').map(value => value.trim()).filter(Boolean);
+const allowedOrigins = (process.env.CORS_ORIGINS || 'https://onepercentdev.pruthviraj-b-in.workers.dev,http://localhost:3005,http://localhost:3000')
+  .split(',').map(value => value.trim().replace(/\/+$/, '')).filter(Boolean);
 app.use(cors({ origin(origin, callback) {
-  if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin)) return callback(null, true);
+  const normalizedOrigin = String(origin || '').replace(/\/+$/, '');
+  if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(normalizedOrigin)) return callback(null, true);
   return callback(new Error('CORS origin denied'));
 }, credentials: true }));
 app.use((req, res, next) => {
