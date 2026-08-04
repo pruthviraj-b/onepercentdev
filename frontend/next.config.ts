@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const isGitHubPages = process.env.GITHUB_PAGES === 'true';
 const isCloudflarePages = process.env.CLOUDFLARE_PAGES === 'true';
 const publicApiUrl = process.env.NEXT_PUBLIC_API_URL
-  ?? (isCloudflarePages ? 'https://onepercentdev.pruthviraj-b-in.workers.dev' : (process.env.VERCEL ? '' : 'http://localhost:3001'));
+  ?? (isCloudflarePages ? '' : (process.env.VERCEL ? '' : 'http://localhost:3001'));
 
 const nextConfig: NextConfig = {
   // Keep the dev compiler isolated from production builds. Sharing `.next`
