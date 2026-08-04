@@ -1,6 +1,6 @@
 [build]
   base = "backend"
-  command = "npm install && npm run build && npm --prefix ../frontend install && npm --prefix ../frontend run build"
+  command = "npm install && npm run build && npm --prefix ../frontend install && CLOUDFLARE_PAGES=true npm --prefix ../frontend run build"
   publish = "../frontend/out"
   functions = "netlify/functions"
 
