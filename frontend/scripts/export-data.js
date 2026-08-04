@@ -93,7 +93,14 @@ const COURSES = Object.entries(COURSES_CONFIG).map(([id, cfg]) => ({
   getDir: (p) => cfg.contentDir && cfg.dirPattern
     ? path.join(cfg.contentDir, cfg.dirPattern.replace('{part}', p))
     : '',
+  getModuleDir: (m) => cfg.contentDir && cfg.moduleDirPattern
+    ? path.join(cfg.contentDir, cfg.moduleDirPattern.replace('{module}', m))
+    : '',
 }));
+
+function countNavigableParts(course) {
+  return course.modules.reduce((total, mod) => total + (mod.lessons || []).reduce((count, lesson) => count + 1 + (lesson.subtopics || []).length, 0), 0);
+}
 
 fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
@@ -122,7 +129,7 @@ async function main() {
     target: course.target,
     goal: course.goal,
     welcomeParagraphs: course.welcomeParagraphs,
-    totalParts: course.modules.reduce((s, m) => s + (m.parts ? m.parts.length : 0), 0),
+    totalParts: countNavigableParts(course),
     children: course.children,
     parentId: course.parentId,
   }));
@@ -146,6 +153,18 @@ async function main() {
     fs.mkdirSync(courseNotesDir, { recursive: true });
     console.log(`Compiling course: ${course.title}...`);
 
+    // Build a lesson title lookup from the lessons array in config
+    const lessonTitleMap = new Map();
+    const lessonByPart = new Map();
+    for (const mod of course.modules) {
+      if (Array.isArray(mod.lessons)) {
+        for (const lesson of mod.lessons) {
+          lessonTitleMap.set(lesson.part, lesson.title);
+          lessonByPart.set(lesson.part, lesson);
+        }
+      }
+    }
+
     const modulesResult = course.modules.map(mod => {
       const notes = mod.parts.map(p => {
         const dirName = course.getDir(p);
@@ -163,17 +182,46 @@ async function main() {
         const entries = fs.readdirSync(dir);
         const rawTitle = titleMatch ? titleMatch[1].trim() : `Part ${p}`;
         const cleanTitle = rawTitle.replace(/^Part\s+\d+(\.\d+)?\s*[—–-]+\s*/i, '');
+        // Use the lesson title from config if notes.md has a generic "Part N" or "Module N" header
+        const isGeneric = /^Part\s+\d+$/i.test(cleanTitle.trim()) || /^Module\s+\d+/i.test(cleanTitle.trim());
+        const finalTitle = isGeneric ? (lessonTitleMap.get(p) || cleanTitle) : cleanTitle;
         // Check if cloudinary has files for this part too
         const hasCloudFiles = (cloudMap.get(`${course.id}:${p}`) || []).length > 0;
         return {
           part: p,
-          title: cleanTitle,
+          code: lessonByPart.get(p)?.code,
+          title: finalTitle,
           importance: course.importance[p] || 'medium',
           hasFiles: entries.some(f => f !== 'notes.md') || hasCloudFiles,
           wordCount: content.split(/\s+/).length,
+          subtopics: (lessonByPart.get(p)?.subtopics || []).map(subtopic => {
+            const subDir = path.join(CONTENT_ROOT, course.getDir(subtopic.part));
+            const subNotesPath = path.join(subDir, 'notes.md');
+            const subContent = fs.existsSync(subNotesPath) ? fs.readFileSync(subNotesPath, 'utf8') : '';
+            const subEntries = fs.existsSync(subDir) ? fs.readdirSync(subDir) : [];
+            const subTitleMatch = subContent.match(/^#\s+(.+)/m);
+            return {
+              part: subtopic.part,
+              code: subtopic.code,
+              title: subtopic.title || (subTitleMatch ? subTitleMatch[1].trim() : `Part ${subtopic.part}`),
+              importance: course.importance[subtopic.part] || 'medium',
+              hasFiles: subEntries.some(f => f !== 'notes.md') || (cloudMap.get(`${course.id}:${subtopic.part}`) || []).length > 0,
+              wordCount: subContent.split(/\s+/).length,
+            };
+          }),
         };
       });
-      return { id: mod.id, title: mod.title, parts: mod.parts, notes };
+      let moduleNote;
+      if (course.getModuleDir(mod.id)) {
+        const moduleDirName = course.getModuleDir(mod.id);
+        const moduleDir = path.join(CONTENT_ROOT, moduleDirName);
+        fs.mkdirSync(moduleDir, { recursive: true });
+        const moduleNotesPath = path.join(moduleDir, 'notes.md');
+        if (!fs.existsSync(moduleNotesPath)) fs.writeFileSync(moduleNotesPath, `# ${mod.title}\n\n## Module notes\n\nThis module has its own notes page.\n`, 'utf8');
+        const moduleContent = fs.readFileSync(moduleNotesPath, 'utf8');
+        moduleNote = { title: mod.title, notes: moduleContent, wordCount: moduleContent.split(/\s+/).length };
+      }
+      return { id: mod.id, code: mod.code, title: mod.title, parts: mod.parts, notes, moduleNote };
     });
 
     fs.writeFileSync(
@@ -184,8 +232,14 @@ async function main() {
     console.log(`  Exported modules-${course.id}.json`);
 
     // Individual part JSON files
-    for (const mod of modulesResult) {
-      for (const p of mod.parts) {
+    for (const mod of course.modules) {
+      const lessonEntries = (mod.lessons || []).flatMap(lesson => [
+        { part: lesson.part, title: lesson.title },
+        ...(lesson.subtopics || []),
+      ]);
+      const entries = lessonEntries.length ? lessonEntries : mod.parts.map(p => ({ part: p, title: lessonTitleMap.get(p) || '' }));
+      for (const entry of entries) {
+        const p = entry.part;
         const dirName = course.getDir(p);
         const dir = path.join(CONTENT_ROOT, dirName);
         if (!fs.existsSync(dir)) continue;
@@ -193,7 +247,9 @@ async function main() {
         const notesPath = path.join(dir, 'notes.md');
         const notesContent = fs.existsSync(notesPath) ? fs.readFileSync(notesPath, 'utf-8') : '';
         const titleMatch = notesContent.match(/^#\s+(.+)/m);
-        const title = titleMatch ? titleMatch[1].trim() : `Part ${p}`;
+        const rawPartTitle = titleMatch ? titleMatch[1].trim() : `Part ${p}`;
+        const isGenericTitle = /^Part\s+\d+$/i.test(rawPartTitle.replace(/^Part\s+\d+(\.\d+)?\s*[—–-]+\s*/i, '').trim());
+        const title = entry.title || (isGenericTitle ? (lessonTitleMap.get(p) || rawPartTitle) : rawPartTitle);
 
         const publicFilesDir = path.join(OUTPUT_DIR, 'files', course.id, String(p));
         fs.mkdirSync(publicFilesDir, { recursive: true });

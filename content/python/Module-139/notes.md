@@ -1,0 +1,5 @@
+# 131. Coding Challenges
+
+## Module notes
+
+This module has its own notes page. Add the module overview, learning goals, and navigation guidance here.
