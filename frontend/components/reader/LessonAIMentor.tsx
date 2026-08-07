@@ -1,18 +1,117 @@
 'use client';
+
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import MarkdownRenderer from './MarkdownRenderer';
+
 type Message = { role: 'user' | 'assistant'; content: string };
-type Props = { open: boolean; onClose: () => void; lesson: { course: string; module: string; title: string; notes: string; progress: number } };
-const prompts = ['Summarize this lesson', "Explain like I’m 10", 'Real-world use cases', 'Explain this code', 'Find a bug in my code', 'Generate a quiz', 'Important concepts', 'Give revision notes', 'Cheat sheet'];
+type Props = {
+  open: boolean;
+  onClose: () => void;
+  lesson: { course: string; module: string; title: string; notes: string; progress: number };
+};
+
+const prompts = [
+  'Summarize this lesson',
+  "Explain like I'm 10",
+  'Real-world use cases',
+  'Explain this code',
+  'Find a bug in my code',
+  'Generate a quiz',
+  'Important concepts',
+  'Give revision notes',
+  'Cheat sheet',
+];
+
 function mentorErrorMessage(error: unknown) {
   const message = error instanceof Error ? error.message.toLowerCase() : '';
-  if (message.includes('cors') || message.includes('origin denied') || message.includes('failed to fetch')) return 'Your mentor is temporarily unavailable. Please try again in a moment.';
+  if (message.includes('cors') || message.includes('origin denied') || message.includes('failed to fetch')) {
+    return 'Your mentor service is unavailable. Please try again in a moment.';
+  }
   return error instanceof Error && error.message ? error.message : 'Please try again in a moment.';
 }
 
 export default function LessonAIMentor({ open, onClose, lesson }: Props) {
-  const [messages, setMessages] = useState<Message[]>([]); const [input, setInput] = useState(''); const [busy, setBusy] = useState(false); const endRef = useRef<HTMLDivElement>(null); const storageKey = `lesson-ai-chat:${lesson.course}:${lesson.title}`;
-  useEffect(() => { try { setMessages(JSON.parse(localStorage.getItem(storageKey) || '[]')); } catch { setMessages([]); } }, [storageKey]); useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, busy]); if (!open) return null;
-  const send = async (event?: FormEvent, preset?: string) => { event?.preventDefault(); const question = (preset || input).trim(); if (!question || busy) return; const next = [...messages, { role: 'user' as const, content: question }]; setMessages(next); setInput(''); setBusy(true); try { const base = process.env.NEXT_PUBLIC_API_URL || window.location.origin; const response = await fetch(`${base}/api/ai/chat`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ question, lesson, history: next }) }); const data = await response.json(); if (!response.ok) throw new Error(data.error?.message || 'Mentor unavailable'); const saved = [...next, { role: 'assistant' as const, content: data.answer }]; setMessages(saved); localStorage.setItem(storageKey, JSON.stringify(saved)); } catch (error) { setMessages([...next, { role: 'assistant', content: `I couldn’t reach your mentor right now. ${mentorErrorMessage(error)}` }]); } finally { setBusy(false); } };
-  return <div className="ai-mentor-scrim" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}><section className="ai-mentor" role="dialog" aria-modal="true" aria-label="AI Learning Mentor"><header className="ai-mentor__header"><div className="ai-mentor__identity"><span className="ai-mentor__orb">✦</span><div><strong>AI Learning Mentor</strong><small>Lesson-aware · always beside you</small></div></div><button type="button" className="ai-mentor__close" onClick={onClose} aria-label="Close mentor">×</button></header><div className="ai-mentor__lesson"><span>LEARNING WITH</span><strong>{lesson.title}</strong><small>{lesson.module} · {lesson.progress}% complete</small></div><div className="ai-mentor__body">{messages.length === 0 && <div className="ai-mentor__welcome"><span className="ai-mentor__wave">👋</span><h2>Hi Pruthvi!</h2><p>I already understand this lesson. Ask me anything, and we’ll work through it together.</p><div className="ai-mentor__chips">{prompts.map(prompt => <button key={prompt} type="button" onClick={() => send(undefined, prompt)}>{prompt}</button>)}</div></div>}{messages.map((message, index) => <div className={`ai-mentor__message ${message.role}`} key={`${message.role}-${index}`}><span className="ai-mentor__avatar">{message.role === 'assistant' ? '✦' : 'P'}</span><div className="ai-mentor__bubble">{message.role === 'assistant' ? <MarkdownRenderer content={message.content} /> : message.content}</div></div>)}{busy && <div className="ai-mentor__message assistant"><span className="ai-mentor__avatar">✦</span><div className="ai-mentor__bubble ai-mentor__typing"><i /><i /><i /></div></div>}<div ref={endRef} /></div><form className="ai-mentor__composer" onSubmit={send}><textarea value={input} onChange={event => setInput(event.target.value)} placeholder="Ask about this lesson…" rows={1} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); send(); } }} /><button type="submit" disabled={!input.trim() || busy} aria-label="Send message">↑</button><small>Enter to send · Shift + Enter for a new line</small></form></section></div>;
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
+  const [busy, setBusy] = useState(false);
+  const endRef = useRef<HTMLDivElement>(null);
+  const storageKey = `lesson-ai-chat:${lesson.course}:${lesson.title}`;
+
+  useEffect(() => {
+    try {
+      setMessages(JSON.parse(localStorage.getItem(storageKey) || '[]'));
+    } catch {
+      setMessages([]);
+    }
+  }, [storageKey]);
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, busy]);
+
+  if (!open) return null;
+
+  const send = async (event?: FormEvent, preset?: string) => {
+    event?.preventDefault();
+    const question = (preset || input).trim();
+    if (!question || busy) return;
+
+    const next = [...messages, { role: 'user' as const, content: question }];
+    setMessages(next);
+    setInput('');
+    setBusy(true);
+
+    try {
+      const base = process.env.NEXT_PUBLIC_API_URL ??
+        (window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin);
+      const response = await fetch(`${base}/api/ai/chat`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ question, lesson, history: next }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error?.message || 'Mentor unavailable');
+
+      const saved = [...next, { role: 'assistant' as const, content: data.answer }];
+      setMessages(saved);
+      localStorage.setItem(storageKey, JSON.stringify(saved));
+    } catch (error) {
+      setMessages([...next, {
+        role: 'assistant',
+        content: `I couldn't reach your mentor right now. ${mentorErrorMessage(error)}`,
+      }]);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="ai-mentor-scrim" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}>
+      <section className="ai-mentor" role="dialog" aria-modal="true" aria-label="AI Learning Mentor">
+        <header className="ai-mentor__header">
+          <div className="ai-mentor__identity">
+            <span className="ai-mentor__orb">✦</span>
+            <div><strong>AI Learning Mentor</strong><small>Lesson-aware · always beside you</small></div>
+          </div>
+          <button type="button" className="ai-mentor__close" onClick={onClose} aria-label="Close mentor">×</button>
+        </header>
+        <div className="ai-mentor__lesson">
+          <span>LEARNING WITH</span>
+          <strong>{lesson.title}</strong>
+          <small>{lesson.module} · {lesson.progress}% complete</small>
+        </div>
+        <div className="ai-mentor__body">
+          {messages.length === 0 && <div className="ai-mentor__welcome"><span className="ai-mentor__wave">👋</span><h2>Hi Pruthvi!</h2><p>I already understand this lesson. Ask me anything, and we’ll work through it together.</p><div className="ai-mentor__chips">{prompts.map(prompt => <button key={prompt} type="button" onClick={() => send(undefined, prompt)}>{prompt}</button>)}</div></div>}
+          {messages.map((message, index) => <div className={`ai-mentor__message ${message.role}`} key={`${message.role}-${index}`}><span className="ai-mentor__avatar">{message.role === 'assistant' ? '✦' : 'P'}</span><div className="ai-mentor__bubble">{message.role === 'assistant' ? <MarkdownRenderer content={message.content} /> : message.content}</div></div>)}
+          {busy && <div className="ai-mentor__message assistant"><span className="ai-mentor__avatar">✦</span><div className="ai-mentor__bubble ai-mentor__typing"><i /><i /><i /></div></div>}
+          <div ref={endRef} />
+        </div>
+        <form className="ai-mentor__composer" onSubmit={send}>
+          <textarea value={input} onChange={event => setInput(event.target.value)} placeholder="Ask about this lesson…" rows={1} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); send(); } }} />
+          <button type="submit" disabled={!input.trim() || busy} aria-label="Send message">↑</button>
+          <small>Enter to send · Shift + Enter for a new line</small>
+        </form>
+      </section>
+    </div>
+  );
 }

@@ -88,7 +88,7 @@ function RingProgress({ pct, size = 56, stroke = 5, color }: { pct: number; size
   const circumference = 2 * Math.PI * r;
   const offset = circumference - (Math.min(100, Math.max(0, pct)) / 100) * circumference;
   return (
-    <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
+    <svg className="course-progress-ring" width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
       <circle stroke={C.border} fill="none" strokeWidth={stroke} cx={size / 2} cy={size / 2} r={r} />
       <circle
         stroke={color} fill="none" strokeWidth={stroke} strokeLinecap="round"
@@ -172,6 +172,7 @@ export function Landing({
   const [expandedModules, setExpandedModules] = useState<Set<number>>(new Set());
   const [expandedMilestones, setExpandedMilestones] = useState<Set<string>>(new Set());
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -272,8 +273,10 @@ export function Landing({
           .catalog-topbar,.course-detail-topbar{display:none!important;}
         `}</style>
 
+        <button className="catalog-mobile-menu" type="button" aria-label="Open course navigation" aria-expanded={mobileNavOpen} onClick={() => setMobileNavOpen(true)}>☰</button>
+        {mobileNavOpen && <button className="catalog-mobile-scrim" type="button" aria-label="Close course navigation" onClick={() => setMobileNavOpen(false)} />}
         {/* Sidebar */}
-        <aside className="catalog-sidebar" style={{ width: '224px', flexShrink: 0, background: C.surface, borderRight: `1px solid ${C.border}`, display: 'flex', flexDirection: 'column', height: '100vh', position: 'sticky', top: 0 }}>
+        <aside className={`catalog-sidebar${mobileNavOpen ? ' is-open' : ''}`} style={{ width: '224px', flexShrink: 0, background: C.surface, borderRight: `1px solid ${C.border}`, display: 'flex', flexDirection: 'column', height: '100vh', position: 'sticky', top: 0 }}>
           <nav style={{ flex: 1, overflowY: 'auto', padding: '14px 10px' }}>
             <SideBtn icon={<img src="/logos/home-neo.svg" alt="" style={{ width: 22, height: 22 }} />} label="Dev Home" onClick={onGoHome} />
             <div style={{ fontFamily: F.mono, fontSize: '0.6rem', color: C.textFaint, textTransform: 'uppercase', letterSpacing: '0.1em', padding: '16px 12px 6px' }}>Courses</div>
@@ -395,8 +398,10 @@ export function Landing({
         .catalog-topbar,.course-detail-topbar{display:none!important;}
       `}</style>
 
+      <button className="catalog-mobile-menu" type="button" aria-label="Open course navigation" aria-expanded={mobileNavOpen} onClick={() => setMobileNavOpen(true)}>☰</button>
+      {mobileNavOpen && <button className="catalog-mobile-scrim" type="button" aria-label="Close course navigation" onClick={() => setMobileNavOpen(false)} />}
       {/* Sidebar */}
-      <aside className="course-detail-sidebar" style={{ width: '224px', flexShrink: 0, background: C.surface, borderRight: `1px solid ${C.border}`, display: 'flex', flexDirection: 'column', height: '100vh', position: 'sticky', top: 0 }}>
+      <aside className={`course-detail-sidebar${mobileNavOpen ? ' is-open' : ''}`} style={{ width: '224px', flexShrink: 0, background: C.surface, borderRight: `1px solid ${C.border}`, display: 'flex', flexDirection: 'column', height: '100vh', position: 'sticky', top: 0 }}>
         <nav style={{ flex: 1, overflowY: 'auto', padding: '14px 10px' }}>
           <SideBtn icon={<img src="/logos/home-neo.svg" alt="" style={{ width: 22, height: 22 }} />} label="Dev Home" onClick={onGoHome} />
           <div style={{ fontFamily: F.mono, fontSize: '0.6rem', color: C.textFaint, textTransform: 'uppercase', letterSpacing: '0.1em', padding: '16px 12px 6px' }}>Courses</div>
@@ -574,7 +579,7 @@ export function Landing({
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{ position: 'relative', width: '56px', height: '56px', flexShrink: 0 }}>
                     <RingProgress pct={progressPct} size={56} stroke={5} color={progressPct === 100 ? C.green : C.cyan} />
-                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.mono, fontWeight: 700, fontSize: '0.72rem', color: C.text }}>{progressPct}%</div>
+                    <div className="course-progress-value" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.mono, fontWeight: 700, fontSize: '0.72rem', color: C.text }}>{progressPct}%</div>
                   </div>
                   <div style={{ fontFamily: F.body, fontSize: '0.76rem', color: C.textDim }}>{completedCount} of {displayTotalParts} lessons done</div>
                 </div>

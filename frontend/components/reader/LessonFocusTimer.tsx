@@ -2,12 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-const PRESETS = [10, 15, 20, 25] as const;
-
-function nearestPreset(minutes: number) {
-  return PRESETS.reduce((best, value) => Math.abs(value - minutes) < Math.abs(best - minutes) ? value : best, PRESETS[0]);
-}
-
 function playCompletionSound() {
   try {
     const AudioContextClass = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
@@ -38,20 +32,18 @@ export function LessonFocusTimer({
   defaultMinutes: number;
   onFocusModeChange: (active: boolean) => void;
 }) {
-  const initialMinutes = useMemo(() => nearestPreset(defaultMinutes), [defaultMinutes]);
-  const [selectedMinutes, setSelectedMinutes] = useState<number>(initialMinutes);
-  const [remaining, setRemaining] = useState(initialMinutes * 60);
-  const [state, setState] = useState<'ready' | 'confirm' | 'running' | 'paused' | 'done'>('ready');
+  const initialSeconds = useMemo(() => Math.max(60, Math.round(defaultMinutes * 60)), [defaultMinutes]);
+  const [remaining, setRemaining] = useState(initialSeconds);
+  const [state, setState] = useState<'ready' | 'running' | 'paused' | 'done'>('ready');
   const [soundEnabled, setSoundEnabled] = useState(true);
   const deadlineRef = useRef<number | null>(null);
 
   useEffect(() => {
-    setSelectedMinutes(initialMinutes);
-    setRemaining(initialMinutes * 60);
+    setRemaining(initialSeconds);
     setState('ready');
     deadlineRef.current = null;
     onFocusModeChange(false);
-  }, [initialMinutes, lessonTitle, onFocusModeChange]);
+  }, [initialSeconds, lessonTitle, onFocusModeChange]);
 
   useEffect(() => {
     if (state !== 'running') return;
@@ -80,30 +72,30 @@ export function LessonFocusTimer({
   };
   const reset = () => {
     deadlineRef.current = null;
-    setRemaining(selectedMinutes * 60);
+    setRemaining(initialSeconds);
     setState('ready');
     onFocusModeChange(false);
   };
-  const selectMinutes = (minutes: number) => {
-    if (state === 'running') return;
-    setSelectedMinutes(minutes);
-    setRemaining(minutes * 60);
-    setState('ready');
+  const pause = () => {
+    deadlineRef.current = null;
+    setState('paused');
+    onFocusModeChange(false);
   };
 
-  const minutes = String(Math.floor(remaining / 60)).padStart(2, '0');
+  const hours = String(Math.floor(remaining / 3600)).padStart(2, '0');
+  const minutes = String(Math.floor((remaining % 3600) / 60)).padStart(2, '0');
   const seconds = String(remaining % 60).padStart(2, '0');
-  const progress = selectedMinutes * 60 ? ((selectedMinutes * 60 - remaining) / (selectedMinutes * 60)) * 100 : 0;
+  const progress = initialSeconds ? ((initialSeconds - remaining) / initialSeconds) * 100 : 0;
 
-  return <section className="rd-focus-timer" aria-label="Lesson focus timer">
+  return <section className="rd-focus-timer rd-focus-timer--header" aria-label="Lesson focus timer">
     <div className="rd-focus-timer__heading"><span>LESSON FOCUS</span><b>{state === 'running' ? 'ACTIVE' : state === 'done' ? 'COMPLETE' : 'READY'}</b></div>
-    <p className="rd-focus-timer__lesson">{lessonTitle}</p>
-    <div className="rd-focus-timer__clock" aria-live="polite"><strong>{minutes}:{seconds}</strong><span>{state === 'running' ? 'Stay focused' : state === 'paused' ? 'Paused' : 'Deep work session'}</span></div>
+    <div className="rd-focus-timer__notify" role="status" aria-live="polite">
+      {state === 'ready' && <button type="button" onClick={start}>Click Start to begin focus</button>}
+      {state === 'running' && <button type="button" onClick={pause}><span>Focus started</span><strong>{hours}:{minutes}:{seconds}</strong></button>}
+      {state === 'paused' && <button type="button" onClick={start}><span>Focus paused · Resume</span><strong>{hours}:{minutes}:{seconds}</strong></button>}
+      {state === 'done' && <button type="button" onClick={reset}>Focus completed · Start again</button>}
+    </div>
     <div className="rd-focus-timer__track"><i style={{ width: `${Math.min(100, Math.max(0, progress))}%` }} /></div>
-    <div className="rd-focus-timer__presets">{PRESETS.map(minutesValue => <button key={minutesValue} type="button" onClick={() => selectMinutes(minutesValue)} className={selectedMinutes === minutesValue ? 'is-selected' : ''} disabled={state === 'running'}>{minutesValue}m</button>)}</div>
-    {state === 'confirm' && <div className="rd-focus-timer__warning" role="alert"><strong>Start focused lesson mode?</strong><span>Navigation and the home button will be hidden until you pause, reset, or finish.</span><div><button type="button" onClick={start}>Start session</button><button type="button" onClick={() => setState('ready')}>Cancel</button></div></div>}
-    {state !== 'confirm' && <div className="rd-focus-timer__actions">{state === 'running' ? <button type="button" className="primary" onClick={() => { setState('paused'); deadlineRef.current = null; onFocusModeChange(false); }}>Pause</button> : state === 'done' ? <button type="button" className="primary" onClick={reset}>Start again</button> : <button type="button" className="primary" onClick={() => setState('confirm')}>{state === 'paused' ? 'Resume focus' : 'Start focus'}</button>}{state !== 'ready' && state !== 'done' && <button type="button" onClick={reset}>Reset</button>}</div>}
     <label className="rd-focus-timer__sound"><input type="checkbox" checked={soundEnabled} onChange={event => setSoundEnabled(event.target.checked)} /> Completion sound</label>
-    <small className="rd-focus-timer__hint">Default is based on this lesson’s reading time. Choose 10, 15, 20, or 25 minutes.</small>
   </section>;
 }

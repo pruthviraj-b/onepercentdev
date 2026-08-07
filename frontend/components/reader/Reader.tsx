@@ -460,6 +460,8 @@ export function Reader({
   const handleLessonFocusModeChange = useCallback((active: boolean) => {
     setLessonFocusActive(active);
     setFocusMode(active);
+    setLessonNavOpen(!active);
+    setUtilityOpen(!active);
   }, []);
 
   /* Theme tokens */
@@ -527,6 +529,13 @@ export function Reader({
     toc.forEach(t => { const el = document.getElementById(t.id); if (el) obs.observe(el); });
     return () => obs.disconnect();
   }, [toc]);
+
+  /* Keep the outline's active item visible while the notes remain the
+     authoritative scroll surface. */
+  useEffect(() => {
+    if (!activeId || !utilityOpen) return;
+    document.querySelector<HTMLElement>('.rd-utility__toc button.is-active')?.scrollIntoView({ block: 'nearest' });
+  }, [activeId, utilityOpen]);
 
   useEffect(() => {
     setMode('read');
@@ -1352,18 +1361,33 @@ export function Reader({
     .rd-mission .rd-prose h2::after{display:none;}
     .rd-mission .rd-prose p{max-width:800px;}
     .rd-mission .rd-footer{max-width:850px;margin-top:56px;}
-    .rd-mission .rd-utility{display:flex;flex-direction:column;gap:26px;min-width:0;overflow:auto;padding:30px 18px;background:${th.surface};border-left:1px solid ${th.border};}
-    .rd-focus-timer{display:grid;gap:10px;padding:14px;border:2px solid #1f2937;border-radius:14px;background:#fff7ed;box-shadow:3px 3px 0 #1f2937;color:${th.text};}
-    .rd-focus-timer__heading{display:flex;align-items:center;justify-content:space-between;font:800 .62rem ${F.mono};letter-spacing:.1em;color:${th.accent};}
-    .rd-focus-timer__heading b{padding:3px 6px;border-radius:99px;background:#1f2937;color:#fff;font-size:.54rem;letter-spacing:.04em;}
-    .rd-focus-timer__lesson{margin:0;color:${th.textDim};font-size:.72rem;font-weight:700;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-    .rd-focus-timer__clock{display:grid;justify-items:center;padding:8px 0 4px;}
-    .rd-focus-timer__clock strong{font:900 2.25rem ${F.mono};letter-spacing:.04em;color:#1f2937;}
-    .rd-focus-timer__clock span{color:${th.textFaint};font-size:.62rem;}
-    .rd-focus-timer__track{height:7px;overflow:hidden;border-radius:99px;background:#fed7aa;}
+    .rd-mission .rd-utility{display:flex;flex-direction:column;gap:26px;min-width:0;min-height:0;overflow:hidden;padding:30px 18px;background:${th.surface};border-left:1px solid ${th.border};}
+    .rd-mission .rd-utility > .rd-focus-timer{position:relative;z-index:2;flex:0 0 auto;}
+    .rd-mission .rd-utility > .rd-utility__section:nth-child(2){display:flex;flex-direction:column;min-height:0;flex:1 1 auto;overflow:hidden;}
+    .rd-mission .rd-utility > .rd-utility__section:nth-child(2) .rd-utility__toc{min-height:0;flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;padding-right:4px;scrollbar-gutter:stable;}
+    .rd-focus-timer{display:grid;gap:8px;width:100%;max-width:260px;padding:10px;border:1.5px solid #263243;border-radius:10px;background:#fbf3e8;box-shadow:2px 2px 0 #263243;color:${th.text};}
+    .rd-focus-timer__heading{display:flex;align-items:center;justify-content:space-between;font:800 .56rem ${F.mono};letter-spacing:.1em;color:${th.accent};}
+    .rd-focus-timer__heading b{padding:3px 6px;border-radius:99px;background:#263243;color:#fff;font-size:.5rem;letter-spacing:.04em;}
+    .rd-focus-timer__lesson{margin:0;color:${th.textDim};font-size:.66rem;font-weight:700;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    .rd-focus-timer__clock{display:flex;align-items:center;gap:10px;padding:2px 2px 1px;}
+    .rd-focus-timer__analog{position:relative;flex:0 0 58px;width:58px;height:58px;border:2px solid #263243;border-radius:50%;background:#f9f1e5;box-shadow:inset 0 0 0 2px #c8a268,1px 1px 0 #263243;}
+    .rd-focus-timer__analog:before{content:'';position:absolute;inset:5px;border:1px solid #c8a268;border-radius:50%;background:repeating-conic-gradient(from -2deg,rgba(38,50,67,.6) 0 1deg,transparent 1deg 30deg);mask:radial-gradient(circle,transparent 0 72%,#000 73%);}
+    .rd-focus-timer__tick{position:absolute;z-index:1;color:#263243;font:700 .4rem Georgia,serif;line-height:1;}
+    .rd-focus-timer__tick--12{top:6px;left:50%;transform:translateX(-50%);}
+    .rd-focus-timer__tick--3{top:50%;right:6px;transform:translateY(-50%);}
+    .rd-focus-timer__tick--6{bottom:6px;left:50%;transform:translateX(-50%);}
+    .rd-focus-timer__tick--9{top:50%;left:6px;transform:translateY(-50%);}
+    .rd-focus-timer__hand{position:absolute;z-index:2;bottom:50%;left:50%;display:block;width:2px;border-radius:99px;background:#1f2937;transform-origin:50% 100%;}
+    .rd-focus-timer__hand--minute{height:18px;}
+    .rd-focus-timer__hand--second{height:22px;width:1px;background:${th.accent};}
+    .rd-focus-timer__pin{position:absolute;z-index:3;top:50%;left:50%;width:6px;height:6px;border:1.5px solid #263243;border-radius:50%;background:${th.accent};transform:translate(-50%,-50%);}
+    .rd-focus-timer__clock-copy{display:grid;gap:2px;min-width:0;}
+    .rd-focus-timer__time{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+    .rd-focus-timer__clock span{color:${th.textFaint};font-size:.56rem;}
+    .rd-focus-timer__track{height:5px;overflow:hidden;border-radius:99px;background:#ead4b5;}
     .rd-focus-timer__track i{display:block;height:100%;border-radius:inherit;background:${th.accent};transition:width .4s linear;}
     .rd-focus-timer__presets{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;}
-    .rd-focus-timer__presets button,.rd-focus-timer__actions button{padding:7px 4px;border:1.5px solid ${th.border};border-radius:8px;background:#fff;color:${th.text};font:800 .64rem ${F.mono};cursor:pointer;}
+    .rd-focus-timer__presets button,.rd-focus-timer__actions button{min-height:32px;padding:5px 4px;border:1.5px solid ${th.border};border-radius:7px;background:#fff;color:${th.text};font:800 .6rem ${F.mono};cursor:pointer;}
     .rd-focus-timer__presets button.is-selected{border-color:${th.accent};background:${th.accent};color:#fff;}
     .rd-focus-timer__presets button:disabled{cursor:not-allowed;opacity:.55;}
     .rd-focus-timer__actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
@@ -1372,9 +1396,17 @@ export function Reader({
     .rd-focus-timer__warning span{color:${th.textDim};}
     .rd-focus-timer__warning div{display:flex;gap:6px;}
     .rd-focus-timer__warning button{flex:1;padding:7px 4px;border:1.5px solid ${th.border};border-radius:7px;background:#fff;color:${th.text};font:800 .62rem ${F.mono};cursor:pointer;}
-    .rd-focus-timer__sound{display:flex;align-items:center;gap:6px;color:${th.textDim};font-size:.62rem;cursor:pointer;}
+    .rd-focus-timer__sound{display:flex;align-items:center;gap:6px;color:${th.textDim};font-size:.58rem;cursor:pointer;}
     .rd-focus-timer__sound input{accent-color:${th.accent};}
-    .rd-focus-timer__hint{color:${th.textFaint};font-size:.58rem;line-height:1.4;}
+    .rd-focus-timer__hint{color:${th.textFaint};font-size:.52rem;line-height:1.3;}
+    .rd-toolbar .rd-focus-timer--header{display:grid;grid-template-columns:auto minmax(160px,1fr);align-items:center;gap:8px;width:min(430px,36vw);max-width:430px;padding:6px 9px;border:1px solid ${th.border};border-radius:9px;background:${th.surface};box-shadow:2px 2px 0 ${th.border};}
+    .rd-toolbar .rd-focus-timer--header .rd-focus-timer__heading{display:flex;gap:6px;align-items:center;font-size:.48rem;white-space:nowrap;}
+    .rd-toolbar .rd-focus-timer--header .rd-focus-timer__heading b{font-size:.44rem;padding:2px 5px;}
+    .rd-toolbar .rd-focus-timer--header .rd-focus-timer__lesson,.rd-toolbar .rd-focus-timer--header .rd-focus-timer__clock,.rd-toolbar .rd-focus-timer--header .rd-focus-timer__track,.rd-toolbar .rd-focus-timer--header .rd-focus-timer__sound{display:none;}
+    .rd-toolbar .rd-focus-timer--header .rd-focus-timer__notify{min-width:0;}
+    .rd-toolbar .rd-focus-timer--header .rd-focus-timer__notify button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:28px;padding:4px 8px;border:1px solid ${th.border};border-radius:6px;background:${th.surfaceHi};color:${th.text};cursor:pointer;font:700 .58rem ${F.body};text-align:left;white-space:nowrap;}
+    .rd-toolbar .rd-focus-timer--header .rd-focus-timer__notify button:hover{border-color:${th.accent};background:${th.accentDim};}
+    .rd-toolbar .rd-focus-timer--header .rd-focus-timer__notify strong{font:800 .72rem ${F.mono};color:${th.accent};}
     .rd-mission .rd-utility__section{padding-bottom:22px;border-bottom:1px solid ${th.border};}
     .rd-mission .rd-utility__section:last-child{border-bottom:0;}
     .rd-mission .rd-utility__heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;color:${th.text};font-family:${F.mono};font-size:.62rem;font-weight:800;letter-spacing:.1em;}
@@ -1419,6 +1451,9 @@ export function Reader({
     .rd-top-nav{display:flex;align-items:center;gap:4px;flex:0 0 auto;}
     .rd-top-nav__button{display:inline-flex;align-items:center;justify-content:center;width:34px;height:30px;padding:0;border:1px solid ${th.border};border-radius:${R.md};background:${th.surface};color:${th.textDim};cursor:pointer;font-family:${F.body};font-size:.8rem;font-weight:800;white-space:nowrap;}
     .rd-top-nav__button:hover{border-color:${th.accent};background:${th.accentDim};color:${th.accent};}
+    .rd-mission .rd-top-nav__home{width:34px;height:34px;border:0;background:transparent;color:inherit;box-shadow:none;}
+    .rd-mission .rd-top-nav__home:hover{border:0;background:transparent;transform:none;}
+    .rd-mission .rd-top-nav__home img{display:block;width:25px;height:25px;object-fit:contain;}
     .rd-mission .rd-reader-back,.rd-mission .rd-toolbar-title{display:none!important;}
     .rd-toolbar-title small{overflow:hidden;color:${th.textFaint};font-family:${F.mono};font-size:.56rem;font-weight:800;letter-spacing:.1em;text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap;}
     .rd-toolbar-title strong{overflow:hidden;color:${th.text};font-size:.78rem;text-overflow:ellipsis;white-space:nowrap;}
@@ -1439,6 +1474,15 @@ export function Reader({
     }
     @media(max-width:560px){
       .rd-mission .rd-content{padding:18px 18px 90px;}
+      .rd-mission .rd-utility{width:calc(100vw - 16px)!important;max-width:none!important;padding:0 16px 28px!important;gap:26px!important;touch-action:pan-y;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+      .rd-mission .rd-utility > .rd-utility__section{flex:0 0 auto!important;min-height:0!important;overflow:visible!important;}
+      .rd-mission .rd-utility > .rd-utility__section:first-child{display:block!important;overflow:visible!important;}
+      .rd-mission .rd-utility > .rd-utility__section:first-child .rd-utility__toc{max-height:calc(100dvh - 220px)!important;overflow-y:auto!important;overscroll-behavior:contain;touch-action:pan-y;padding-right:4px;}
+      .rd-mission .rd-utility__section{padding-bottom:16px!important;}
+      .rd-mission .rd-focus-timer__presets button,.rd-mission .rd-focus-timer__actions button{min-height:40px!important;padding:7px 4px!important;font-size:.64rem!important;}
+      .rd-mission .rd-focus-timer__sound{font-size:.62rem!important;}
+      .rd-mission .rd-focus-timer__hint{font-size:.58rem!important;line-height:1.4!important;}
+      .rd-toolbar .rd-focus-timer--header{order:4;width:100%;max-width:none;grid-template-columns:auto minmax(0,1fr);padding:5px 7px;}
       .rd-mission .rd-title{font-size:2.35rem;}
       .rd-mission .rd-prose{font-size:calc(1rem * var(--rd-fs,1));}
       .rd-mission .rd-toolbar-left{overflow:hidden;}
@@ -1463,7 +1507,7 @@ export function Reader({
       {/* ── Toolbar ── */}
       <div className="rd-toolbar" role="toolbar">
         <div className="rd-toolbar-left">
-          {!lessonFocusActive && <button type="button" className="rd-top-nav__button" onClick={onGoHome} aria-label="Go to home" title="Go to home"><img src="/logos/home-neo.svg" alt="" width="24" height="24" /></button>}
+          {!lessonFocusActive && <button type="button" className="rd-top-nav__button rd-top-nav__home" onClick={onGoHome} aria-label="Go to home" title="Go to home"><img src="/logos/home-neo.svg" alt="" width="24" height="24" /></button>}
           {false && <div className="rd-top-nav" aria-label="Course navigation">
             <button type="button" className="rd-top-nav__button" onClick={onGoHome} aria-label="Go to dashboard" title="Go to dashboard"><img src="/logos/home-neo.svg" alt="" width="24" height="24" /><span>Dashboard</span></button>
             <button type="button" className="rd-top-nav__button" onClick={onSwitchCourse} aria-label="Switch course" title="Switch course">⇄ <span>Courses</span></button>
@@ -1494,6 +1538,7 @@ export function Reader({
         <div className="rd-toolbar-center" aria-label="Reader word">痴迷</div>
 
         {completionAction && <div className="rd-toolbar-completion">{completionAction}</div>}
+        <LessonFocusTimer key={`${courseId}-${noteData?.part ?? currentPart}`} lessonTitle={cleanTitle} defaultMinutes={readTime} onFocusModeChange={handleLessonFocusModeChange} />
 
         {mode === 'read' && activeTab === 'notes' && (
           <div className="rd-highlighter" role="toolbar" aria-label="Text highlighter">
@@ -1749,7 +1794,6 @@ export function Reader({
           </button>
         </main>
         <aside className="rd-utility" aria-label="Reader tools">
-          <LessonFocusTimer key={`${courseId}-${noteData?.part ?? currentPart}`} lessonTitle={cleanTitle} defaultMinutes={readTime} onFocusModeChange={handleLessonFocusModeChange} />
           <section className="rd-utility__section"><div className="rd-utility__heading"><span>ON THIS PAGE</span><small>{toc.length} sections</small><button className="rd-panel-close" type="button" onClick={() => setUtilityOpen(false)} aria-label="Close reader tools" title="Close reader tools">›</button></div><div className="rd-utility__toc">{toc.length === 0 ? <span className="rd-utility__empty">Headings appear here</span> : toc.map(item => <button type="button" key={item.id} className={activeId === item.id ? 'is-active' : ''} onClick={() => document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><i />{item.text}</button>)}</div></section>
           <section className="rd-utility__section"><div className="rd-utility__heading"><span>READING PROGRESS</span><strong>{Math.round(readingPct)}%</strong></div><div className="rd-utility__progress"><span style={{ width: `${readingPct}%` }} /></div><small className="rd-utility__muted">{minutesLeft} minutes remaining</small></section>
           <section className="rd-utility__section rd-utility__quick"><div className="rd-utility__heading"><span>QUICK ACTIONS</span></div><button type="button" onClick={() => toggleBookmark(`lesson-${noteData?.part ?? currentPart}`)}>★ {isBookmarked ? 'Bookmarked' : 'Bookmark lesson'}</button><button type="button" onClick={onShowShortcuts}>⌘ Keyboard shortcuts</button><button type="button" onClick={onToggleComplete}>{isCompleted ? '✓ Checkpoint complete' : '○ Mark checkpoint complete'}</button><button type="button" className="rd-utility__ai" onClick={() => setAiOpen(true)}>✦ Ask AI about this lesson</button></section>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef, type CSSProperties } from 'react';
 import {
   fetchModules, fetchNote, fetchProgress, fetchBookmarks,
   toggleProgress, toggleBookmark,
@@ -330,7 +330,44 @@ const SPACE_PARTICLES = Array.from({ length: 128 }, (_, index) => ({
   duration: 7 + (index % 7) * 0.8,
 }));
 
-function AcademyBootScreen({ stage = 'auth' }: { stage?: 'auth' | 'courses' }) {
+const BOOT_PARTICLES = Array.from({ length: 56 }, (_, index) => {
+  const angle = (index * 137.5) % 360;
+  const radius = 92 + ((index * 29) % 178);
+  return {
+    angle,
+    radius,
+    nearRadius: Math.max(26, radius * 0.22),
+    size: 1.4 + (index % 4) * 0.6,
+    delay: -((index * 0.13) % 6.5),
+    duration: 5.8 + (index % 6) * 0.55,
+    tone: index % 5 === 0 ? 'purple' : index % 3 === 0 ? 'orange' : 'black',
+  };
+});
+
+function AcademyBootScreen({ stage: _stage = 'auth' }: { stage?: 'auth' | 'courses' }) {
+  return (
+    <div className="academy-boot academy-orbit-loader" role="status" aria-live="polite" aria-label="Loading Academy">
+      <div className="academy-orbit-field" aria-hidden="true">
+        {BOOT_PARTICLES.map((particle, index) => (
+          <i
+            key={index}
+            className={`academy-orbit-particle academy-orbit-particle--${particle.tone}`}
+            style={{ '--angle': `${particle.angle}deg`, '--radius': `${particle.radius}px`, '--near-radius': `${particle.nearRadius}px`, '--size': `${particle.size}px`, '--delay': `${particle.delay}s`, '--duration': `${particle.duration}s` } as CSSProperties}
+          />
+        ))}
+        <span className="academy-orbit-ring academy-orbit-ring--one" />
+        <span className="academy-orbit-ring academy-orbit-ring--two" />
+        <span className="academy-orbit-ring academy-orbit-ring--three" />
+        <span className="academy-orbit-ripple academy-orbit-ripple--one" />
+        <span className="academy-orbit-ripple academy-orbit-ripple--two" />
+        <span className="academy-orbit-core"><b>1%</b></span>
+      </div>
+      <p className="academy-orbit-label">Initializing...</p>
+    </div>
+  );
+}
+
+function LegacyAcademyBootScreen({ stage = 'auth' }: { stage?: 'auth' | 'courses' }) {
   const [phase, setPhase] = useState(0);
   const coursePhases = [
     ['Initializing Intelligence...', 'Mapping your learning universe'],

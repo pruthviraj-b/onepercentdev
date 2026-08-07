@@ -735,7 +735,7 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
               </div>
             </div>
 
-            <div className="card" style={{ padding: '18px 20px' }}>
+            <div className="card dashboard-activity-card" style={{ padding: '18px 20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '12px' }}>
                 <span style={{ fontFamily: F.mono, fontSize: '0.66rem', color: C.textFaint, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Activity log</span>
                 <span className="dash-date-widget" style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: '8px', padding: '6px 9px', flexShrink: 0 }}>
@@ -1171,7 +1171,7 @@ function ContributionHeatmap({ dates, loading }: { dates: string[]; loading: boo
     : null;
 
   return (
-    <div style={{ width: '178px', maxWidth: '100%' }}>
+    <div className="dashboard-heatmap" style={{ width: '178px', maxWidth: '100%' }}>
       <div style={{ fontFamily: F.mono, fontSize: '0.68rem', color: C.textDim, marginBottom: '8px' }}>{monthLabel}</div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '3px', marginBottom: '4px', color: C.textFaint, fontFamily: F.mono, fontSize: '0.5rem', textAlign: 'center' }}>
         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => <span key={`${day}-${i}`}>{day}</span>)}

@@ -63,6 +63,507 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* -------------------------------------------------------------------------
+   Mission Control dashboard skin
+   The dashboard is deliberately styled at its boundary so the existing
+   course/reader surfaces keep their behavior while the main workspace gets a
+   coherent premium visual language.
+------------------------------------------------------------------------- */
+.dash-root {
+  --mc-ink: #0b0b0b;
+  --mc-muted: #667085;
+  --mc-line: #e7eaf0;
+  --mc-orange: #ff6b00;
+  --mc-cyan: #00d9ff;
+  background:
+    radial-gradient(circle at 72% -12%, rgba(0, 217, 255, .08), transparent 26rem),
+    #f7f8fb !important;
+}
+
+.dash-root .dash-sidebar {
+  width: 248px !important;
+  background: #0b0b0b !important;
+  border-right: 1px solid rgba(255,255,255,.08) !important;
+  color: #fff !important;
+}
+
+.dash-root .dash-brand-panel {
+  height: 82px !important;
+  padding: 22px 22px 0 !important;
+  position: relative;
+}
+
+.dash-root .dash-brand-panel::before {
+  content: '01% / ACADEMY';
+  display: block;
+  color: #fff;
+  font: 800 .73rem/1 var(--font-display);
+  letter-spacing: .12em;
+}
+
+.dash-root .dash-brand-panel::after {
+  content: 'LEARNING CONTROL CENTER';
+  display: block;
+  margin-top: 9px;
+  color: rgba(255,255,255,.4);
+  font: 700 .52rem/1 var(--font-mono);
+  letter-spacing: .14em;
+}
+
+.dash-root .dash-sidebar nav {
+  padding: 10px 14px !important;
+}
+
+.dash-root .dash-sidebar nav > div:first-child,
+.dash-root .dash-sidebar nav > div:nth-of-type(2) {
+  color: rgba(255,255,255,.38) !important;
+  letter-spacing: .16em !important;
+}
+
+.dash-root .dash-sidebar .nav-item {
+  color: rgba(255,255,255,.66) !important;
+  border-radius: 11px !important;
+  transition: color .2s ease, background .2s ease, transform .2s ease !important;
+}
+
+.dash-root .dash-sidebar .nav-item:hover {
+  color: #fff !important;
+  background: rgba(255,255,255,.08) !important;
+  transform: translateX(2px);
+}
+
+.dash-root .dash-sidebar > div:last-child {
+  border-top: 1px solid rgba(255,255,255,.1) !important;
+  padding: 14px !important;
+}
+
+.dash-root .dash-sidebar > div:last-child button {
+  color: #fff !important;
+}
+
+.dash-root .dash-sidebar > div:last-child button:hover {
+  background: rgba(255,255,255,.08) !important;
+}
+
+.dash-root .dash-workspace {
+  background: transparent !important;
+}
+
+.dash-root .dash-main {
+  padding: 26px clamp(18px, 4vw, 54px) 54px !important;
+}
+
+.dash-root .hero-card {
+  min-height: 328px;
+  border: 1px solid #242424 !important;
+  border-radius: 24px !important;
+  background:
+    radial-gradient(circle at 87% 18%, rgba(0,217,255,.2), transparent 18rem),
+    radial-gradient(circle at 72% 120%, rgba(255,107,0,.25), transparent 22rem),
+    #0b0b0b !important;
+  box-shadow: 0 26px 65px rgba(11,11,11,.18) !important;
+}
+
+.dash-root .hero-card .dash-hero-brand {
+  color: rgba(255,255,255,.58) !important;
+  letter-spacing: .18em !important;
+}
+
+.dash-root .hero-card .hero-title {
+  color: #fff !important;
+  font-size: clamp(2.1rem, 4vw, 3.6rem) !important;
+  letter-spacing: -.07em !important;
+}
+
+.dash-root .hero-card .hero-title span {
+  color: var(--mc-cyan) !important;
+}
+
+.dash-root .hero-card > div:nth-of-type(3) {
+  color: var(--mc-cyan) !important;
+  font-weight: 800 !important;
+  letter-spacing: .16em !important;
+}
+
+.dash-root .hero-card .hero-message {
+  max-width: 600px !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  border-radius: 15px !important;
+  background: rgba(255,255,255,.07) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.1) !important;
+  backdrop-filter: blur(14px);
+}
+
+.dash-root .hero-card .hero-message p {
+  color: rgba(255,255,255,.72) !important;
+}
+
+.dash-root .hero-card .hero-metrics {
+  border-top-color: rgba(255,255,255,.14) !important;
+}
+
+.dash-root .hero-card .hero-metrics > div > div:first-child {
+  color: rgba(255,255,255,.42) !important;
+}
+
+.dash-root .hero-card .hero-metrics > div > div:last-child {
+  color: #fff !important;
+}
+
+.dash-root .btn-primary {
+  background: var(--mc-orange) !important;
+  border-color: var(--mc-orange) !important;
+  box-shadow: 0 10px 24px rgba(255,107,0,.24) !important;
+}
+
+.dash-root .btn-primary:hover {
+  background: #ff8533 !important;
+  transform: translateY(-2px);
+}
+
+.dash-root .hero-card .btn-ghost {
+  color: #fff !important;
+  border-color: rgba(255,255,255,.22) !important;
+  background: rgba(255,255,255,.06) !important;
+}
+
+.dash-root .hero-card .btn-ghost:hover {
+  border-color: var(--mc-cyan) !important;
+  background: rgba(0,217,255,.1) !important;
+}
+
+.dash-root .card {
+  border-color: var(--mc-line) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 10px 28px rgba(16,24,40,.055) !important;
+}
+
+.dash-root .card-hover:hover {
+  border-color: rgba(255,107,0,.45) !important;
+  box-shadow: 0 18px 40px rgba(16,24,40,.11) !important;
+}
+
+.dash-root .course-progress-aurora-card {
+  min-height: 168px;
+}
+
+.dash-root .course-progress-bar-fill {
+  background: linear-gradient(90deg, var(--mc-orange), var(--mc-cyan)) !important;
+}
+
+.dash-root .task-terminal {
+  border-radius: 20px !important;
+  background: #101215 !important;
+  border-color: #252930 !important;
+  color: #fff;
+}
+
+.dash-root .task-terminal .task-list-heading {
+  border-bottom-color: #252930 !important;
+}
+
+.dash-root .task-terminal .task-list-heading span {
+  color: rgba(255,255,255,.55) !important;
+}
+
+.dash-root .task-terminal .task-row:hover {
+  background: rgba(255,255,255,.07) !important;
+}
+
+.dash-root .task-terminal .task-label,
+.dash-root .task-terminal .task-check {
+  color: rgba(255,255,255,.78) !important;
+}
+
+@media (max-width: 900px) {
+  .dash-root .dash-sidebar { width: 78px !important; }
+  .dash-root .dash-brand-panel::before { content: '01%'; font-size: .95rem; }
+  .dash-root .dash-brand-panel::after { content: 'HQ'; }
+  .dash-root .dash-sidebar nav > div:first-child,
+  .dash-root .dash-sidebar nav > div:nth-of-type(2),
+  .dash-root .dash-sidebar .nav-item span:not(:first-child),
+  .dash-root .dash-sidebar > div:last-child button > div:last-child { display: none !important; }
+  .dash-root .dash-sidebar nav > div { grid-template-columns: 1fr !important; }
+}
+
+/* Minimal orbital boot animation. This selector is scoped to the boot screen
+   so it cannot alter any product page after the loader unmounts. */
+.academy-orbit-loader {
+  position: relative !important;
+  display: grid !important;
+  min-height: 100dvh !important;
+  overflow: hidden !important;
+  isolation: isolate;
+  place-items: center;
+  background: #fff !important;
+  color: #111 !important;
+}
+.academy-orbit-loader::before,
+.academy-orbit-loader::after {
+  display: none !important;
+  background: none !important;
+}
+.academy-orbit-field {
+  position: relative;
+  width: min(72vw, 560px);
+  aspect-ratio: 1;
+  contain: layout paint;
+}
+.academy-orbit-ring,
+.academy-orbit-ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  border: 1px solid rgba(17,17,17,.16);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.academy-orbit-ring--one {
+  width: 58%;
+  height: 24%;
+  border-color: rgba(123,97,255,.42);
+  transform: translate(-50%, -50%) rotate(-24deg);
+  animation: academyOrbitSpinOne 11s linear infinite;
+}
+.academy-orbit-ring--two {
+  width: 73%;
+  height: 31%;
+  border-color: rgba(255,107,0,.38);
+  transform: translate(-50%, -50%) rotate(31deg);
+  animation: academyOrbitSpinTwo 16s linear infinite;
+}
+.academy-orbit-ring--three {
+  width: 44%;
+  height: 70%;
+  border-color: rgba(17,17,17,.12);
+  transform: translate(-50%, -50%) rotate(66deg);
+  animation: academyOrbitSpinThree 20s linear infinite;
+}
+.academy-orbit-ring--one::after,
+.academy-orbit-ring--two::after,
+.academy-orbit-ring--three::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ff6b00;
+  box-shadow: 0 0 14px rgba(255,107,0,.45);
+}
+.academy-orbit-ring--one::after { background: #7b61ff; }
+.academy-orbit-ring--three::after { background: #111; box-shadow: none; }
+.academy-orbit-ripple {
+  width: 18%;
+  height: 18%;
+  border-color: rgba(255,107,0,.38);
+  animation: academyOrbitRipple 4.6s ease-out infinite;
+}
+.academy-orbit-ripple--two { animation-delay: 2.3s; }
+.academy-orbit-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: clamp(58px, 9vw, 76px);
+  height: clamp(58px, 9vw, 76px);
+  place-items: center;
+  border: 1px solid #111;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 5px rgba(255,107,0,.08), 0 0 22px rgba(255,107,0,.22), 0 0 56px rgba(123,97,255,.12);
+  transform: translate(-50%, -50%);
+  animation: academyOrbitCore 4.2s ease-in-out infinite;
+}
+.academy-orbit-core::before {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border: 1px solid rgba(255,107,0,.42);
+  border-radius: 50%;
+}
+.academy-orbit-core b {
+  position: relative;
+  z-index: 1;
+  color: #111;
+  font: 800 clamp(.82rem, 1.6vw, 1rem) var(--font-mono);
+  letter-spacing: -.08em;
+  opacity: 0;
+  animation: academyOrbitLogo 5.2s cubic-bezier(.22,1,.36,1) 1.4s infinite;
+}
+.academy-orbit-particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: #111;
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(var(--angle)) translateX(var(--radius));
+  animation: academyOrbitParticle var(--duration) cubic-bezier(.22,.8,.25,1) var(--delay) infinite;
+  will-change: transform, opacity;
+}
+.academy-orbit-particle--orange { background: #ff6b00; box-shadow: 0 0 8px rgba(255,107,0,.3); }
+.academy-orbit-particle--purple { background: #7b61ff; box-shadow: 0 0 8px rgba(123,97,255,.28); }
+.academy-orbit-label {
+  position: absolute;
+  bottom: clamp(28px, 6vh, 54px);
+  left: 0;
+  width: 100%;
+  margin: 0;
+  color: #111;
+  font: 600 .68rem var(--font-mono);
+  letter-spacing: .16em;
+  text-align: center;
+  animation: academyOrbitLabel 2.4s ease-in-out infinite;
+}
+@keyframes academyOrbitParticle {
+  0% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--angle)) translateX(var(--radius)) scale(.25); }
+  18% { opacity: .7; }
+  38% { opacity: .92; transform: translate(-50%, -50%) rotate(calc(var(--angle) + 42deg)) translateX(var(--near-radius)) scale(1); }
+  56% { opacity: .72; transform: translate(-50%, -50%) rotate(calc(var(--angle) + 174deg)) translateX(var(--radius)) scale(.8); }
+  100% { opacity: 0; transform: translate(-50%, -50%) rotate(calc(var(--angle) + 360deg)) translateX(var(--radius)) scale(.22); }
+}
+@keyframes academyOrbitSpinOne { to { transform: translate(-50%, -50%) rotate(336deg); } }
+@keyframes academyOrbitSpinTwo { to { transform: translate(-50%, -50%) rotate(-329deg); } }
+@keyframes academyOrbitSpinThree { to { transform: translate(-50%, -50%) rotate(426deg); } }
+@keyframes academyOrbitRipple { 0% { opacity: .5; transform: translate(-50%, -50%) scale(.5); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(4.5); } }
+@keyframes academyOrbitCore { 0%,100% { box-shadow: 0 0 0 5px rgba(255,107,0,.08), 0 0 22px rgba(255,107,0,.22), 0 0 56px rgba(123,97,255,.12); } 50% { box-shadow: 0 0 0 8px rgba(255,107,0,.1), 0 0 30px rgba(255,107,0,.3), 0 0 70px rgba(123,97,255,.16); } }
+@keyframes academyOrbitLogo { 0%,20% { opacity: 0; transform: scale(.72); } 42%,82% { opacity: 1; transform: scale(1); } 100% { opacity: .86; transform: scale(1); } }
+@keyframes academyOrbitLabel { 0%,100% { opacity: .45; } 50% { opacity: .9; } }
+@media (max-width: 640px) { .academy-orbit-field { width: min(92vw, 420px); } .academy-orbit-label { bottom: 26px; font-size: .6rem; } }
+@media (prefers-reduced-motion: reduce) {
+  .academy-orbit-ring, .academy-orbit-ripple, .academy-orbit-particle, .academy-orbit-core, .academy-orbit-core b, .academy-orbit-label { animation: none; }
+  .academy-orbit-core b { opacity: 1; }
+  .academy-orbit-particle { opacity: .45; }
+}
+
+/* Reader home control: show the icon only, while keeping the button hit area. */
+.rd-mission .rd-toolbar-left > .rd-top-nav__home {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.rd-mission .rd-toolbar-left > .rd-top-nav__home:hover,
+.rd-mission .rd-toolbar-left > .rd-top-nav__home:focus-visible {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Only the course progress circle is animated. The rest of the course page
+   keeps its original layout and motion profile. */
+.course-detail-shell .milestone-dashboard-ring {
+  position: relative;
+  isolation: isolate;
+  border: 0;
+  background: conic-gradient(from -42deg, #ff6b00 0 var(--progress-angle), #e5e7eb var(--progress-angle) 360deg);
+  box-shadow: 0 0 0 1px rgba(17, 24, 39, .14), 0 0 0 5px rgba(255, 107, 0, .06);
+  animation: progressCircleBreath 3.6s ease-in-out infinite;
+}
+.course-detail-shell .milestone-dashboard-ring::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  z-index: -1;
+  border: 1px dashed rgba(123, 97, 255, .62);
+  border-radius: 50%;
+  animation: progressCircleOrbit 9s linear infinite;
+}
+.course-detail-shell .milestone-dashboard-ring::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  z-index: 0;
+  border: 1px solid rgba(17, 24, 39, .1);
+  border-radius: 50%;
+  background: #fffdfa;
+}
+.course-detail-shell .milestone-dashboard-ring strong,
+.course-detail-shell .milestone-dashboard-ring span {
+  position: relative;
+  z-index: 1;
+}
+.course-detail-shell .milestone-dashboard-ring strong { margin-top: 2px; }
+@keyframes progressCircleBreath { 0%, 100% { box-shadow: 0 0 0 1px rgba(17,24,39,.14), 0 0 0 5px rgba(255,107,0,.06); } 50% { box-shadow: 0 0 0 1px rgba(17,24,39,.18), 0 0 0 8px rgba(255,107,0,.1); } }
+@keyframes progressCircleOrbit { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .course-detail-shell .milestone-dashboard-ring,
+  .course-detail-shell .milestone-dashboard-ring::before { animation: none; }
+}
+
+/* One clear hierarchy for every progress circle. */
+.course-detail-shell .milestone-dashboard-ring {
+  border: 0 !important;
+  background: #fffdfa !important;
+  border: 5px solid #ff6b00 !important;
+  box-shadow: 0 0 0 1px rgba(17, 24, 39, .12), 0 0 0 4px rgba(255, 107, 0, .07) !important;
+}
+.course-detail-shell .milestone-dashboard-ring::before {
+  inset: -3px !important;
+  border: 1px solid rgba(17, 24, 39, .18) !important;
+  animation: none !important;
+}
+.course-detail-shell .milestone-dashboard-ring::after {
+  inset: 5px !important;
+  border: 1px solid rgba(17, 24, 39, .1) !important;
+  background: #fffdfa !important;
+}
+.course-detail-shell .milestone-dashboard-ring strong {
+  color: #111827 !important;
+  font-size: 1.05rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  letter-spacing: -.06em;
+}
+.course-detail-shell .milestone-dashboard-ring span {
+  color: #6b7280 !important;
+  font-size: .48rem !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.course-detail-shell .course-progress-ring {
+  display: block;
+  overflow: visible;
+}
+.course-detail-shell .course-progress-value {
+  color: #111827 !important;
+  font-family: var(--font-mono) !important;
+  font-size: .72rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  letter-spacing: -.04em;
+  text-shadow: 0 1px 0 #fff;
+}
+.course-detail-shell .milestone-dashboard-ring::before {
+  border: 1px dashed rgba(123, 97, 255, .62) !important;
+  animation: progressCircleOrbit 9s linear infinite !important;
+}
+@keyframes progressCircleOrbit { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .course-detail-shell .milestone-dashboard-ring::before { animation: none !important; }
+}
+
+@media (max-width: 700px) {
+  .dash-root .dash-sidebar { width: 0 !important; border: 0 !important; }
+  .dash-root .dash-sidebar.open { width: 248px !important; }
+  .dash-root .dash-main { padding: 16px 14px 34px !important; }
+  .dash-root .hero-card { min-height: 0; border-radius: 20px !important; }
+}
+
 /* Keep the fixed Academy view from exposing the browser/app dark canvas
    around the dashboard's light background. */
 .academy-view-frame {
@@ -1416,6 +1917,177 @@ input:focus, textarea:focus, select:focus {
   }
   .typing-main {
     overflow: visible !important;
+  }
+}
+
+/* Reader utility tools use a real right-side drawer on touch layouts. */
+@media (max-width: 900px) {
+  .rd-mission .rd-utility {
+    display: flex !important;
+    position: absolute !important;
+    inset: 0 0 0 auto !important;
+    z-index: 45 !important;
+    width: min(320px, 88vw) !important;
+    max-width: 88vw !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+    padding: 22px 16px 28px !important;
+    border-left: 1px solid var(--line) !important;
+    background: var(--paper, #fff) !important;
+    transform: translateX(105%) !important;
+    transition: transform 220ms var(--ease) !important;
+    visibility: visible !important;
+    pointer-events: none !important;
+    box-shadow: -18px 0 50px rgba(15, 23, 42, .18) !important;
+  }
+
+  .rd-mission:not(.utility-closed) .rd-utility {
+    transform: translateX(0) !important;
+    pointer-events: auto !important;
+  }
+
+  .rd-mission.utility-closed .rd-utility {
+    transform: translateX(105%) !important;
+    visibility: visible !important;
+  }
+
+  .rd-mission .rd-panel-reopen--right {
+    display: flex !important;
+    position: absolute !important;
+    top: 18px !important;
+    right: 0 !important;
+    z-index: 60 !important;
+    width: 32px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1px solid var(--ink, #172033) !important;
+    border-right: 0 !important;
+    border-radius: 10px 0 0 10px !important;
+    background: var(--paper, #fff) !important;
+    color: var(--ink, #172033) !important;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, .14) !important;
+  }
+
+  .rd-mission:not(.utility-closed) .rd-panel-reopen--right {
+    display: none !important;
+  }
+
+  .rd-mission .rd-utility .rd-panel-close {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+}
+
+/* Dashboard hero copy uses the same readable ink color across its light
+   signal card, actions, and progress metrics. */
+.dash-root .hero-card .hero-title,
+.dash-root .hero-card .dash-hero-brand,
+.dash-root .hero-card > div:nth-of-type(3),
+.dash-root .hero-card .hero-title span,
+.dash-root .hero-card .hero-message,
+.dash-root .hero-card .hero-message p,
+.dash-root .hero-card .hero-metrics,
+.dash-root .hero-card .hero-metrics > div > div,
+.dash-root .hero-card .btn,
+.dash-root .hero-card .btn-primary,
+.dash-root .hero-card .btn-ghost {
+  color: #000 !important;
+}
+.dash-root .hero-card .hero-metrics { border-top-color: rgba(0, 0, 0, .18) !important; }
+.dash-root .hero-card .btn-primary,
+.dash-root .hero-card .btn-ghost { text-shadow: none !important; }
+
+/* Activity calendar: keep every neutral label readable in pure black. */
+.dash-root .dashboard-activity-card,
+.dash-root .dashboard-activity-card span,
+.dash-root .dashboard-activity-card small,
+.dash-root .dashboard-activity-card button,
+.dash-root .dashboard-activity-card div {
+  color: #000 !important;
+}
+.dash-root .dashboard-activity-card .calendar-stat-item strong { color: #000 !important; }
+
+/* Keep the dashboard hero compact: cards should follow their content rather
+   than stretching to the activity panel's height. */
+.dash-root .hero-grid { align-items: start !important; }
+.dash-root .hero-card,
+.dash-root .dashboard-activity-card {
+  align-self: start !important;
+  height: fit-content !important;
+  min-height: 0 !important;
+}
+.dash-root .hero-card .hero-title {
+  font-size: clamp(1.5rem, 2.4vw, 2rem) !important;
+  line-height: 1 !important;
+}
+.dash-root .hero-card .dash-hero-brand { font-size: .62rem !important; }
+.dash-root .hero-card .hero-message { padding: 12px !important; }
+.dash-root .hero-card .hero-metrics { margin-top: 16px !important; padding-top: 12px !important; }
+
+/* Activity module compact mode: approximately half the previous visual
+   density while preserving the surrounding dashboard column. */
+.dash-root .dashboard-activity-card .dashboard-heatmap {
+  width: 89px !important;
+}
+.dash-root .dashboard-activity-card .dashboard-heatmap > div:first-child {
+  margin-bottom: 4px !important;
+  font-size: .34rem !important;
+}
+.dash-root .dashboard-activity-card .dashboard-heatmap > div:nth-child(2) {
+  gap: 2px !important;
+  margin-bottom: 2px !important;
+  font-size: .25rem !important;
+}
+.dash-root .dashboard-activity-card .dashboard-heatmap > div:nth-child(3) {
+  gap: 2px !important;
+}
+.dash-root .dashboard-activity-card .dashboard-heatmap > div:nth-child(3) button {
+  width: 14px !important;
+  height: 14px !important;
+  min-height: 14px !important;
+  font-size: .24rem !important;
+  border-radius: 3px !important;
+}
+.dash-root .dashboard-activity-card .dashboard-heatmap > div:last-child {
+  min-height: 12px !important;
+  margin-top: 4px !important;
+  font-size: .27rem !important;
+}
+.dash-root .dashboard-activity-card .calendar-stat-grid {
+  gap: 4px !important;
+  margin-top: 7px !important;
+  padding-top: 6px !important;
+}
+.dash-root .dashboard-activity-card .calendar-stat-item {
+  gap: 1px !important;
+  padding: 4px 5px !important;
+  border-radius: 6px !important;
+}
+.dash-root .dashboard-activity-card .calendar-stat-item span { font-size: .29rem !important; }
+.dash-root .dashboard-activity-card .calendar-stat-item strong { font-size: .5rem !important; }
+.dash-root .dashboard-activity-card .calendar-stat-item small { font-size: .275rem !important; }
+
+/* Narrow dashboard rows must use the full available canvas; do not leave a
+   phantom right-hand grid track beside the activity or quick-access panels. */
+@media (max-width: 1100px) {
+  .dash-root .hero-grid,
+  .dash-root .tasks-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+  }
+  .dash-root .hero-grid > *,
+  .dash-root .tasks-grid > * {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+  .dash-root .tasks-grid > :last-child,
+  .dash-root .tasks-grid > :last-child > * {
+    width: 100% !important;
   }
 }
 
@@ -3878,5 +4550,378 @@ body:has(.rd.rd-root),
 @media (max-width: 620px) {
   .rd.rd-root .rd-toolbar-center {
     font-size: .9rem !important;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Responsive architecture
+   Shared layout contracts for the LMS. Feature styles may still own their
+   visual language, but width, flow, touch, and viewport behavior live here.
+------------------------------------------------------------------------- */
+:root {
+  --content-max: 1600px;
+  --page-gutter: clamp(16px, 3vw, 56px);
+  --touch-target: 48px;
+}
+
+html { overflow-x: clip; }
+body, #__next { max-width: 100%; overflow-x: clip; }
+*, *::before, *::after { min-width: 0; }
+img, video, svg, canvas { max-width: 100%; }
+button, input, select, textarea { max-width: 100%; }
+button, [role="button"], a { -webkit-tap-highlight-color: transparent; }
+button, .btn, .ds-button, .rd-btn, .rd-tab, .hacker-btn, .shell-icon-button,
+.shell-avatar, .shell-nav-item, .profile-close, .profile-menu-action,
+.aptitude-course-topic, .typing-daily-set { min-height: var(--touch-target); }
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible,
+select:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 65%, #fff); outline-offset: 2px; }
+h1, h2, h3, h4, p, li, td, th, label, span { overflow-wrap: anywhere; }
+pre, code, .rd-code-body pre, .editor-textarea, .line-numbers { overflow-wrap: normal; word-break: normal; }
+
+/* App shell: desktop rail -> compact rail -> touch drawer. */
+.app-shell-frame { min-height: 100dvh; overflow: clip; }
+.app-shell-frame__main { width: min(100%, var(--content-max)); min-width: 0; }
+.app-shell-frame:has(.shell-sidebar.is-collapsed) .app-shell-frame__main { margin-left: 72px; }
+.shell-topbar { min-width: 0; }
+.shell-topbar__left, .shell-topbar__actions, .shell-topbar__course { min-width: 0; }
+.shell-topbar__actions { flex-wrap: nowrap; }
+.shell-brand, .shell-search-trigger { flex: 0 0 auto; }
+.shell-sidebar { max-width: 88vw; }
+.shell-sidebar__scroll { min-height: 0; }
+.shell-nav-item span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.shell-overlay { padding: max(16px, 8vh) 16px 16px; overflow-y: auto; }
+.shell-search-panel, .shell-command-panel { max-height: calc(100dvh - 32px); }
+.shell-search-types { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+.shell-notifications { max-height: min(620px, calc(100dvh - 84px)); overflow-y: auto; }
+
+/* Shared page containers and responsive grids. */
+.dash-main, .catalog-main, .course-detail-main, .aptitude-content,
+.target-room-main, .typing-main { width: 100%; max-width: var(--content-max); margin-inline: auto; }
+.dash-main > *, .catalog-main > *, .course-detail-main > *, .aptitude-content > *,
+.target-room-main > * { max-width: 100%; }
+.hero-grid, .tasks-grid, .course-detail-grid, .profile-grid { grid-template-columns: repeat(12, minmax(0, 1fr)) !important; }
+.hero-grid > :first-child { grid-column: span 8; }
+.hero-grid > :last-child { grid-column: span 4; }
+.tasks-grid > :first-child { grid-column: span 9; }
+.tasks-grid > :last-child { grid-column: span 3; }
+.course-detail-grid > :first-child { min-width: 0; }
+.course-detail-grid > * { min-width: 0; }
+.catalog-course-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)) !important; }
+.course-progress-list { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important; }
+.profile-grid > * { grid-column: span 6; }
+.profile-metrics { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)) !important; }
+.calendar-stat-grid { grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)) !important; }
+.card, .hero-card, .catalog-hero, .catalog-course-card, .course-curriculum-card,
+.course-detail-hero, .course-detail-rail > div, .profile-card, .profile-metric,
+.taskhub-task-card, .aptitude-question-widget, .typing-lesson-widget { min-width: 0; }
+.hero-card, .catalog-hero, .course-detail-hero { isolation: isolate; }
+.hero-card > *, .catalog-hero > *, .course-detail-hero > * { position: relative; z-index: 1; }
+.hero-card .hero-message { width: min(100%, 540px); }
+.hero-card .hero-metrics > div { min-width: min(150px, 100%); }
+.course-progress-card { min-width: 0 !important; }
+.task-row { min-width: 0; }
+.task-label { min-width: 0; overflow-wrap: anywhere; }
+.task-due, .task-delete { flex: 0 0 auto; }
+
+/* Charts and rich media get a bounded, width-driven box. */
+.recharts-responsive-container, [class*="chart"], [class*="Chart"] { max-width: 100%; }
+.chart-container, .recharts-wrapper, .recharts-surface { max-width: 100%; }
+.rd-video-frame, .lp-iframe-wrap, .video-wrapper, iframe { max-width: 100%; }
+.rd-video-frame video, .lp-iframe-wrap iframe, .video-wrapper video { display: block; width: 100%; aspect-ratio: 16 / 9; height: auto; }
+.rd-table-wrap, .prose table { max-width: 100%; overflow-x: auto; }
+.rd-table-wrap table, .prose table { min-width: 600px; }
+
+/* Task Hub and practice workspaces: no desktop flex widths leaking to phones. */
+.taskhub-page { min-height: 100dvh !important; height: auto !important; overflow: visible !important; }
+.taskhub-nav { flex-wrap: wrap; min-height: 64px; }
+.taskhub-workspace { min-width: 0 !important; }
+.taskhub-list-panel, .taskhub-side-panel { min-width: 0 !important; }
+.taskhub-task-scroll, .taskhub-side-panel { overflow-y: auto; overflow-x: hidden; }
+.typing-layout { width: min(100%, 1440px); min-width: 0; }
+.typing-main { min-width: 0; }
+.typing-target-widget, .typing-input-widget { max-width: 100%; }
+
+/* Playground/code editors intentionally own their inner code scrolling. */
+.playground, .hacker-workspace, .editor-area, .tracer-grid-split { min-width: 0; max-width: 100%; }
+.playground { width: 100%; max-width: 100vw; overflow: hidden; }
+.hacker-header { flex-wrap: wrap; min-width: 0; }
+.hacker-title-text, .playground-controls { min-width: 0; }
+.playground-controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.editor-area { display: grid; grid-template-columns: auto minmax(0, 1fr); overflow: hidden; }
+.editor-textarea { min-width: 0; width: 100%; max-width: none; resize: none; }
+.line-numbers { overflow: hidden; }
+.hacker-workspace pre, .editor-textarea, .line-numbers { font-size: clamp(.72rem, .7rem + .15vw, .9rem); }
+
+/* Dialogs become sheets at touch widths; content remains reachable. */
+.shortcuts-backdrop, .achievement-share-backdrop { padding: 16px; overflow-y: auto; }
+.shortcuts-modal, .achievement-share-modal { width: min(100%, 720px); max-height: calc(100dvh - 32px); overflow-y: auto; }
+.achievement-share-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mentore-drawer, .ai-mentor { max-width: min(440px, calc(100vw - 24px)); }
+
+@media (max-width: 1280px) {
+  .app-shell-frame__main { padding-inline: clamp(20px, 3vw, 36px); }
+  .hero-grid > :first-child { grid-column: span 7; }
+  .hero-grid > :last-child { grid-column: span 5; }
+  .tasks-grid > :first-child { grid-column: span 8; }
+  .tasks-grid > :last-child { grid-column: span 4; }
+}
+
+@media (max-width: 1023px) {
+  .app-shell-frame:has(.shell-sidebar.is-collapsed) .app-shell-frame__main,
+  .app-shell-frame__main { margin-left: 72px; padding: 24px; }
+  .shell-sidebar { width: 72px; }
+  .shell-sidebar.is-collapsed { width: 72px; }
+  .hero-grid, .tasks-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .hero-grid > *, .tasks-grid > * { grid-column: span 1; }
+  .course-detail-grid { grid-template-columns: minmax(0, 1fr) 280px !important; }
+  .profile-grid > * { grid-column: span 6; }
+  .taskhub-workspace { flex-direction: column !important; overflow: visible !important; }
+  .taskhub-list-panel, .taskhub-side-panel { flex: 1 1 auto !important; width: 100% !important; min-height: 420px; border-right: 0 !important; }
+  .taskhub-side-panel { border-top: 1px solid var(--line); }
+}
+
+@media (max-width: 767px) {
+  .app-shell-frame { overflow: visible; }
+  .app-shell-frame__main, .app-shell-frame:has(.shell-sidebar.is-collapsed) .app-shell-frame__main { margin-left: 0; padding: 20px 16px calc(72px + env(safe-area-inset-bottom)); }
+  .shell-topbar { height: 56px; padding-inline: 12px; }
+  .shell-sidebar, .shell-sidebar.is-collapsed { bottom: 0; top: 56px; width: min(320px, calc(100vw - 40px)); transform: translateX(-105%); }
+  .shell-sidebar.is-open { transform: translateX(0); }
+  .shell-sidebar-scrim { inset: 56px 0 0; }
+  .shell-mobile-close { display: flex; }
+  .shell-sidebar__footer { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+  .shell-statusbar { display: none; }
+  .shell-brand__name, .shell-search-trigger span, .shell-search-trigger kbd { display: none; }
+  .shell-icon-button, .shell-avatar, .shell-menu-button { min-height: 48px; min-width: 48px; }
+  .shell-notifications { left: 12px; right: 12px; top: 60px; width: auto; max-height: calc(100dvh - 76px); }
+  .shell-quick-actions { bottom: calc(18px + env(safe-area-inset-bottom)); right: 16px; }
+  .hero-grid, .tasks-grid, .course-detail-grid, .profile-grid { grid-template-columns: 1fr !important; }
+  .hero-grid > *, .tasks-grid > *, .profile-grid > * { grid-column: 1; }
+  .dash-main, .catalog-main, .course-detail-main, .aptitude-content, .target-room-main { padding-inline: 0 !important; }
+  .hero-card { padding: 22px 18px !important; }
+  .dash-root .dash-hero-logo { width: clamp(76px, 24vw, 118px) !important; height: auto !important; right: 14px !important; top: 26px !important; }
+  .hero-title { font-size: clamp(1.8rem, 9vw, 2.7rem) !important; max-width: 60%; }
+  .hero-message { max-width: 100% !important; }
+  .hero-metrics { gap: 14px !important; }
+  .hero-metrics > div { min-width: 0 !important; flex: 1 1 130px; }
+  .course-progress-list, .catalog-stats, .profile-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .course-detail-rail { display: flex !important; flex-direction: column; }
+  .course-detail-hero { padding: 22px 18px !important; }
+  .course-detail-hero > button { width: 100%; }
+  .taskhub-nav { padding: 10px 12px !important; }
+  .taskhub-filter-bar { padding-inline: 12px !important; }
+  .taskhub-task-scroll { padding-inline: 12px !important; }
+  .typing-page .typing-nav { height: 60px !important; padding-inline: 12px !important; }
+  .typing-page .typing-main { padding: 18px 12px 44px !important; }
+  .typing-page .typing-lesson-widget { padding: 18px !important; }
+  .typing-page .typing-lesson-widget > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+  .typing-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .typing-daily-grid { grid-template-columns: 1fr !important; }
+  .hacker-header { padding: 10px 12px !important; gap: 10px; }
+  .hacker-title-text { flex: 1 1 100%; }
+  .playground-controls { width: 100%; }
+  .playground-controls .hacker-btn { flex: 1 1 120px; }
+  .workspace-tab-row { overflow-x: auto; max-width: 100%; }
+  .achievement-share-grid { grid-template-columns: 1fr; }
+  .shortcuts-backdrop, .achievement-share-backdrop { padding: 0; align-items: stretch; }
+  .shortcuts-modal, .achievement-share-modal { width: 100%; max-height: none; min-height: 100dvh; border-radius: 0 !important; }
+  .mentore-drawer, .ai-mentor { inset: auto 0 0 !important; width: 100% !important; max-width: none; max-height: min(86dvh, 720px); border-radius: 18px 18px 0 0 !important; }
+}
+
+@media (max-width: 420px) {
+  .app-shell-frame__main { padding-inline: 12px; }
+  .course-progress-list, .catalog-stats, .profile-metrics { grid-template-columns: 1fr !important; }
+  .hero-card { padding-inline: 14px !important; }
+  .hero-title { max-width: 100%; }
+  .dash-root .dash-hero-logo { opacity: .18; right: 4px !important; }
+  .btn, .hacker-btn { width: 100%; justify-content: center; }
+  .hero-message > div { display: grid !important; grid-template-columns: 1fr; }
+  .hero-message .btn { width: 100%; }
+  .shortcuts-header, .shortcuts-body { padding-inline: 14px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+/* Narrow-shell corrections: the original feature styles had separate
+   768/900px rules that left a desktop rail visible on small tablets. */
+.catalog-mobile-menu, .catalog-mobile-scrim { display: none; }
+
+@media (max-width: 900px) {
+  .dash-root {
+    display: block !important;
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow: visible !important;
+  }
+  .dash-root .dash-sidebar {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    z-index: 1000 !important;
+    width: min(300px, 86vw) !important;
+    height: 100dvh !important;
+    transform: translateX(-105%) !important;
+    border: 0 !important;
+    box-shadow: 18px 0 50px rgba(15, 23, 42, .18) !important;
+  }
+  .dash-root .dash-sidebar.open { transform: translateX(0) !important; }
+  .dash-root .sidebar-scrim.open {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 999 !important;
+    background: rgba(15, 23, 42, .42) !important;
+  }
+  .dash-root .dash-workspace {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 100dvh !important;
+    overflow: visible !important;
+  }
+  .dash-root .dash-main {
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+  }
+  .dash-root .dash-unified-header { width: 100% !important; margin-left: 0 !important; }
+
+  .course-catalog-shell, .course-detail-shell {
+    display: block !important;
+    min-height: 100dvh !important;
+    overflow: visible !important;
+  }
+  .course-catalog-shell .catalog-sidebar,
+  .course-detail-shell .course-detail-sidebar {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    z-index: 1001 !important;
+    width: min(300px, 86vw) !important;
+    height: 100dvh !important;
+    transform: translateX(-105%) !important;
+    box-shadow: 18px 0 50px rgba(15, 23, 42, .18) !important;
+    transition: transform 220ms var(--ease) !important;
+  }
+  .course-catalog-shell .catalog-sidebar.is-open,
+  .course-detail-shell .course-detail-sidebar.is-open { transform: translateX(0) !important; }
+  .catalog-mobile-menu {
+    position: fixed;
+    top: max(12px, env(safe-area-inset-top));
+    left: 12px;
+    z-index: 1002;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow-md);
+    cursor: pointer;
+  }
+  .catalog-mobile-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    width: 100%;
+    border: 0;
+    background: rgba(15, 23, 42, .42);
+    cursor: pointer;
+  }
+  .course-catalog-shell .catalog-workspace,
+  .course-detail-shell .course-detail-workspace {
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+  }
+  .course-catalog-shell .catalog-topbar,
+  .course-detail-shell .course-detail-topbar { display: none !important; }
+  .course-catalog-shell .catalog-main,
+  .course-detail-shell .course-detail-main {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    overflow: visible !important;
+    padding: 76px 18px 44px !important;
+  }
+  .course-catalog-shell .catalog-hero,
+  .course-detail-shell .course-detail-hero { padding: 22px 18px !important; }
+
+  /* Lesson reader: the navigator is a drawer, never a stacked second page. */
+  .rd-mission .rd-stage {
+    display: block !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+  .rd-mission .rd-rail {
+    position: absolute !important;
+    inset: 0 auto 0 0 !important;
+    z-index: 40 !important;
+    width: min(320px, 88vw) !important;
+    max-height: none !important;
+    transform: translateX(-105%) !important;
+    transition: transform 220ms var(--ease) !important;
+    box-shadow: 18px 0 50px rgba(15, 23, 42, .18) !important;
+  }
+  .rd-mission:not(.lesson-nav-closed) .rd-rail { transform: translateX(0) !important; }
+  .rd-mission.lesson-nav-closed .rd-rail { pointer-events: none !important; }
+  .rd-mission .rd-main { width: 100% !important; min-width: 0 !important; }
+  .rd-mission .rd-content { width: 100% !important; min-width: 0 !important; }
+  .rd-mission .rd-prose, .rd-mission .rd-hero, .rd-mission .rd-footer { max-width: none !important; }
+  .rd-mission .rd-prose { overflow-wrap: anywhere; }
+  .rd-mission .rd-table-wrap { width: 100% !important; max-width: 100% !important; overflow-x: auto !important; }
+  .rd-mission .rd-code, .rd-mission .rd-file-card { max-width: 100% !important; }
+  .rd-mission .rd-code-body, .rd-mission .rd-code-body pre { max-width: 100% !important; overflow-x: auto !important; }
+}
+
+@media (max-width: 560px) {
+  .dash-root .dash-main { padding: 16px 14px 40px !important; }
+  .dash-root .hero-card { padding: 20px 16px !important; }
+  .dash-root .hero-card .hero-title { max-width: 100% !important; }
+  .course-catalog-shell .catalog-topbar,
+  .course-detail-shell .course-detail-topbar { min-height: 58px; }
+  .course-catalog-shell .catalog-main,
+  .course-detail-shell .course-detail-main { padding: 72px 14px 40px !important; }
+  .rd-mission .rd-toolbar { min-height: 58px !important; padding: 8px 12px !important; }
+  .rd-mission .rd-toolbar-left, .rd-mission .rd-toolbar-right { min-width: 0 !important; }
+  .rd-mission .rd-content { padding: 18px 14px 80px !important; }
+  .rd-mission .rd-title { font-size: clamp(1.6rem, 8vw, 2.2rem) !important; }
+  .rd-mission .rd-hero-heading { flex-wrap: wrap !important; gap: 10px !important; }
+  .rd-mission .rd-hero-heading .rd-btn { margin-left: 0 !important; }
+  .rd-mission .rd-code-head, .rd-mission .rd-file-head { flex-wrap: wrap !important; gap: 6px !important; }
+}
+
+/* The Academy component mounts most product views inside a fixed viewport
+   frame. On touch widths that frame must become the page scroller; otherwise
+   the dashboard/catalog can grow visually but the document cannot move. */
+@media (max-width: 900px) {
+  .academy-view-frame:has(.dash-root),
+  .academy-view-frame:has(.course-catalog-shell),
+  .academy-view-frame:has(.course-detail-shell),
+  .academy-view-frame:has(.taskhub-page),
+  .academy-view-frame:has(.typing-page),
+  .academy-view-frame:has(.target-room-page),
+  .academy-view-frame:has(.aptitude-page) {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow-x: clip !important;
+    overflow-y: auto !important;
+  }
+  .academy-view-frame:has(.dash-root) .dash-root {
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow: visible !important;
+  }
+  .academy-view-frame:has(.taskhub-page) .taskhub-page,
+  .academy-view-frame:has(.typing-page) .typing-page,
+  .academy-view-frame:has(.target-room-page) .target-room-page,
+  .academy-view-frame:has(.aptitude-page) .aptitude-page {
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow: visible !important;
   }
 }
