@@ -1,5 +1,5 @@
 module.exports = function registerReaderRoutes(ctx) {
-  with (ctx) {
+  const { app, fs, path, crypto, multer, exec, cloudinary, PORT, IS_PRODUCTION, SUPABASE_URL, SUPABASE_KEY, HAS_SUPABASE_CONFIG, supabase, allowedOrigins, rateBuckets, RATE_WINDOW_MS, RATE_LIMIT, ADMIN_PASSWORD, BACKEND_ROOT, REPO_ROOT, CONFIG_PATH, COURSES_CONFIG, COURSES_DATA, userAuthMiddleware, adminAuthMiddleware, writeConfig, isTextFile, readPartData, VALID_TASK_TYPES, VALID_STATUSES, VALID_PRIORITIES, VALID_LINK_TYPES, VALID_INTERNAL_TARGETS, VALID_URL_TYPES, localDateString, validateTaskSchedule, sanitizeText, validateUrl, detectUrlType, buildDateFilter, DEFAULT_NOTIFICATION_PREFS, sanitizeEmail, normalizeReminderOffsets, normalizeNotificationPreferences, sendReminderEmail, sendDigestEmail } = ctx;
     app.post('/api/watch-session/start', async (req, res) => {
       const { courseId, partId, videoId, durationSeconds } = req.body;
       if (!courseId || partId == null || !videoId) return res.status(400).json({ error: 'Missing fields' });
@@ -329,5 +329,4 @@ module.exports = function registerReaderRoutes(ctx) {
     
     // ── Upsert user profile (called on login from frontend) ───────────────────
     // This is the ONLY route that does NOT require admin auth — students call it
-  }
 };
