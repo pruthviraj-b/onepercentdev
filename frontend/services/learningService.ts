@@ -98,8 +98,11 @@ export async function createTask(text: string, due_date?: string): Promise<Task 
       lsSetTasks(updated);
       return { ...optimistic, id: data.id };
     }
-  } catch {}
-  return optimistic;
+    lsSetTasks(current);
+  } catch {
+    lsSetTasks(current);
+  }
+  return null;
 }
 
 export async function updateTask(id: number, patch: Partial<Task>): Promise<void> {
@@ -108,12 +111,15 @@ export async function updateTask(id: number, patch: Partial<Task>): Promise<void
   lsSetTasks(current.map(t => t.id === id ? { ...t, ...patch } : t));
 
   try {
-    await fetch(`${getApiBase()}/api/tasks/${id}`, {
+    const res = await fetch(`${getApiBase()}/api/tasks/${id}`, {
       method: 'PUT',
       headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(patch),
     });
-  } catch {}
+    if (!res.ok) throw new Error(`Task update failed (${res.status})`);
+  } catch {
+    // The UI remains optimistic, but the next refresh will reveal a failed save.
+  }
 }
 
 export async function deleteTask(id: number): Promise<void> {
@@ -121,11 +127,14 @@ export async function deleteTask(id: number): Promise<void> {
   lsSetTasks(current.filter(t => t.id !== id));
 
   try {
-    await fetch(`${getApiBase()}/api/tasks/${id}`, { 
+    const res = await fetch(`${getApiBase()}/api/tasks/${id}`, { 
       method: 'DELETE',
       headers: getAuthHeaders()
     });
-  } catch {}
+    if (!res.ok) throw new Error(`Task delete failed (${res.status})`);
+  } catch {
+    // Keep the UI responsive; the backend remains the source of truth on reload.
+  }
 }
 
 // ── Streak API ───────────────────────────────────────────────────────────────

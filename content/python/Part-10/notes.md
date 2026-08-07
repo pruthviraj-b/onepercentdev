@@ -1,5 +1,3 @@
-# 1.10 Best practices
+# Part 10
 
-## Best practices
-
-This lesson has its own notes page. Add explanations, examples, exercises, and review prompts here.
+This chapter is currently under construction.

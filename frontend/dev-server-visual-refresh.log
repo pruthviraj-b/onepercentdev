@@ -1,0 +1,74 @@
+
+> onepercentdev-frontend@0.1.0 predev
+> node -e "const fs = require('fs'); if (fs.existsSync('.next')) fs.rmSync('.next', { recursive: true, force: true });" && node scripts/export-data.js
+
+Exporting courses metadata...
+Exported courses.json successfully.
+Exported videos.json successfully.
+  (Supabase not configured — skipping Cloudinary file merge)
+Compiling course: Python for Data Analysis — Industry Master Program...
+  Exported modules-python.json
+  Exported part notes for python.
+Compiling course: Cloud Computing...
+  Exported modules-cloud.json
+  Exported part notes for cloud.
+Compiling course: Data Analyst (Telugu)...
+  Exported modules-data-analyst-te.json
+  Exported part notes for data-analyst-te.
+Compiling course: Data Analyst (English)...
+  Exported modules-data-analyst-en.json
+  Exported part notes for data-analyst-en.
+Compiling course: Excel Mastery...
+  Exported modules-excel.json
+  Exported part notes for excel.
+Compiling course: SQL...
+  Exported modules-sql.json
+  Exported part notes for sql.
+
+Data export complete!
+
+> onepercentdev-frontend@0.1.0 dev
+> cross-env NODE_OPTIONS=--max-old-space-size=4096 NEXT_TELEMETRY_DISABLED=1 next dev --port 3005
+
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3005
+   - Network:      http://192.168.134.237:3005
+   - Experiments (use with caution):
+     · cpus: 1
+
+ ✓ Starting...
+ ✓ Ready in 21.1s
+ ○ Compiling / ...
+ ✓ Compiled /_not-found in 68.5s (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 31505ms
+ GET /api/modules-data-analyst.json 404 in 7540ms
+ GET / 200 in 76105ms
+ GET / 200 in 722ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 2.7s (880 modules)
+ GET /favicon.ico 200 in 3356ms
+ GET /favicon.ico 200 in 30ms
+ GET /api/modules-data-analyst.json 404 in 1334ms
+ GET /api/modules-data-analyst.json 404 in 146ms
+ GET /api/modules-data-analyst.json 404 in 210ms
+ GET /api/modules-data-analyst.json 404 in 126ms
+ ✓ Compiled in 3.5s (1445 modules)
+ GET /?view=landing&course=python 200 in 1447ms
+ GET / 200 in 167ms
+ ✓ Compiled in 1368ms (1445 modules)
+ GET /?view=landing&course=python 200 in 1077ms
+ GET / 200 in 273ms
+ ✓ Compiled in 4.8s (1431 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 874ms (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 3213ms
+ GET / 200 in 2306ms
+ GET /?view=reader&course=python&part=1 200 in 2307ms
+ GET /api/modules-data-analyst.json 404 in 236ms
+ ✓ Compiled in 1861ms (1450 modules)
+ GET / 200 in 796ms
+ GET /?view=reader&course=python&part=1 200 in 810ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 5s (1779 modules)
+ GET / 500 in 12906ms
+[?25h

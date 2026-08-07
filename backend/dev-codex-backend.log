@@ -1,0 +1,302 @@
+
+> onepercentdev-backend@1.0.0 dev
+> node --watch src/app/server.js
+
+◇ injected env (8) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+  ✓  Analytics tables ready.
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+Failed running 'src/app/server.js'. Waiting for file changes before restarting...
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+  ✓  Analytics tables ready.
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+  ✓  Analytics tables ready.
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+Failed running 'src/app/server.js'. Waiting for file changes before restarting...
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ override existing { override: true }
+Failed running 'src/app/server.js'. Waiting for file changes before restarting...
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ enable debugging { debug: true }
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+  ✓  Analytics tables ready.
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+  ✓  Analytics tables ready.
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ override existing { override: true }
+Failed running 'src/app/server.js'. Waiting for file changes before restarting...
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+Restarting 'src/app/server.js'
+Waiting for graceful termination...
+Gracefully restarted 'src/app/server.js'
+◇ injected env (8) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ override existing { override: true }
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ override existing { override: true }
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+Failed running 'src/app/server.js'. Waiting for file changes before restarting...
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Failed running 'src/app/server.js'. Waiting for file changes before restarting...
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ suppress logs { quiet: true }
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+Failed running 'src/app/server.js'. Waiting for file changes before restarting...
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ override existing { override: true }
+Failed running 'src/app/server.js'. Waiting for file changes before restarting...
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ suppress logs { quiet: true }
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+  ✓  Analytics tables ready.
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ suppress logs { quiet: true }
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+  ✓  Analytics tables ready.
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ enable debugging { debug: true }
+Failed running 'src/app/server.js'. Waiting for file changes before restarting...
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+  ✓  Analytics tables ready.
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+  ✓  Analytics tables ready.
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ override existing { override: true }
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+  ✓  Analytics tables ready.
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Failed running 'src/app/server.js'. Waiting for file changes before restarting...
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+Failed running 'src/app/server.js'. Waiting for file changes before restarting...
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+  ✓  Analytics tables ready.
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Failed running 'src/app/server.js'. Waiting for file changes before restarting...
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ suppress logs { quiet: true }
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+  ✓  Analytics tables ready.
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ override existing { override: true }
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+  ✓  Analytics tables ready.
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ override existing { override: true }
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+  ✓  Analytics tables ready.
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+  ✓  Analytics tables ready.
+
+Restarting 'src/app/server.js'
+Waiting for graceful termination...
+Gracefully restarted 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ suppress logs { quiet: true }
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ suppress logs { quiet: true }
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+Restarting 'src/app/server.js'
+◇ injected env (8) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+
+  ● 1% Dev Academy — API Server (Supabase + Cloudinary)
+  ● http://localhost:3001
+  ● Supabase: undefined
+  ● Cloudinary: undefined
+  ● Courses: cloud, data-analyst, data-analyst-te, data-analyst-en, excel, sql, python
+
+  ✓  Analytics tables ready.
+
+Failed running 'src/app/server.js'. Waiting for file changes before restarting...

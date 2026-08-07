@@ -145,7 +145,7 @@ Edit the `"videos"` section of the course:
 ```
 
 ### Add a new part
-1. Create the folder: `content/python/Part-39/notes.md` (or `content/cloud/Part-X/`)
+1. Create the folder: `content/cloud/Part-X/notes.md`
 2. Add the part number to the correct module in `courses.config.json`:
    ```json
    { "id": 8, "title": "File Handling & Advanced Data", "parts": [36, 37.1, 37.2, 38, 38.1, 39] }

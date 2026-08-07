@@ -9,6 +9,7 @@ const registerReaderController = require('../controllers/ReaderController');
 const registerAnalyticsController = require('../controllers/AnalyticsController');
 const registerHealthController = require('../controllers/HealthController');
 const registerAIController = require('../controllers/AIController');
+const registerTTSController = require('../controllers/TTSController');
 
 module.exports = function registerRoutes(context) {
   registerCourseController(context);
@@ -21,5 +22,6 @@ module.exports = function registerRoutes(context) {
   registerReaderController(context);
   registerAnalyticsController(context);
   registerAIController(context);
+  registerTTSController(context);
   registerHealthController(context);
 };

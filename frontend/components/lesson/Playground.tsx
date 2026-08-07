@@ -305,7 +305,7 @@ export function Playground({ prefilledCode, courseId }: Props) {
   // ── Workspace State ──
   const [activeLang, setActiveLang] = useState<'python' | 'sql'>('python');
   const [files, setFiles] = useState<Record<string, string>>({
-    'main.py': '# Write Python here and press ▶ Run (Ctrl+Enter)\nprint("Hello from 1% Dev Academy!")\nx = [1, 2]\ny = x\ny.append(3)\nprint("x =", x)\n',
+    'main.py': '# Write Python here and press ▶ Run (Ctrl+Enter)\nprint("Hello from the learning sandbox!")\nx = [1, 2]\ny = x\ny.append(3)\nprint("x =", x)\n',
     'query.sql': '-- Write SQL here and press ▶ Run (Ctrl+Enter)\n-- A mock database (employees, sales) is pre-loaded for you!\nSELECT * FROM employees;\n'
   });
   const [activeFile, setActiveFile] = useState('main.py');
@@ -320,7 +320,7 @@ export function Playground({ prefilledCode, courseId }: Props) {
     { text: ' * Management:     https://landscape.canonical.com', type: 'info' },
     { text: ' * Support:        https://ubuntu.com/pro', type: 'info' },
     { text: '', type: 'info' },
-    { text: 'Welcome to 1% Dev Academy Cloud Sandbox.', type: 'info' },
+    { text: 'Welcome to the Cloud Sandbox.', type: 'info' },
     { text: 'Type "help" to view diagnostic commands.', type: 'info' },
     { text: '', type: 'info' }
   ]);
@@ -482,7 +482,7 @@ export function Playground({ prefilledCode, courseId }: Props) {
           outputText = 'curl: missing URL';
           outputType = 'err';
         } else {
-          outputText = 'HTTP/1.1 200 OK\nServer: nginx/1.25.1\nContent-Type: text/html\nContent-Length: 120\n\n<html>\n<head><title>1% Dev Academy Node</title></head>\n<body><h1>Proxy Node Active</h1></body>\n</html>';
+          outputText = 'HTTP/1.1 200 OK\nServer: nginx/1.25.1\nContent-Type: text/html\nContent-Length: 120\n\n<html>\n<head><title>Learning Sandbox Node</title></head>\n<body><h1>Proxy Node Active</h1></body>\n</html>';
         }
         break;
       default:

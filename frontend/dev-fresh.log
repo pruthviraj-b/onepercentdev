@@ -1,0 +1,54 @@
+
+> onepercentdev-frontend@0.1.0 predev
+> node -e "const fs = require('fs'); if (fs.existsSync('.next-dev')) fs.rmSync('.next-dev', { recursive: true, force: true });" && node scripts/export-data.js
+
+Exporting courses metadata...
+Exported courses.json successfully.
+Exported videos.json successfully.
+  (Supabase not configured — skipping Cloudinary file merge)
+Compiling course: Cloud Computing...
+  Exported modules-cloud.json
+  Exported part notes for cloud.
+Compiling course: Data Analyst (Telugu)...
+  Exported modules-data-analyst-te.json
+  Exported part notes for data-analyst-te.
+Compiling course: Data Analyst (English)...
+  Exported modules-data-analyst-en.json
+  Exported part notes for data-analyst-en.
+Compiling course: Excel Mastery...
+  Exported modules-excel.json
+  Exported part notes for excel.
+Compiling course: SQL...
+  Exported modules-sql.json
+  Exported part notes for sql.
+
+Data export complete!
+
+> onepercentdev-frontend@0.1.0 dev
+> cross-env NODE_OPTIONS=--max-old-space-size=4096 NEXT_TELEMETRY_DISABLED=1 next dev --port 3005 --port 3005
+
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3005
+   - Network:      http://192.168.217.111:3005
+   - Experiments (use with caution):
+     · cpus: 1
+
+ ✓ Starting...
+ ✓ Ready in 7s
+ ○ Compiling / ...
+ ✓ Compiled / in 15.3s (1445 modules)
+ GET / 200 in 18587ms
+ GET / 200 in 681ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 3.4s (879 modules)
+ GET /favicon.ico 200 in 3916ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 2.2s (1453 modules)
+ GET /api/modules-data-analyst.json 404 in 4750ms
+ GET /api/modules-data-analyst.json 404 in 219ms
+ GET / 200 in 1014ms
+ GET /favicon.ico 200 in 178ms
+ GET /api/modules-data-analyst.json 404 in 279ms
+ GET /api/modules-data-analyst.json 404 in 136ms
+ ✓ Compiled in 3.2s (1453 modules)
+[?25h

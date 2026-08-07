@@ -55,15 +55,15 @@ const HIDDEN_COURSE_IDS = ['data-analyst', 'data-analyst-en'];
 
 function getCourseLogoUrl(mascot?: string, id?: string): string | null {
   const val = `${mascot || ''} ${id || ''}`.toLowerCase();
-  if (val.includes('snake') || val.includes('python')) return '/logos/python.jpg';
-  if (val.includes('cloud')) return '/logos/cloud.jpg';
-  if (val.includes('excel')) return '/logos/excel.jpg';
-  if (val.includes('dashboard')) return '/logos/dashboard.jpg';
-  if (val.includes('aptitude') || val.includes('apti')) return '/logos/apti.jpg';
-  if (val.includes('typing')) return '/logos/typing-board.jpg';
-  if (val.includes('task') || val.includes('taskhub') || val.includes('hub')) return '/logos/completed-task.jpg';
-  if (val.includes('data-analyst') || val.includes('data analyst') || val.includes('analyst') || val.includes('chart')) return '/logos/da.jpg';
-  if (val.includes('database') || val.includes('sql')) return '/logos/sql.jpg';
+  if (val.includes('snake') || val.includes('python')) return '/logos/python-neo.svg';
+  if (val.includes('cloud')) return '/logos/cloud-neo.svg';
+  if (val.includes('excel')) return '/logos/excel-neo.svg';
+  if (val.includes('dashboard')) return '/logos/dashboard-neo.svg';
+  if (val.includes('aptitude') || val.includes('apti')) return '/logos/aptitude-neo.svg';
+  if (val.includes('typing')) return '/logos/typing-neo.svg';
+  if (val.includes('task') || val.includes('taskhub') || val.includes('hub')) return '/logos/tasks-neo.svg';
+  if (val.includes('data-analyst') || val.includes('data analyst') || val.includes('analyst') || val.includes('chart')) return '/logos/analytics-neo.svg';
+  if (val.includes('database') || val.includes('sql')) return '/logos/sql-neo.svg';
   return null;
 }
 
@@ -111,6 +111,8 @@ function CourseLogoImg({ mascot, id, size = 28 }: { mascot?: string; id?: string
 interface CourseProgress { id: string; label: string; icon: string; completed: number; total: number; }
 interface DashboardProps { onNavigate: (module: string) => void; onOpenTaskHub?: () => void; }
 
+const BRAND_TITLE = '1% Dev Academy';
+
 export interface DashboardBootstrapData {
   tasks: Task[];
   streak: StreakInfo;
@@ -131,16 +133,29 @@ export function preloadDashboardData(): Promise<DashboardBootstrapData> {
   if (dashboardBootstrapPromise) return dashboardBootstrapPromise;
 
   dashboardBootstrapPromise = (async () => {
-    const [tasks, streak, courses, recentActivity] = await Promise.all([
-      fetchLegacyTasks(),
-      fetchStreak(),
-      fetchCourses(),
-      fetchRecentActivity(),
-      Promise.resolve(initVideos()).catch(() => undefined),
-    ]).then(([tasks, streak, courses, recentActivity]) => [tasks, streak, courses, recentActivity] as const);
+    // Start every request that does not depend on the course list immediately.
+    // Progress requests begin as soon as the course list resolves instead of
+    // waiting for the other dashboard requests to finish first.
+    const tasksPromise = fetchLegacyTasks();
+    const streakPromise = fetchStreak();
+    const coursesPromise = fetchCourses();
+    const recentActivityPromise = fetchRecentActivity();
+    const videosPromise = Promise.resolve(initVideos()).catch(() => undefined);
+    const progressPromise = coursesPromise.then(courses => {
+      const dashboardCourses = courses.filter(course => !HIDDEN_COURSE_IDS.includes(course.id));
+      return Promise.all(dashboardCourses.map(course => fetchModulesAndProgress(course.id)));
+    });
+
+    const [tasks, streak, courses, recentActivity, progressResults] = await Promise.all([
+      tasksPromise,
+      streakPromise,
+      coursesPromise,
+      recentActivityPromise,
+      progressPromise,
+      videosPromise,
+    ]);
 
     const dashboardCourses = courses.filter(course => !HIDDEN_COURSE_IDS.includes(course.id));
-    const progressResults = await Promise.all(dashboardCourses.map(course => fetchModulesAndProgress(course.id)));
     const courseProgress = dashboardCourses.map((course, index) => ({
       id: course.id,
       label: course.title,
@@ -192,16 +207,37 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
   const [newTaskDue, setNewTaskDue] = useState('');
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [profilePopoverPosition, setProfilePopoverPosition] = useState<{ left: number; top?: number; bottom?: number }>({ left: 12, bottom: 84 });
   const [imgError, setImgError] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false); // mobile sidebar toggle
   const profileRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const heroLogoRef = useRef<HTMLVideoElement>(null);
   const [streak, setStreak] = useState<StreakInfo>(() => dashboardBootstrapSnapshot?.streak ?? { current: 0, longest: 0, total: 0, dates: [] });
   const [courseProgress, setCourseProgress] = useState<CourseProgress[]>(() => dashboardBootstrapSnapshot?.courseProgress ?? []);
   const [coursesList, setCoursesList] = useState<Course[]>(() => dashboardBootstrapSnapshot?.courses ?? []);
   const [statsLoading, setStatsLoading] = useState(() => !dashboardBootstrapSnapshot);
   const [displayStreak, setDisplayStreak] = useState(0);
   const [recentActivity, setRecentActivity] = useState<{ courseId: string; partId: number } | null>(() => dashboardBootstrapSnapshot?.recentActivity ?? null);
+
+  useEffect(() => {
+    const video = heroLogoRef.current;
+    if (!video) return;
+
+    video.muted = true;
+    video.defaultMuted = true;
+    video.setAttribute('muted', '');
+    const keepPlaying = () => { void video.play().catch(() => undefined); };
+    keepPlaying();
+    video.addEventListener('loadeddata', keepPlaying);
+    video.addEventListener('canplay', keepPlaying);
+    document.addEventListener('visibilitychange', keepPlaying);
+    return () => {
+      video.removeEventListener('loadeddata', keepPlaying);
+      video.removeEventListener('canplay', keepPlaying);
+      document.removeEventListener('visibilitychange', keepPlaying);
+    };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -241,6 +277,29 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
     document.addEventListener('mousedown', h);
     return () => document.removeEventListener('mousedown', h);
   }, []);
+
+  useEffect(() => {
+    if (!profileMenuOpen) return;
+    const updatePopoverPosition = () => {
+      const anchor = profileRef.current?.getBoundingClientRect();
+      if (!anchor) return;
+      const estimatedHeight = 300;
+      const gap = 8;
+      const left = Math.max(8, Math.min(anchor.left + 12, window.innerWidth - 252));
+      if (anchor.bottom + estimatedHeight + gap <= window.innerHeight) {
+        setProfilePopoverPosition({ left, top: anchor.bottom + gap });
+      } else {
+        setProfilePopoverPosition({ left, bottom: Math.max(8, window.innerHeight - anchor.top + gap) });
+      }
+    };
+    updatePopoverPosition();
+    window.addEventListener('resize', updatePopoverPosition);
+    window.addEventListener('scroll', updatePopoverPosition, true);
+    return () => {
+      window.removeEventListener('resize', updatePopoverPosition);
+      window.removeEventListener('scroll', updatePopoverPosition, true);
+    };
+  }, [profileMenuOpen]);
 
   useEffect(() => { if (showAddTask && inputRef.current) inputRef.current.focus(); }, [showAddTask]);
 
@@ -406,7 +465,10 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
         .course-progress-aurora-card:hover { border-color: rgba(249,128,18,.42) !important; box-shadow: 0 18px 36px rgba(31,41,55,.12), 0 0 0 4px rgba(249,128,18,.06) !important; }
         .course-progress-aurora-ring { display: grid; place-items: center; border-radius: 50%; background: radial-gradient(circle at 35% 25%, rgba(255,255,255,.95), rgba(245,247,252,.72)); box-shadow: 0 8px 18px rgba(83,96,128,.12), inset 0 1px 2px rgba(255,255,255,.95); }
         .course-progress-aurora-icon { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.9); border-radius: 50%; background: rgba(255,255,255,.74); box-shadow: 0 4px 12px rgba(31,41,55,.08); }
-        .profile-popover { position: absolute; bottom: calc(100% + 12px); left: 12px; right: 12px; z-index: 50; padding: 10px; border: 1px solid rgba(255,255,255,.95); border-radius: 18px; background: rgba(255,255,255,.92); box-shadow: 0 18px 48px rgba(31,41,55,.16), 0 0 0 4px rgba(249,128,18,.04); backdrop-filter: blur(20px); animation: profilePopoverIn 180ms var(--ease); }
+        .course-progress-bar-track { height: 10px; padding: 1px; overflow: hidden; border: 1px solid ${C.border}; border-radius: 4px; background: ${C.surface}; box-sizing: border-box; }
+        .course-progress-bar-fill { height: 100%; min-width: 0; border-radius: 2px; transition: width .35s ease; }
+        .course-progress-card > div:nth-child(n+3) { display: none !important; }
+        .profile-popover { position: fixed; z-index: 1000; width: 236px; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow-y: auto; padding: 10px; box-sizing: border-box; border: 1px solid rgba(255,255,255,.95); border-radius: 18px; background: rgba(255,255,255,.96); box-shadow: 0 18px 48px rgba(31,41,55,.16), 0 0 0 4px rgba(249,128,18,.04); backdrop-filter: blur(20px); animation: profilePopoverIn 180ms var(--ease); }
         .profile-popover-head { display: flex; align-items: center; gap: 10px; padding: 8px; }
         .profile-popover-head img, .profile-popover-avatar { width: 42px; height: 42px; flex: 0 0 42px; border-radius: 13px; object-fit: cover; }
         .profile-popover-avatar { display: grid; place-items: center; background: var(--accent-dim); color: var(--accent); font-weight: 800; }
@@ -511,10 +573,13 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
             position: fixed !important;
             top: 46px !important;
             height: calc(100dvh - 46px) !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+            border: 0 !important;
             padding-top: 0 !important;
             z-index: 500;
             transform: translateX(-100%);
-            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+            box-shadow: 0 0 40px rgba(0,0,0,0.5) !important;
           }
           .dash-sidebar.open { transform: translateX(0); }
           .sidebar-scrim.open {
@@ -527,6 +592,7 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
           .dash-main { padding: 16px !important; }
           .hero-card { padding: 18px !important; }
           .mobile-menu-btn { display: inline-flex !important; }
+          .dash-workspace { margin: 0 !important; border-radius: 0 !important; border: 0 !important; }
         }
 
         @media (min-width: 769px) {
@@ -544,25 +610,15 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
 
       <div className={`sidebar-scrim ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)} />
 
+      {/* ══════════ MERGED PANEL WRAPPER ══════════ */}
       {/* ══════════ SIDEBAR ══════════ */}
       <aside className={`dash-sidebar ${sidebarOpen ? 'open' : ''}`} style={{
-        width: '232px', flexShrink: 0, background: C.surface, borderRight: `1px solid ${C.border}`,
-        display: 'flex', flexDirection: 'column', height: '100dvh', paddingTop: 0, top: 0, left: 0,
+        width: '260px', flexShrink: 0, background: C.bg,
+        margin: 0, borderRadius: 0, border: 'none', borderRight: `1px solid ${C.border}`, boxShadow: 'none',
+        display: 'flex', flexDirection: 'column', height: '100%', paddingTop: 0, top: 0, left: 0, overflow: 'hidden'
       }}>
-        <div style={{ flexShrink: 0, height: '182px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', padding: '12px 12px 16px', boxSizing: 'border-box', borderBottom: `1px solid ${C.border}` }}>
-          <video
-            src="/logos/applogo.webm"
-            autoPlay
-            muted
-            loop
-            playsInline
-            aria-label="1% Dev Academy logo"
-            style={{ width: '112px', height: '112px', objectFit: 'contain', objectPosition: 'center', display: 'block' }}
-          />
-          <div style={{ marginTop: '8px', textAlign: 'center', fontFamily: F.display, fontWeight: 700, fontSize: '1.04rem', lineHeight: 1.15, letterSpacing: '-0.025em', whiteSpace: 'nowrap' }}>1% Dev Academy</div>
-        </div>
+        <div className="dash-brand-panel" style={{ flexShrink: 0, height: '18px', padding: 0, boxSizing: 'border-box' }} />
         <nav style={{ flex: 1, overflowY: 'auto', padding: '14px 10px' }}>
-          <SideItem icon={<Icon name="home" />} label="Home" active onClick={() => {}} />
           <div style={{ fontFamily: F.mono, fontSize: '0.6rem', color: C.textFaint, textTransform: 'uppercase', letterSpacing: '0.1em', padding: '16px 12px 6px' }}>Courses</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '6px', marginBottom: '4px' }}>
             {visibleCourses.map(c => (
@@ -571,13 +627,13 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
           </div>
           <div style={{ fontFamily: F.mono, fontSize: '0.6rem', color: C.textFaint, textTransform: 'uppercase', letterSpacing: '0.1em', padding: '16px 12px 6px' }}>Training</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '6px' }}>
-            <SideItemLogo mascot="typing" courseId="typing" label="Typing" iconOnly onClick={() => onNavigate('typing')} />
-            <SideItemLogo mascot="aptitude" courseId="aptitude" label="Aptitude" iconOnly onClick={() => onNavigate('aptitude')} />
-            {onOpenTaskHub && <SideItemLogo mascot="taskhub" courseId="taskhub" label="Task Hub" iconOnly onClick={onOpenTaskHub} />}
+            <SideItemLogo mascot="typing" courseId="typing" label="Typing" iconOnly iconName="keyboard" onClick={() => onNavigate('typing')} />
+            <SideItemLogo mascot="aptitude" courseId="aptitude" label="Aptitude" iconOnly iconName="spark" onClick={() => onNavigate('aptitude')} />
+            {onOpenTaskHub && <SideItemLogo mascot="taskhub" courseId="taskhub" label="Task Hub" iconOnly iconName="check" onClick={onOpenTaskHub} />}
           </div>
         </nav>
 
-        <div ref={profileRef} style={{ position: 'relative', borderTop: `1px solid ${C.border}`, padding: '12px' }}>
+        <div ref={profileRef} style={{ position: 'relative', padding: '12px' }}>
           <button onClick={() => setProfileMenuOpen(o => !o)} style={{
             width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
             background: profileMenuOpen ? C.surfaceHi : 'transparent', border: 'none', borderRadius: '8px',
@@ -592,7 +648,7 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
             </div>
           </button>
           {profileMenuOpen && (
-            <div className="profile-popover" role="menu">
+            <div className="profile-popover" role="menu" style={profilePopoverPosition}>
               <div className="profile-popover-head">
                 {photoURL ? <img src={photoURL} alt="" /> : <div className="profile-popover-avatar">{initials}</div>}
                 <div style={{ minWidth: 0 }}>
@@ -620,28 +676,9 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
       </aside>
 
       {/* ══════════ MAIN COLUMN ══════════ */}
-      <div className="dash-workspace" style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, minHeight: 0 }}>
+      {/* ══════════ MAIN COLUMN ══════════ */}
+      <div className="dash-workspace" style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, minHeight: 0, background: C.bg, margin: 0, borderRadius: 0, border: 'none', overflow: 'hidden' }}>
 
-        {/* Topbar */}
-        <header className="dash-unified-header" style={{
-          height: '46px', flexShrink: 0, borderBottom: '0', background: 'transparent', boxShadow: 'none',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px',
-          marginLeft: 0, width: 'auto', position: 'relative', zIndex: 10,
-        }}>
-          <div className="dash-topbar-left" style={{ display: 'flex', alignItems: 'center', gap: '10px', transform: 'none' }}>
-            <button
-              className="mobile-menu-btn"
-              onClick={() => setSidebarOpen(o => !o)}
-              aria-label="Toggle menu"
-              style={{ display: 'none', background: C.surface, border: `1px solid ${C.border}`, borderRadius: '7px', width: '32px', height: '32px', cursor: 'pointer', color: C.text, alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem' }}
-            ><Icon name="menu" /></button>
-            <span className="dash-date-widget" style={{ display: 'inline-flex', alignItems: 'center', gap: '9px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: '8px', padding: '7px 11px' }}>
-              <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: isActiveToday ? C.green : C.textFaint, animation: isActiveToday ? 'pulseDot 2s ease infinite' : 'none' }} />
-              <span className="dash-topbar-date" style={{ fontFamily: F.mono, fontSize: '0.72rem', color: C.textDim }}>{topbarDate()}</span>
-            </span>
-          </div>
-          <div aria-hidden="true" />
-        </header>
 
         <main className="dash-main" style={{ flex: 1, minHeight: 0, overflowY: 'auto', overscrollBehavior: 'contain', padding: '18px 32px 44px' }}>
 
@@ -654,10 +691,23 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
               background: `linear-gradient(135deg, ${C.surface}, ${C.surfaceHi})`, border: `1px solid ${C.border}`,
               borderRadius: '14px', padding: '26px 28px', position: 'relative', overflow: 'hidden',
             }}>
+              <div className="dash-hero-brand">1% DEV ACADEMY</div>
               <div style={{
                 position: 'absolute', top: '-40%', right: '-10%', width: '260px', height: '260px', borderRadius: '50%',
                 background: `radial-gradient(circle, ${C.cyanDim}, transparent 70%)`, pointerEvents: 'none',
               }} />
+              <video
+                ref={heroLogoRef}
+                className="dash-hero-logo"
+                src="/logos/applogo.webm"
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+                onCanPlay={event => { void event.currentTarget.play().catch(() => undefined); }}
+                aria-label="1% Dev Academy logo"
+              />
               <div style={{ fontFamily: F.mono, fontSize: '0.7rem', color: C.cyan, letterSpacing: '0.06em', marginBottom: '6px' }}>{greeting.toUpperCase()}</div>
               <h1 className="hero-title" style={{ fontFamily: F.display, fontWeight: 700, fontSize: '2rem', letterSpacing: '-0.02em', margin: '0 0 8px', color: C.text }}>
                 {firstName}<span style={{ color: C.textFaint }}>.</span>
@@ -686,8 +736,12 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
             </div>
 
             <div className="card" style={{ padding: '18px 20px' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '12px' }}>
                 <span style={{ fontFamily: F.mono, fontSize: '0.66rem', color: C.textFaint, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Activity log</span>
+                <span className="dash-date-widget" style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: '8px', padding: '6px 9px', flexShrink: 0 }}>
+                  <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: isActiveToday ? C.green : C.textFaint, animation: isActiveToday ? 'pulseDot 2s ease infinite' : 'none' }} />
+                  <span className="dash-topbar-date" style={{ fontFamily: F.mono, fontSize: '0.64rem', color: C.textDim }}>{topbarDate()}</span>
+                </span>
               </div>
               <ContributionHeatmap dates={streak.dates} loading={statsLoading} />
               <div className="calendar-stat-grid">
@@ -744,7 +798,7 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
             );
           })()}
 
-          {/* Course progress rings */}
+          {/* Course progress bars */}
           <section className="course-progress-aurora" style={{ marginBottom: '22px' }}>
             <SectionHeader title="Course progress" action={{ label: 'View all →', onClick: () => onNavigate('academy') }} />
             {statsLoading ? (
@@ -755,16 +809,18 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
                   const pct = cp.total > 0 ? Math.round((cp.completed / cp.total) * 100) : 0;
                   return (
                     <div key={cp.id} onClick={() => onNavigate(`course_${cp.id}`)} className="card card-hover course-progress-card course-progress-aurora-card" style={{
-                      minWidth: 0, padding: '12px', cursor: 'pointer',
-                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '7px',
+                      minWidth: 0, padding: '14px', cursor: 'pointer',
+                      display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '10px',
                     }}>
-                      <div className="course-progress-aurora-ring" style={{ position: 'relative', width: '72px', height: '72px' }}>
-                        <RingProgress pct={pct} size={64} stroke={5} color={ringColors[idx % ringColors.length]} />
-                        <div className="course-progress-aurora-icon" style={{ position: 'absolute', inset: 0, margin: 'auto' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '9px', minWidth: 0 }}>
+                        <div style={{ display: 'grid', placeItems: 'center', width: '34px', height: '34px', flex: '0 0 34px', border: `2px solid ${C.border}`, borderRadius: '8px', background: C.surfaceHi }}>
                           <CourseLogoImg mascot={undefined} id={cp.id} size={21} />
                         </div>
+                        <div style={{ minWidth: 0, overflow: 'hidden', fontFamily: F.body, fontWeight: 700, fontSize: '0.78rem', color: C.text, textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cp.label}</div>
                       </div>
-                      <div style={{ fontFamily: F.body, fontWeight: 600, fontSize: '0.78rem', color: C.text, textAlign: 'center' }}>{cp.label}</div>
+                      <div className="course-progress-bar-track" aria-label={`${cp.label} progress`}>
+                        <div className="course-progress-bar-fill" style={{ width: `${pct}%`, background: ringColors[idx % ringColors.length] }} />
+                      </div>
                       <div style={{ fontFamily: F.mono, fontWeight: 700, fontSize: '0.8rem', color: ringColors[idx % ringColors.length] }}>{pct}% · {cp.completed}/{cp.total}</div>
                       <div style={{ fontFamily: F.mono, fontSize: '0.6rem', color: C.textFaint }}>Next: lesson {Math.min(cp.total, cp.completed + 1) || 1}</div>
                     </div>
@@ -827,15 +883,12 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
           <section className="tasks-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 280px', gap: '20px' }}>
 
             {/* Task terminal */}
-            <div className="card" style={{ overflow: 'hidden' }}>
+            <div className="card task-terminal" style={{ overflow: 'hidden' }}>
               <div className="task-list-heading" style={{ padding: '14px 18px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: C.red, opacity: 0.7 }} />
-                  <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: C.amber, opacity: 0.7 }} />
-                  <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: C.green, opacity: 0.7 }} />
                   <span style={{ fontFamily: F.mono, fontSize: '0.72rem', color: C.textDim, marginLeft: '8px' }}>tasks.sh</span>
                 </div>
-                <button className="btn" onClick={() => setShowAddTask(true)} style={{
+                <button className="btn task-add-button" onClick={() => setShowAddTask(true)} style={{
                   background: C.cyanDim, color: C.cyan, border: `1px solid ${C.cyan}44`,
                   padding: '5px 12px', fontFamily: F.mono, fontWeight: 700, fontSize: '0.68rem',
                 }}>Add task</button>
@@ -843,7 +896,7 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
 
               {tasks.length > 0 && (
                 <div style={{ padding: '12px 18px 0' }}>
-                  <div style={{ height: '4px', background: C.border, borderRadius: '2px', overflow: 'hidden' }}>
+                  <div className="task-progress-track" style={{ height: '4px', background: C.border, borderRadius: '2px', overflow: 'hidden' }}>
                     <div style={{ height: '100%', width: `${progressPct}%`, background: progressPct === 100 ? C.green : C.cyan, transition: 'width 0.4s ease' }} />
                   </div>
                 </div>
@@ -860,17 +913,17 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
                 {tasks.map(task => {
                   const due = formatDue(task.due_date);
                   return (
-                    <div key={task.id} onClick={() => handleToggleTask(task.id)} className="nav-item" style={{
+                    <div key={task.id} onClick={() => handleToggleTask(task.id)} className="nav-item task-row" style={{
                       display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 10px', borderRadius: '7px',
                       cursor: 'pointer',
                     }}
                       onMouseEnter={e => (e.currentTarget.style.background = C.surfaceHi)}
                       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                     >
-                      <span style={{ color: task.done ? C.green : C.textFaint, fontSize: '0.82rem', flexShrink: 0 }}>{task.done ? '[✓]' : '[ ]'}</span>
-                      <span style={{ fontSize: '0.82rem', color: task.done ? C.textFaint : C.text, textDecoration: task.done ? 'line-through' : 'none', flex: 1 }}>{task.text}</span>
-                      {due && <span style={{ fontSize: '0.66rem', color: due.overdue ? C.red : C.textDim, flexShrink: 0 }}>{due.label}</span>}
-                      <button onClick={e => { e.stopPropagation(); handleDeleteTask(task.id); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: C.textFaint, fontSize: '0.72rem', flexShrink: 0 }}>✕</button>
+                      <span className={`task-check ${task.done ? 'is-done' : ''}`} aria-hidden="true">{task.done ? '[✓]' : '[ ]'}</span>
+                      <span className={`task-label ${task.done ? 'is-done' : ''}`}>{task.text}</span>
+                      {due && <span className={`task-due ${due.overdue ? 'is-overdue' : ''}`}>{due.label}</span>}
+                      <button className="task-delete" onClick={e => { e.stopPropagation(); handleDeleteTask(task.id); }} aria-label={`Delete ${task.text}`}>✕</button>
                     </div>
                   );
                 })}
@@ -882,10 +935,10 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
               <div className="card" style={{ padding: '16px' }}>
                 <div style={{ fontFamily: F.mono, fontSize: '0.66rem', color: C.textFaint, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px' }}>Quick access</div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                  <QuickCard title="Typing" icon={<Icon name="keyboard" size={20} />} onClick={() => onNavigate('typing')} />
-                  <QuickCard title="Aptitude" icon={<Icon name="spark" size={20} />} onClick={() => onNavigate('aptitude')} />
-                  <QuickCard title="Courses" icon={<Icon name="book" size={20} />} onClick={() => onNavigate('academy')} />
-                  <QuickCard title="Resources" icon={<Icon name="resource" size={20} />} onClick={() => {}} />
+                  <QuickCard title="Typing" icon={<CourseLogoImg mascot="typing" id="typing" size={30} />} onClick={() => onNavigate('typing')} />
+                  <QuickCard title="Aptitude" icon={<CourseLogoImg mascot="aptitude" id="aptitude" size={30} />} onClick={() => onNavigate('aptitude')} />
+                  <QuickCard title="Courses" icon={<CourseLogoImg mascot="dashboard" id="dashboard" size={30} />} onClick={() => onNavigate('academy')} />
+                  <QuickCard title="Resources" icon={<CourseLogoImg mascot="taskhub" id="taskhub" size={30} />} onClick={() => {}} />
                 </div>
               </div>
 
@@ -896,7 +949,6 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
                 <div style={{ fontFamily: F.display, fontStyle: 'italic', fontSize: '0.92rem', color: C.text, lineHeight: 1.5, marginBottom: '8px' }}>
                   "Consistency is the compound interest of learning."
                 </div>
-                <div style={{ fontFamily: F.mono, fontSize: '0.64rem', color: C.textFaint }}>— 1% Dev Academy</div>
               </div>
             </div>
           </section>
@@ -949,6 +1001,7 @@ export function Dashboard({ onNavigate, onOpenTaskHub }: DashboardProps) {
     </div>
   );
 }
+
 
 // ═══════════════════════════════════════════════════════════════
 // SUB-COMPONENTS
@@ -1051,22 +1104,22 @@ function SideItem({ icon, label, onClick, active = false }: { icon: React.ReactN
   );
 }
 
-function SideItemLogo({ mascot, courseId, label, iconOnly = false, onClick }: { mascot?: string; courseId: string; label: string; iconOnly?: boolean; onClick: () => void }) {
+function SideItemLogo({ mascot, courseId, label, iconOnly = false, showImage = true, iconName, onClick }: { mascot?: string; courseId: string; label: string; iconOnly?: boolean; showImage?: boolean; iconName?: IconName; onClick: () => void }) {
   const [hover, setHover] = React.useState(false);
   const url = getCourseLogoUrl(mascot, courseId);
   return (
     <button onClick={onClick}
       onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
-      className="nav-item"
+      className={`nav-item ${iconOnly ? 'nav-icon-only' : 'nav-course-card'}`}
       style={{
         width: '100%', display: 'flex', alignItems: 'center', justifyContent: iconOnly ? 'center' : 'flex-start', gap: '10px',
         background: hover ? C.surfaceHi : 'transparent', color: C.textDim,
         border: 'none', borderRadius: '8px', padding: iconOnly ? '9px 6px' : '8px 12px', marginBottom: '2px',
         cursor: 'pointer', fontSize: '0.82rem', fontFamily: F.body, fontWeight: 500,
       }}>
-      {url
+      {showImage && url
         ? <img src={url} alt={label} style={{ width: iconOnly ? 24 : 18, height: iconOnly ? 24 : 18, objectFit: 'contain', borderRadius: 4 }} />
-        : <Icon name={courseId.includes('typing') ? 'keyboard' : courseId.includes('task') ? 'check' : 'book'} size={iconOnly ? 18 : 16} />}
+        : <Icon name={iconName || (courseId.includes('typing') ? 'keyboard' : courseId.includes('task') ? 'check' : 'book')} size={iconOnly ? 20 : 16} />}
       {!iconOnly && <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</span>}
     </button>
   );

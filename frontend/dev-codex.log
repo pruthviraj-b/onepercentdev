@@ -1,0 +1,33 @@
+
+> onepercentdev-frontend@0.1.0 predev
+> node -e "const fs = require('fs'); if (fs.existsSync('.next-dev')) fs.rmSync('.next-dev', { recursive: true, force: true });" && node scripts/export-data.js
+
+Exporting courses metadata...
+Exported courses.json successfully.
+Exported videos.json successfully.
+  (Supabase not configured — skipping Cloudinary file merge)
+Compiling course: Python for Data Analysis — Industry Master Program...
+  Exported modules-python.json
+  Exported part notes for python.
+Compiling course: Cloud Computing...
+  Exported modules-cloud.json
+  Exported part notes for cloud.
+Compiling course: Data Analyst (Telugu)...
+  Exported modules-data-analyst-te.json
+  Exported part notes for data-analyst-te.
+Compiling course: Data Analyst (English)...
+  Exported modules-data-analyst-en.json
+  Exported part notes for data-analyst-en.
+Compiling course: Excel Mastery...
+  Exported modules-excel.json
+  Exported part notes for excel.
+Compiling course: SQL...
+  Exported modules-sql.json
+  Exported part notes for sql.
+
+Data export complete!
+
+> onepercentdev-frontend@0.1.0 dev
+> cross-env NODE_OPTIONS=--max-old-space-size=4096 NEXT_TELEMETRY_DISABLED=1 next dev --port 3005
+
+[?25h

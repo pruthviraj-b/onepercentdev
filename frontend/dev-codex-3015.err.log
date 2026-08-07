@@ -1,0 +1,35 @@
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'D:\onepercentdev-main\frontend\.next-dev\cache\webpack\server-development\0.pack.gz_' -> 'D:\onepercentdev-main\frontend\.next-dev\cache\webpack\server-development\0.pack.gz'
+ ⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+ ⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+ ⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: EPERM: operation not permitted, rename 'D:\onepercentdev-main\frontend\.next-dev\cache\webpack\client-development\1.pack.gz_' -> 'D:\onepercentdev-main\frontend\.next-dev\cache\webpack\client-development\1.pack.gz'
+ ⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: EPERM: operation not permitted, rename 'D:\onepercentdev-main\frontend\.next-dev\cache\webpack\client-development\2.pack.gz_' -> 'D:\onepercentdev-main\frontend\.next-dev\cache\webpack\client-development\2.pack.gz'
+
+<--- Last few GCs --->
+
+[8116:000001DE87173000] 27199768 ms: Scavenge 1396.7 (1471.3) -> 1373.0 (1471.8) MB, pooled: 40 MB, 22.20 / 0.23 ms  (average mu = 0.950, current mu = 0.748) allocation failure; 
+[8116:000001DE87173000] 27200081 ms: Scavenge 1399.6 (1475.1) -> 1377.0 (1473.0) MB, pooled: 39 MB, 24.80 / 0.07 ms  (average mu = 0.950, current mu = 0.748) task; 
+[8116:000001DE87173000] 27202668 ms: Scavenge 1411.7 (1481.6) -> 1393.5 (1545.1) MB, pooled: 0 MB, 124.00 / 0.70 ms  (average mu = 0.950, current mu = 0.748) task; 
+
+FATAL ERROR: NewSpace::EnsureCurrentCapacity Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 00007FF7CA4397FF node::OnFatalError+1343
+ 2: 00007FF7CB07DA77 v8::Function::NewInstance+423
+ 3: 00007FF7CAE7E327 v8::base::AddressSpaceReservation::AddressSpaceReservation+322071
+ 4: 00007FF7CAE3EDC3 v8::base::AddressSpaceReservation::AddressSpaceReservation+62643
+ 5: 00007FF7CAE8072A v8::base::AddressSpaceReservation::AddressSpaceReservation+331290
+ 6: 00007FF7CAE7FD56 v8::base::AddressSpaceReservation::AddressSpaceReservation+328774
+ 7: 00007FF7CAE90CE2 v8::internal::StrongRootAllocatorBase::deallocate_impl+15858
+ 8: 00007FF7CAE9080B v8::internal::StrongRootAllocatorBase::deallocate_impl+14619
+ 9: 00007FF7CC2F89AD v8::base::UnsignedDivisionByConstant<unsigned __int64>+2791325
+10: 00007FF7CAE7BDF0 v8::base::AddressSpaceReservation::AddressSpaceReservation+312544
+11: 00007FF7CAE83D10 v8::base::AddressSpaceReservation::AddressSpaceReservation+345088
+12: 00007FF7CACFA944 v8::Promise::MarkAsSilent+88484
+13: 00007FF7CB054AD0 X509_STORE_set_get_issuer+607040
+14: 00007FF7CB053E62 X509_STORE_set_get_issuer+603858
+15: 000001DEBF8B727A 

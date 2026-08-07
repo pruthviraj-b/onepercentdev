@@ -19,6 +19,8 @@ interface Props {
   completedParts: number[];
   partTitles: string[];
   partNumbers: number[];
+  milestoneLabel?: string;
+  nextMilestoneLabel?: string;
 }
 
 function getRangeLabel(partTitles: string[]) {
@@ -26,15 +28,16 @@ function getRangeLabel(partTitles: string[]) {
   return ids.length > 1 ? `${ids[0]} → ${ids[ids.length - 1]}` : ids[0] || 'completed module';
 }
 
-export function AchievementShare({ userId, courseId, courseTitle, moduleId, moduleTitle, completedParts, partTitles, partNumbers }: Props) {
+export function AchievementShare({ userId, courseId, courseTitle, moduleId, moduleTitle, completedParts, partTitles, partNumbers, milestoneLabel, nextMilestoneLabel }: Props) {
   const [open, setOpen] = useState(false);
   const [reaction, setReaction] = useState('🏆');
   const [customMessage, setCustomMessage] = useState('');
   const [copied, setCopied] = useState(false);
+  const [shareStatus, setShareStatus] = useState('');
   const [saved, setSaved] = useState<AchievementRecord | null>(null);
   const [learnedItems, setLearnedItems] = useState<string[]>([]);
   const rangeLabel = useMemo(() => getRangeLabel(partTitles), [partTitles]);
-  const partLabel = `Part ${moduleId}`;
+  const partLabel = milestoneLabel || `Part ${moduleId}`;
   const completionLabel = `${completedParts.length}/${partNumbers.length} lessons complete`;
   const completedPartsKey = completedParts.join(',');
   const post = buildAchievementPost({ courseTitle, partLabel, rangeLabel, completionLabel, learnedItems, reaction, customMessage });
@@ -94,7 +97,25 @@ export function AchievementShare({ userId, courseId, courseTitle, moduleId, modu
     const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://onepercentdev.vercel.app')}`;
     window.open(url, '_blank', 'noopener,noreferrer');
     void navigator.clipboard?.writeText(post);
+    setShareStatus('LinkedIn opened. The post text is copied; attach the downloaded badge image to show the credential.');
     void record;
+  };
+
+  const shareBadge = async () => {
+    const record = ensureBadge();
+    try {
+      const response = await fetch(record.badgeDataUrl);
+      const blob = await response.blob();
+      const file = new File([blob], `${courseId}-module-${moduleId}-milestone.svg`, { type: 'image/svg+xml' });
+      if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
+        await navigator.share({ files: [file], title: `${partLabel} milestone`, text: post });
+        setShareStatus('Badge shared with the selected app.');
+        return;
+      }
+    } catch {}
+    downloadBadge();
+    await navigator.clipboard?.writeText(post);
+    setShareStatus('Badge downloaded and post text copied. Attach the badge image when posting.');
   };
 
   const downloadBadge = () => {
@@ -123,7 +144,7 @@ export function AchievementShare({ userId, courseId, courseTitle, moduleId, modu
                 <b>{partLabel}</b>
                 <span>Completed modules {rangeLabel}</span>
                 <small>{completionLabel}</small>
-                <small>via 1% Dev Academy</small>
+                <small>Verified learner record</small>
               </div>
               <div className="achievement-share-form">
                 <label>Choose a reaction</label>
@@ -134,8 +155,8 @@ export function AchievementShare({ userId, courseId, courseTitle, moduleId, modu
                 <textarea id="achievement-custom-message" value={customMessage} onChange={e => setCustomMessage(e.target.value)} placeholder="What did you learn?" rows={3}/>
                 <label>Auto-captured learning</label>
                 <div className="achievement-learning-list">{learnedItems.map(item => <span key={item}>+ {item}</span>)}</div>
+                {nextMilestoneLabel && <div className="achievement-next-step"><strong>Next milestone</strong><span>{nextMilestoneLabel}</span></div>}
                 <div className="achievement-credential-meta">
-                  <div><span>ISSUED BY</span><strong>1% Dev Academy</strong></div>
                   <div><span>ACHIEVEMENT ID</span><strong>{courseId.toUpperCase()}-P{moduleId}-{completedParts.length}</strong></div>
                   <div><span>SKILLS EVIDENCE</span><strong>{learnedItems.slice(0, 3).join(' · ') || 'Course milestone completion'}</strong></div>
                 </div>
@@ -143,11 +164,13 @@ export function AchievementShare({ userId, courseId, courseTitle, moduleId, modu
               </div>
             </div>
             <div className="achievement-share-actions">
+              <button onClick={shareBadge}>Share badge image</button>
               <button onClick={downloadBadge}>Download badge</button>
               <button onClick={copyPost}>{copied ? 'Copied' : 'Copy post'}</button>
               <button className="primary" onClick={shareLinkedIn}>Share on LinkedIn ↗</button>
             </div>
-            <div className="achievement-share-note">Your milestone badge is saved to your learner profile. LinkedIn opens in a new tab; the post text is copied for you.</div>
+            {shareStatus && <div className="achievement-share-status" role="status">{shareStatus}</div>}
+            <div className="achievement-share-note">Your badge is a real downloadable credential image. Mobile sharing can send it directly; LinkedIn requires you to attach the downloaded image to the post.</div>
           </section>
         </div>,
         document.body,

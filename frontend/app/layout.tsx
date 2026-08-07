@@ -2,18 +2,18 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: '1% Dev Academy',
+  title: 'Learning Platform',
   description: 'Unified learning platform for industry master programs. Notes, code, and practice all in one unified dashboard.',
   openGraph: {
-    title: '1% Dev Academy',
+    title: 'Learning Platform',
     description: 'Master specialized technology disciplines from fundamentals up to real-world cloud architectures.',
     type: 'website',
     locale: 'en_IN',
-    siteName: '1% Dev Academy',
+    siteName: 'Learning Platform',
   },
   twitter: {
     card: 'summary_large_image',
-    title: '1% Dev Academy',
+    title: 'Learning Platform',
     description: 'Master specialized technology disciplines from fundamentals up to real-world cloud architectures.',
   }
 };

@@ -137,10 +137,10 @@ const ROADMAP_TIERS: Tier[] = [
 ];
 
 interface AptitudeViewProps { onBack: () => void; }
-type Phase = 'roadmap' | 'menu' | 'quiz' | 'results';
+type Phase = 'landing' | 'roadmap' | 'menu' | 'quiz' | 'results' | 'topic';
 
 export function AptitudeView({ onBack }: AptitudeViewProps) {
-  const [phase, setPhase] = useState<Phase>('roadmap');
+  const [phase, setPhase] = useState<Phase>('landing');
   const [category, setCategory] = useState<string>('All');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [current, setCurrent] = useState(0);
@@ -148,6 +148,7 @@ export function AptitudeView({ onBack }: AptitudeViewProps) {
   const [answers, setAnswers] = useState<(number | null)[]>([]);
   const [timeLeft, setTimeLeft] = useState(0);
   const [totalTime, setTotalTime] = useState(0);
+  const [selectedTopic, setSelectedTopic] = useState<{ tier: Tier; topic: string } | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startTimeRef = useRef<number>(0);
 
@@ -212,7 +213,6 @@ export function AptitudeView({ onBack }: AptitudeViewProps) {
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         <span style={{ fontWeight: 800, padding: '3px 10px', background: C.cyanDim, color: C.cyan, border: `1px solid ${C.cyan}`, borderRadius: '4px', fontSize: '0.75rem' }}>1%</span>
-        <span style={{ fontWeight: 800, color: C.text, textTransform: 'uppercase', letterSpacing: '0.03em' }}>Dev Academy</span>
         <span style={{ fontSize: '0.7rem', fontWeight: 600, color: C.textFaint, textTransform: 'uppercase', letterSpacing: '0.08em', marginLeft: '4px' }}>/ Aptitude Tests</span>
       </div>
       <button onClick={onBack} style={{
@@ -233,6 +233,54 @@ export function AptitudeView({ onBack }: AptitudeViewProps) {
   );
 
   // ── ROADMAP ──
+  // Separate blank note records keep every aptitude topic ready for the future reader.
+  const aptitudeNotes = Object.fromEntries(ROADMAP_TIERS.flatMap(tier => tier.topics.map(topic => [topic, '']))) as Record<string, string>;
+
+  if (phase === 'landing') return wrap(
+    <>
+      <section className="aptitude-course-hero">
+        <div>
+          <div className="aptitude-eyebrow">SEPARATE LEARNING TRACK</div>
+          <h1>🧠 Aptitude Tests</h1>
+          <p>Build the reasoning, quant, verbal, data interpretation, and business thinking needed for analyst assessments.</p>
+          <div className="aptitude-hero-meta"><span>95 topics</span><span>9 tiers</span><span>Practice quizzes</span><span>Notes ready for later</span></div>
+        </div>
+        <button className="aptitude-hero-action" onClick={() => setPhase('menu')}>Start practice →</button>
+      </section>
+      <section className="aptitude-course-intro"><strong>How this track works</strong><span>Choose a tier, open any topic, and add notes later without mixing Aptitude into the main Courses catalog.</span></section>
+      <div className="aptitude-curriculum-heading"><div><div className="aptitude-eyebrow">CURRICULUM</div><h2>Learning path</h2></div><span>{ROADMAP_TIERS.length} tiers · {ROADMAP_TIERS.reduce((sum, tier) => sum + tier.topics.length, 0)} topics</span></div>
+      <div className="aptitude-course-curriculum">
+        {ROADMAP_TIERS.map((tier, tierIndex) => (
+          <section key={tier.id} className="aptitude-course-module">
+            <div className="aptitude-course-module__header">
+              <span className="aptitude-module-number">{String(tierIndex + 1).padStart(2, '0')}</span>
+              <div><h3>{tier.title.replace(/^Tier \d+\s*[—-]\s*/, '')}</h3>{tier.note && <p>{tier.note}</p>}</div>
+              <span className="aptitude-module-count">{tier.topics.length} topics</span>
+            </div>
+            <div className="aptitude-course-topics">
+              {tier.topics.map((topic, topicIndex) => (
+                <button key={topic} className="aptitude-course-topic" onClick={() => { setSelectedTopic({ tier, topic }); setPhase('topic'); }}>
+                  <span>{tierIndex + 1}.{topicIndex + 1}</span><strong>{topic}</strong><em>Notes →</em>
+                </button>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </>
+  );
+
+  if (phase === 'topic' && selectedTopic) return wrap(
+    <>
+      <button className="aptitude-back-link" onClick={() => setPhase('landing')}>← Back to curriculum</button>
+      <section className="aptitude-topic-reader">
+        <div className="aptitude-eyebrow">{selectedTopic.tier.title}</div>
+        <h1>{selectedTopic.topic}</h1>
+        <div className="aptitude-empty-notes"><span>NOTES SPACE</span><strong>{aptitudeNotes[selectedTopic.topic] === '' ? 'Notes for this topic are ready to be added.' : aptitudeNotes[selectedTopic.topic]}</strong><p>This topic stays separate from the main Courses catalog. When notes are added later, this reader space will display them here.</p><button onClick={() => setPhase('menu')}>Practice this topic →</button></div>
+      </section>
+    </>
+  );
+
   if (phase === 'roadmap') return wrap(
     <>
       <h1 style={{ fontSize: '1.8rem', fontWeight: 900, margin: '0 0 8px', color: C.text }}>🗺️ Aptitude Roadmap</h1>
@@ -285,7 +333,7 @@ export function AptitudeView({ onBack }: AptitudeViewProps) {
     <>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', flexWrap: 'wrap' }}>
         <h1 style={{ fontSize: '1.8rem', fontWeight: 900, margin: '0 0 8px', color: C.text }}>🧠 Aptitude Tests</h1>
-        <button onClick={() => setPhase('roadmap')} style={{
+        <button onClick={() => setPhase('landing')} style={{
           background: C.surfaceHi, color: C.textDim, border: `1px solid ${C.border}`, borderRadius: '6px',
           padding: '6px 14px', fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: '0.78rem',
           cursor: 'pointer', textTransform: 'uppercase',

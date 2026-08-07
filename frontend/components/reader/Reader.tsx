@@ -1,13 +1,18 @@
 'use client';
 
-import { memo, useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { memo, useEffect, useRef, useState, useMemo, useCallback, type ReactNode } from 'react';
 import dynamic from 'next/dynamic';
-import { NoteData, Module } from '@/services/courseService';
+import { NoteData, Module, PartMeta, isPartComplete } from '@/services/courseService';
 import { getVideoIds } from '@/features/video/videos';
 import MarkdownRenderer from './MarkdownRenderer';
 import { fetchVideoTimestamp, saveVideoTimestamp } from '@/services/courseService';
 import { C, CLight, F, R, S, T, L, FS, FONT_IMPORT, CalloutVariant, CALLOUT_MAP } from '@/shared/theme/theme';
 import LessonAIMentor from './LessonAIMentor';
+import { TextToSpeechPlayer } from './TextToSpeechPlayer';
+import { LessonFocusTimer } from './LessonFocusTimer';
+import { MilestoneIcon } from '@/components/course/MilestoneIcon';
+import { loadTtsPreferences, resetTtsPreferences, TTS_SPEEDS, type TtsSpeed } from '@/services/ttsService';
+import { getMilestones, hasMilestoneSystem, isMilestoneComplete, isMilestoneUnlocked, milestoneParts } from '@/features/certificates/milestones';
 
 const InteractiveBlueprint = dynamic(
   () => import('@/components/lesson/InteractiveBlueprint').then(m => m.InteractiveBlueprint),
@@ -283,9 +288,30 @@ interface Props {
   completedParts: number[];
   bookmarkedParts: number[];
   onSelectPart: (part: number) => void;
+  completionAction?: ReactNode;
 }
 
-function LessonNavigator({ modules, currentPart, completedParts, bookmarkedParts, onSelectPart, onNext, onClose }: Pick<Props, 'modules' | 'currentPart' | 'completedParts' | 'bookmarkedParts' | 'onSelectPart'> & { onNext?: () => void; onClose: () => void }) {
+function MilestoneCurriculum({ courseId, modules, currentPart, completedParts, bookmarkedParts, onSelectPart }: Pick<Props, 'courseId' | 'modules' | 'currentPart' | 'completedParts' | 'bookmarkedParts' | 'onSelectPart'>) {
+  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
+  const definitions = getMilestones(courseId);
+  const renderNote = (note: PartMeta, nested = false) => {
+    const completed = isPartComplete(note, completedParts);
+    const active = currentPart === note.part;
+    const bookmarked = bookmarkedParts.includes(note.part);
+    return <button type="button" title={note.title} key={note.part} className={`rd-lesson-item${active ? ' is-active' : ''}${completed ? ' is-complete' : ''}`} onClick={() => onSelectPart(note.part)}><span className={`rd-lesson-item__state${completed ? ' is-verified' : active ? ' is-current' : ''}`} aria-hidden="true">{completed ? <svg className="rd-done-icon" viewBox="0 0 24 24"><path d="M5 12.5 9.2 17 19 7" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" /></svg> : active ? '→' : ''}</span><span className="rd-lesson-item__title">{nested ? note.title.replace(/^Part\s+\d+(?:\.\d+)?\s*[-–—]?\s*/i, '') : note.title.replace(/^Part\s+\d+(?:\.\d+)?\s*[-–—]?\s*/i, '')}</span>{bookmarked && <span className="rd-lesson-item__bookmark">★</span>}</button>;
+  };
+  return <div className="rd-milestone-curriculum">{definitions.map((definition, index) => {
+    const groupedModules = definition.moduleIds.map(id => modules.find(module => module.id === id)).filter(Boolean) as Module[];
+    const parts = milestoneParts(groupedModules, definition);
+    const done = parts.filter(part => completedParts.includes(part)).length;
+    const complete = isMilestoneComplete(modules, completedParts, definition);
+    const open = !collapsed.has(definition.id);
+    const previousComplete = isMilestoneUnlocked(courseId, modules, completedParts, definition);
+    return <section key={definition.id} className="rd-milestone-group" data-state={definition.locked ? 'locked' : complete ? 'complete' : previousComplete ? 'unlocked' : 'upcoming'}><button type="button" className="rd-milestone-group__header" onClick={() => setCollapsed(value => { const next = new Set(value); next.has(definition.id) ? next.delete(definition.id) : next.add(definition.id); return next; })}><MilestoneIcon index={definition.index} size={24} /><strong>{definition.name}</strong><small>{definition.locked ? 'LOCKED' : `${done}/${parts.length} lessons`}</small><em>{open ? '⌃' : '⌄'}</em></button>{open && <div className="rd-milestone-group__body">{definition.locked ? <div className="rd-milestone-group__lock">Capstone required</div> : groupedModules.map(module => <section key={module.id} className="rd-lesson-module"><div className="rd-lesson-module__header"><span><small>MODULE {module.id}</small><strong>{module.title}</strong></span></div><div className="rd-lesson-module__lessons">{module.notes.map(note => <div key={note.part}>{renderNote(note)}{(note.subtopics || []).map(subtopic => renderNote(subtopic, true))}</div>)}</div></section>)}</div>}</section>;
+  })}</div>;
+}
+
+function LessonNavigator({ modules, currentPart, completedParts, bookmarkedParts, onSelectPart, onNext, onClose, courseId }: Pick<Props, 'modules' | 'currentPart' | 'completedParts' | 'bookmarkedParts' | 'onSelectPart' | 'courseId'> & { onNext?: () => void; onClose: () => void }) {
   const [query, setQuery] = useState('');
   const [collapsed, setCollapsed] = useState<Set<number>>(new Set());
   const normalized = query.trim().toLowerCase();
@@ -295,7 +321,8 @@ function LessonNavigator({ modules, currentPart, completedParts, bookmarkedParts
     <div className="rd-lesson-nav__progress"><span style={{ width: `${(completedParts.length / Math.max(1, modules.reduce((sum, module) => sum + module.notes.length, 0))) * 100}%` }} /></div>
     <label className="rd-lesson-nav__search"><span aria-hidden="true">⌕</span><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search lessons" aria-label="Search lessons" /></label>
     <div className="rd-lesson-nav__actions"><button type="button" onClick={() => setCollapsed(new Set(visibleModules.map(module => module.id)))}>Collapse all</button><button type="button" onClick={() => setCollapsed(new Set())}>Expand all</button></div>
-    <div className="rd-lesson-nav__tree">{visibleModules.map(module => { const isCollapsed = collapsed.has(module.id); return <section key={module.id} className="rd-lesson-module"><button type="button" className="rd-lesson-module__header" onClick={() => setCollapsed(previous => { const next = new Set(previous); next.has(module.id) ? next.delete(module.id) : next.add(module.id); return next; })}><span className="rd-lesson-module__chevron">{isCollapsed ? '›' : '⌄'}</span><span><small>MODULE {module.id}</small><strong>{module.title}</strong></span></button>{!isCollapsed && <div className="rd-lesson-module__lessons">{module.notes.map(note => { const completed = completedParts.includes(note.part); const active = currentPart === note.part; const bookmarked = bookmarkedParts.includes(note.part); return <button type="button" title={note.title} key={note.part} className={`rd-lesson-item${active ? ' is-active' : ''}${completed ? ' is-complete' : ''}`} onClick={() => onSelectPart(note.part)}><span className={`rd-lesson-item__state${completed ? ' is-verified' : active ? ' is-current' : ''}`} aria-hidden="true">{completed ? '✓' : active ? '→' : ''}</span><span className="rd-lesson-item__title">{note.title.replace(/^Part\s+\d+(?:\.\d+)?\s*[-–—]?\s*/i, '')}</span>{bookmarked && <span className="rd-lesson-item__bookmark">★</span>}</button>; })}</div>}</section>; })}</div>
+    {hasMilestoneSystem(courseId) && <MilestoneCurriculum courseId={courseId} modules={visibleModules} currentPart={currentPart} completedParts={completedParts} bookmarkedParts={bookmarkedParts} onSelectPart={onSelectPart} />}
+    <div className="rd-lesson-nav__tree">{visibleModules.map(module => { const isCollapsed = collapsed.has(module.id); return <section key={module.id} className="rd-lesson-module"><button type="button" className="rd-lesson-module__header" onClick={() => setCollapsed(previous => { const next = new Set(previous); next.has(module.id) ? next.delete(module.id) : next.add(module.id); return next; })}><span className="rd-lesson-module__chevron">{isCollapsed ? '›' : '⌄'}</span><span><small>MODULE {module.id}</small><strong>{module.title}</strong></span></button>{!isCollapsed && <div className="rd-lesson-module__lessons">{module.notes.map(note => { const completed = completedParts.includes(note.part); const active = currentPart === note.part; const bookmarked = bookmarkedParts.includes(note.part); return <button type="button" title={note.title} key={note.part} className={`rd-lesson-item${active ? ' is-active' : ''}${completed ? ' is-complete' : ''}`} onClick={() => onSelectPart(note.part)}><span className={`rd-lesson-item__state${completed ? ' is-verified' : active ? ' is-current' : ''}`} aria-hidden="true">{completed ? <svg className="rd-done-icon" viewBox="0 0 24 24"><path d="M5 12.5 9.2 17 19 7" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" /></svg> : active ? '→' : ''}</span><span className="rd-lesson-item__title">{note.title.replace(/^Part\s+\d+(?:\.\d+)?\s*[-–—]?\s*/i, '')}</span>{bookmarked && <span className="rd-lesson-item__bookmark">★</span>}</button>; })}</div>}</section>; })}</div>
     {onNext && <button type="button" className="rd-lesson-nav__continue" onClick={onNext}>Continue learning <span>→</span></button>}
   </aside>;
 }
@@ -307,11 +334,13 @@ export function Reader({
   noteData, loading, activeTab, isCompleted, currentIdx, totalCount,
   onTabChange, onToggleComplete, onPrev, onNext, onShowShortcuts, onGoHome, onSwitchCourse, courseId,
   modules, currentPart, completedParts, bookmarkedParts, onSelectPart,
+  completionAction,
 }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [readingPct, setReadingPct] = useState(0);
   const [mode, setMode] = useState<ReaderMode>('read');
   const [focusMode, setFocusMode] = useState(false);
+  const [lessonFocusActive, setLessonFocusActive] = useState(false);
   const [toc, setToc] = useState<{ id: string; text: string; level: number }[]>([]);
   const [activeId, setActiveId] = useState('');
   const [tocQuery, setTocQuery] = useState('');
@@ -325,9 +354,37 @@ export function Reader({
   const [highlights, setHighlights] = useState<ReaderHighlight[]>([]);
   const [lessonNavOpen, setLessonNavOpen] = useState(true);
   const [utilityOpen, setUtilityOpen] = useState(true);
+  const [utilityHubOpen, setUtilityHubOpen] = useState(false);
+  const [utilityQuery, setUtilityQuery] = useState('');
   const [aiOpen, setAiOpen] = useState(false);
+  const [ttsActiveText, setTtsActiveText] = useState('');
+  const [ttsActivePosition, setTtsActivePosition] = useState({ index: -1, total: 0 });
+  const [ttsRate, setTtsRate] = useState<TtsSpeed>(() => loadTtsPreferences().rate);
+  const [ttsVoiceName, setTtsVoiceName] = useState(() => loadTtsPreferences().voiceName);
+  const [ttsPitch, setTtsPitch] = useState(() => loadTtsPreferences().pitch);
+  const [ttsVolume, setTtsVolume] = useState(() => loadTtsPreferences().volume);
+  const [ttsVoices, setTtsVoices] = useState<SpeechSynthesisVoice[]>([]);
+
+  const emitTtsPreference = useCallback((detail: { voiceName?: string; rate?: TtsSpeed; pitch?: number; volume?: number }) => {
+    window.dispatchEvent(new CustomEvent('tts-preference-change', { detail }));
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    const loadVoices = () => setTtsVoices(window.speechSynthesis.getVoices());
+    loadVoices();
+    window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+    return () => window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);
+  }, []);
   const readingPctRef = useRef(0);
   const scrollSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!utilityHubOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') setUtilityHubOpen(false); };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [utilityHubOpen]);
 
   useEffect(() => { setBookmarks(loadBookmarks()); }, []);
 
@@ -340,6 +397,23 @@ export function Reader({
     const article = articleRef.current;
     if (article && mode === 'read' && activeTab === 'notes') paintReaderHighlights(article, highlights);
   }, [highlights, mode, activeTab, noteData?.part]);
+
+  useEffect(() => {
+    const article = articleRef.current;
+    if (!article) return;
+    const active = ttsActiveText.replace(/\s+/g, ' ').trim().toLowerCase();
+    const elements = Array.from(article.querySelectorAll<HTMLElement>('[data-tts-paragraph]'));
+    const positionTarget = ttsActivePosition.index >= 0 && ttsActivePosition.total > 0
+      ? Math.min(elements.length - 1, Math.floor((ttsActivePosition.index / ttsActivePosition.total) * elements.length))
+      : -1;
+    elements.forEach((element, elementIndex) => {
+      const text = (element.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+      const isTable = element.classList.contains('rd-table-wrap');
+      const isActive = elementIndex === positionTarget || Boolean(active && ((text.includes(active) || active.includes(text)) || (isTable && active.startsWith('table row:'))));
+      element.toggleAttribute('data-tts-active', isActive);
+      if (isActive) element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }, [ttsActivePosition, ttsActiveText, noteData?.part]);
 
   const commitHighlights = useCallback((next: ReaderHighlight[]) => {
     setHighlights(next);
@@ -381,6 +455,11 @@ export function Reader({
       saveBookmarks(next);
       return next;
     });
+  }, []);
+
+  const handleLessonFocusModeChange = useCallback((active: boolean) => {
+    setLessonFocusActive(active);
+    setFocusMode(active);
   }, []);
 
   /* Theme tokens */
@@ -484,6 +563,10 @@ export function Reader({
     const wordCount = noteData ? noteData.notes.trim().split(/\s+/).filter(Boolean).length : 0;
     return { wordCount, readTime: wordCount ? Math.max(1, Math.round(wordCount / 200)) : 0 };
   }, [noteData?.notes]);
+  const displayNotes = useMemo(() => {
+    const raw = noteData?.notes || '';
+    return raw.replace(/^\uFEFF?\s*#\s+[^\r\n]*(?:\r?\n){1,2}/, '');
+  }, [noteData?.notes]);
   const readTime = readingStats.readTime;
   const wordCount = readingStats.wordCount;
   const minutesLeft = Math.max(0, Math.round(readTime * (1 - readingPct / 100)));
@@ -503,10 +586,11 @@ export function Reader({
       return <code className={className} {...rest}>{children}</code>;
     },
     pre({ children }: any) { return <>{children}</>; },
-    table({ children }: any) { return <div className="rd-table-wrap"><table>{children}</table></div>; },
+    table({ children }: any) { return <div className="rd-table-wrap" data-tts-paragraph><table>{children}</table></div>; },
     img({ src, alt, ...props }: any) {
       return <img {...props} src={src} alt={alt || ''} loading="lazy" decoding="async" />;
     },
+    p({ children, ...props }: any) { return <p data-tts-paragraph {...props}>{children}</p>; },
   }), []);
 
   /* ─── CSS ─────────────────────────────────────────────────────────────────── */
@@ -539,6 +623,54 @@ export function Reader({
     }
     .rd-toolbar-left{display:flex;align-items:center;gap:10px}
     .rd-toolbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .rd-nav-menu{position:relative;display:flex;align-items:center;}
+    .rd-nav-menu__trigger{display:grid;place-items:center;width:52px;height:44px;padding:0;border:2px solid ${th.accent};border-radius:10px;background:${th.surfaceHi};color:${th.accent};box-shadow:3px 3px 0 ${th.accent};cursor:pointer;}
+    .rd-nav-menu__trigger:hover,.rd-nav-menu__trigger[aria-expanded="true"]{background:${th.accent};color:${th.surfaceHi};transform:translate(-1px,-1px);box-shadow:4px 4px 0 ${th.border};}
+    .rd-nav-menu__icon{display:flex;flex-direction:column;gap:5px;width:22px;}
+    .rd-nav-menu__icon i{display:block;height:2px;width:100%;border-radius:2px;background:currentColor;}
+    .rd-nav-menu__panel{position:fixed;top:74px;left:18px;z-index:200;display:flex!important;flex-direction:column!important;gap:5px;width:190px;max-width:calc(100vw - 32px);padding:8px;background:${th.surfaceRaised};border:2px solid ${th.border};border-radius:${R.md};box-shadow:5px 5px 0 ${th.border};}
+    .rd-nav-menu__item{display:block;width:100%;padding:9px 11px;border:1.5px solid transparent;border-radius:${R.sm};background:transparent;color:${th.textDim};font-family:${F.mono};font-size:${FS.xs};font-weight:800;text-align:left;text-transform:uppercase;cursor:pointer;}
+    .rd-nav-menu__item:hover{background:${th.surfaceHover};border-color:${th.border};color:${th.text};}
+    .rd-nav-menu__item.active{background:${th.accent};border-color:#1F2937;color:${th.onAccent};box-shadow:2px 2px 0 #1F2937;}
+    /* The reader toolbar owns the completion/share actions. Keep the optional
+       highlighter hidden here, but leave the right-side action group visible. */
+    .rd-toolbar > .rd-highlighter{display:none!important;}
+    .rd-mission .rd-toolbar-right{display:none!important;}
+    .rd-toolbar-completion{display:flex;align-items:center;flex:0 0 auto;}
+    .rd-utility-hub{position:fixed;right:24px;bottom:24px;z-index:120;display:flex;flex-direction:column;align-items:flex-end;gap:12px;font-family:${F.body};}
+    .rd-utility-hub__trigger{display:grid;place-items:center;width:62px;height:62px;border:3px solid #1f2937;border-radius:50%;background:${th.accent};box-shadow:5px 5px 0 #1f2937,0 0 0 6px rgba(249,128,18,.16);color:#fff;cursor:pointer;font-size:1.45rem;font-weight:900;transition:transform .22s ease,box-shadow .22s ease,background .22s ease;}
+    .rd-utility-hub__trigger:hover,.rd-utility-hub__trigger[aria-expanded="true"]{transform:translate(-2px,-3px) rotate(6deg);background:#ff9f2d;box-shadow:7px 8px 0 #1f2937,0 0 0 9px rgba(249,128,18,.2);}
+    .rd-utility-hub__menu{display:grid;gap:12px;width:min(340px,calc(100vw - 32px));max-height:min(70vh,620px);overflow:auto;padding:16px;border:3px solid #1f2937;border-radius:18px;background:#fff;box-shadow:7px 7px 0 #1f2937;animation:rdHubIn .2s cubic-bezier(.22,1,.36,1) both;}
+    .rd-utility-hub__header{display:flex;align-items:center;justify-content:space-between;padding:8px 10px 10px;border-bottom:3px solid #1f2937;color:#1f2937;}
+    .rd-utility-hub__header strong{font-size:.8rem;letter-spacing:.08em;color:${th.accent};}
+    .rd-utility-hub__header span{color:${th.textFaint};font-size:.62rem;}
+    .rd-completion-message{margin:0;padding:0 4px;color:${th.textDim};font-size:.72rem;line-height:1.45;}
+    .rd-completion-action{padding:4px;}
+    .rd-utility-hub__section{display:grid;gap:6px;}
+    .rd-utility-hub__section-label{padding:4px;color:${th.textFaint};font-size:.58rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;}
+    .rd-utility-hub__actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+    .rd-utility-hub__action{display:flex;align-items:center;gap:8px;min-width:0;padding:10px;border:1px solid rgba(31,41,55,.1);border-radius:12px;background:rgba(255,255,255,.62);color:${th.text};cursor:pointer;font:600 .68rem ${F.body};text-align:left;transition:transform .16s ease,background .16s ease,border-color .16s ease,box-shadow .16s ease;}
+    .rd-utility-hub__action:hover{transform:translateY(-2px);border-color:rgba(249,128,18,.38);background:rgba(255,255,255,.96);box-shadow:0 8px 18px rgba(31,41,55,.1);}
+    .rd-utility-hub__action i{display:grid;place-items:center;width:24px;height:24px;flex:0 0 24px;border-radius:8px;background:rgba(249,128,18,.12);color:#e66f0a;font-style:normal;font-size:.85rem;}
+    .rd-utility-hub__speed{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:2px solid ${th.border};border-radius:10px;background:${th.surface};color:${th.text};font-size:.68rem;font-weight:700;}
+    .rd-utility-hub__speed select{min-width:82px;padding:6px 8px;border:1.5px solid ${th.border};border-radius:8px;background:${th.surfaceHi};color:${th.text};font:800 .68rem ${F.mono};}
+    .rd-utility-hub__voice-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px;border:2px solid ${th.border};border-radius:10px;background:${th.surface};}
+    .rd-utility-hub__voice-grid label{display:grid;gap:4px;color:${th.textDim};font:700 .62rem ${F.mono};}
+    .rd-utility-hub__voice-grid label:first-child{grid-column:1/-1;}
+    .rd-utility-hub__voice-grid select{min-width:0;padding:6px 8px;border:1.5px solid ${th.border};border-radius:8px;background:${th.surfaceHi};color:${th.text};font:700 .62rem ${F.mono};}
+    .rd-utility-hub__voice-grid input[type=range]{width:100%;accent-color:${th.accent};}
+    .rd-utility-hub__reset{justify-self:start;padding:7px 9px;border:2px solid ${th.border};border-radius:8px;background:${th.surfaceHi};color:${th.text};font:800 .6rem ${F.mono};cursor:pointer;}
+    .rd-utility-hub__reset:hover{background:${th.accent};color:${th.onAccent};}
+    .rd-utility-hub__tts{min-width:0;}
+    .rd-utility-hub__tts .rd-tts{width:100%;max-width:100%;margin:0;height:auto;min-height:0;display:grid;grid-template-columns:1fr;gap:8px;padding:10px;position:relative;top:auto;box-sizing:border-box;}
+    .rd-utility-hub__tts .rd-tts__topline,.rd-utility-hub__tts .rd-tts__progress-row,.rd-utility-hub__tts .rd-tts__controls,.rd-utility-hub__tts .rd-tts__now{position:static;inset:auto;width:auto;height:auto;grid-column:auto;}
+    .rd-utility-hub__tts .rd-tts__topline{display:flex;}
+    .rd-utility-hub__tts .rd-tts__controls{display:flex;flex-wrap:wrap;}
+    .rd-utility-hub__tts .rd-tts__now{display:flex;}
+    .rd-utility-hub__progress{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:2px solid #1f2937;border-radius:10px;background:#fff7ed;color:${th.textDim};font-size:.67rem;}
+    .rd-utility-hub__progress strong{color:#e66f0a;}
+    @keyframes rdHubIn{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @media (prefers-color-scheme:dark){.rd-utility-hub__menu{background:#fff;border-color:#1f2937;}.rd-utility-hub__action{background:#fff;border-color:#1f2937;color:#1f2937;}.rd-utility-hub__action:hover{background:#fff7ed;}.rd-utility-hub__trigger{background:${th.accent};color:#fff;}}
     .rd-highlighter{display:flex;align-items:center;gap:6px;padding:4px 7px;background:${th.bg};border:2px solid ${th.border};border-radius:${R.md};box-shadow:2px 2px 0 ${th.border}}
     .rd-highlighter-label{font-family:${F.mono};font-size:.62rem;font-weight:800;letter-spacing:.05em;color:${th.textDim};text-transform:uppercase;margin-right:2px}
     .rd-color{width:22px;height:22px;padding:0;border:2px solid ${th.border};border-radius:50%;cursor:pointer;box-shadow:1px 1px 0 ${th.border}}
@@ -548,6 +680,57 @@ export function Reader({
     .rd-erase.active{background:${th.text};color:${th.bg};border-color:${th.text}}
     .rd-highlight-count{font-family:${F.mono};font-size:.62rem;color:${th.textFaint};white-space:nowrap}
     .rd-prose [data-reader-highlight]{border-radius:3px;box-shadow:inset 0 -2px rgba(17,24,39,.15);padding:1px 0}
+    .rd-prose [data-tts-active]{background:linear-gradient(90deg,rgba(249,128,18,.2),rgba(249,128,18,.06));border-left:4px solid ${th.accent};border-radius:0 ${R.sm} ${R.sm} 0;padding-left:12px;transition:background .2s ease,border-color .2s ease;}
+    .rd-tts{position:sticky;top:6px;z-index:8;display:grid;gap:6px;margin:0 0 14px;padding:8px 12px;border:1px solid #333;border-radius:10px;background:#171717;color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.18);}
+    .rd-tts__topline,.rd-tts__progress-row,.rd-tts__controls{display:flex;align-items:center;gap:10px;}
+    .rd-tts__topline{justify-content:space-between;}.rd-tts__topline-actions{display:flex;align-items:center;gap:6px;}.rd-tts__topline strong{display:block;font-size:.78rem;}.rd-tts__eyebrow{display:block;margin-bottom:1px;color:#1db954;font:800 .5rem ${F.mono};letter-spacing:.12em;}.rd-tts__estimate,.rd-tts__status{color:#b3b3b3;font:600 .58rem ${F.mono};}.rd-tts__expert-toggle{padding:4px 7px;border:1px solid #555;border-radius:999px;background:#252525;color:#fff;font:800 .54rem ${F.mono};cursor:pointer;}.rd-tts__expert-toggle.active{background:#1db954;border-color:#1db954;color:#06140a;}.rd-tts__now{display:flex;align-items:center;gap:8px;min-width:0;padding:5px 8px;border-left:3px solid #1db954;background:#252525;border-radius:0 6px 6px 0;}.rd-tts__now span{flex:0 0 auto;color:#1db954;font:800 .5rem ${F.mono};letter-spacing:.12em;}.rd-tts__now strong{min-width:0;overflow:hidden;color:#fff;font-size:.68rem;line-height:1.25;font-weight:650;text-overflow:ellipsis;white-space:nowrap;}.rd-tts__progress-row input{flex:1;accent-color:#1db954;}.rd-tts__progress-row span{min-width:78px;text-align:right;color:#b3b3b3;font:600 .58rem ${F.mono};}
+    .rd-tts__controls button{display:inline-flex;align-items:center;justify-content:center;gap:2px;min-width:28px;height:26px;border:0;border-radius:999px;background:transparent;color:#fff;cursor:pointer;font:800 .62rem ${F.mono};}.rd-tts__controls button:hover:not(:disabled){color:#1db954;transform:translateY(-1px);}.rd-tts__controls button:disabled{opacity:.35;cursor:not-allowed;}.rd-tts__controls .rd-tts__play{width:32px;height:32px;border:0;background:#fff;color:#111;border-radius:50%;font-size:.8rem;}.rd-tts__speed{display:flex;align-items:center;gap:4px;margin-left:auto;color:#b3b3b3;font:700 .58rem ${F.mono};}.rd-tts__speed select,.rd-tts__settings-panel select{border:1px solid #555;border-radius:999px;background:#252525;color:#fff;padding:3px 6px;font:700 .6rem ${F.mono};}.rd-tts__settings-panel{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px;border-top:1px solid #333;}.rd-tts__settings-panel label{display:grid;gap:4px;color:#b3b3b3;font:700 .58rem ${F.mono};}.rd-tts__settings-panel input[type=range]{accent-color:#1db954;}.rd-tts__reset{grid-column:1/-1;justify-self:start;padding:5px 8px;border:1px solid #777;border-radius:999px;background:#252525;color:#fff;cursor:pointer;font:800 .56rem ${F.mono};}.rd-tts__reset:hover{background:#1db954;border-color:#1db954;color:#06140a;}.rd-tts__settings-panel small{grid-column:1/-1;color:#b3b3b3;font:.58rem ${F.mono};}@media(max-width:640px){.rd-tts{padding:7px 9px;}.rd-tts__controls{flex-wrap:wrap;}.rd-tts__speed{margin-left:0;}.rd-tts__settings-panel{grid-template-columns:1fr;}.rd-tts__settings-panel small{grid-column:auto;}.rd-tts__reset{grid-column:auto;}}
+    /* Compact reader bar: keep the player inside the green-box footprint. */
+    .rd-tts{width:calc(100% + 160px);max-width:none;margin-left:-80px;height:82px;min-height:82px;box-sizing:border-box;display:block;position:sticky;overflow:visible;background:${th.surface};border:2px solid ${th.border};border-radius:${R.md};color:${th.text};box-shadow:4px 4px 0 ${th.border};}
+    .rd-tts__topline{position:absolute;top:8px;left:12px;right:12px;height:18px;}
+    .rd-tts__topline strong{color:${th.text};font-family:${F.body};}
+    .rd-tts__eyebrow{color:${th.accent};}
+    .rd-tts__estimate,.rd-tts__status{color:${th.textFaint};}
+    .rd-tts__expert-toggle{border-color:${th.border};background:${th.surfaceHi};color:${th.text};}
+    .rd-tts__expert-toggle.active{background:${th.accent};border-color:${th.border};color:${th.onAccent};}
+    .rd-tts__progress-row{position:absolute;top:30px;left:12px;right:12px;height:10px;}
+    .rd-tts__progress-row input{accent-color:${th.accent};}
+    .rd-tts__progress-row span{color:${th.textFaint};}
+    .rd-tts__controls{position:absolute;left:12px;right:12px;bottom:8px;height:32px;}
+    .rd-tts__controls button{color:${th.text};}
+    .rd-tts__controls button:hover:not(:disabled){color:${th.accent};}
+    .rd-tts__controls .rd-tts__play{background:${th.accent};color:${th.onAccent};border:2px solid ${th.border};box-shadow:2px 2px 0 ${th.border};}
+    .rd-tts__speed{color:${th.textDim};}
+    .rd-tts__speed select,.rd-tts__settings-panel select{border-color:${th.border};background:${th.surfaceHi};color:${th.text};}
+    .rd-tts__now{position:absolute;left:190px;right:175px;bottom:8px;height:22px;box-sizing:border-box;padding:3px 7px;}
+    .rd-tts__now{border-left-color:${th.accent};background:${th.surfaceHi};}
+    .rd-tts__now span{color:${th.accent};}
+    .rd-tts__now strong{color:${th.text};font-family:${F.body};}
+    .rd-tts__status{display:none;}
+    .rd-tts__settings-panel{position:absolute;top:calc(100% + 7px);right:0;z-index:30;width:min(520px,calc(100vw - 32px));box-sizing:border-box;background:${th.surface};border:2px solid ${th.border};border-radius:${R.md};box-shadow:5px 5px 0 ${th.border};}
+    .rd-tts__settings-panel label{color:${th.textDim};}
+    .rd-tts__settings-panel input[type=range]{accent-color:${th.accent};}
+    .rd-tts__reset{border-color:${th.border};background:${th.surfaceHi};color:${th.text};}
+    .rd-tts__reset:hover{background:${th.accent};border-color:${th.border};color:${th.onAccent};}
+    .rd-tts__settings-panel small{color:${th.textFaint};}
+    .rd-tts__settings,.rd-tts__settings-panel{display:none!important;}
+    @media(max-width:800px){.rd-tts{width:100%;margin-left:0;}.rd-tts__now{left:155px;right:145px;}}
+    @media(max-width:640px){.rd-tts{height:88px;min-height:88px;}.rd-tts__now{left:12px;right:12px;bottom:7px;}.rd-tts__controls{bottom:34px;}.rd-tts__settings-panel{right:auto;left:0;width:min(100%,calc(100vw - 32px));}}
+    /* Desktop stays on one horizontal line: identity, progress, controls, live text. */
+    @media(min-width:801px){
+      .rd-tts{height:72px;min-height:72px;display:grid;grid-template-columns:minmax(180px,1.1fr) minmax(220px,1.35fr) minmax(220px,1.3fr) minmax(170px,1fr);align-items:center;gap:12px;padding:9px 13px;}
+      .rd-tts__topline,.rd-tts__progress-row,.rd-tts__controls,.rd-tts__now{position:static;inset:auto;width:auto;height:auto;min-width:0;}
+      .rd-tts__topline{grid-column:1;}
+      .rd-tts__progress-row{grid-column:2;display:flex;}
+      .rd-tts__progress-row input{min-width:0;}
+      .rd-tts__progress-row span{white-space:nowrap;}
+      .rd-tts__controls{grid-column:3;display:flex;gap:6px;white-space:nowrap;}
+      .rd-tts__controls button{flex:0 0 auto;}
+      .rd-tts__now{grid-column:4;display:flex;}
+      .rd-tts__topline-actions{min-width:0;}
+      .rd-tts__estimate{white-space:nowrap;}
+      .rd-tts__now strong{font-size:.62rem;}
+    }
 
     /* Mode tabs */
     .rd-tabs{display:flex;gap:4px;background:${th.bg};padding:3px;border-radius:${R.md};border:2px solid ${th.border}}
@@ -1118,7 +1301,7 @@ export function Reader({
     .rd-mission .rd-stage{display:grid;grid-template-columns:280px minmax(0,1fr) 270px;height:0;min-height:0;flex:1 1 auto;overflow:hidden;background:${th.bg};}
     .rd-mission .rd-rail{display:block!important;position:relative;inset:auto;width:auto;min-width:0;overflow:hidden;background:${th.surface};border-right:1px solid ${th.border};box-shadow:none;}
     .rd-mission .rd-rail-inner{display:none;}
-    .rd-mission .rd-lesson-nav{display:flex;height:100%;flex-direction:column;overflow:hidden;padding:24px 16px 16px;}
+    .rd-mission .rd-lesson-nav{display:flex;height:100%;min-height:0;flex-direction:column;overflow-y:auto;overflow-x:hidden;padding:24px 16px 16px;scrollbar-gutter:stable;}
     .rd-mission .rd-lesson-nav__top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:12px;}
     .rd-mission .rd-lesson-nav__eyebrow{display:block;margin-bottom:5px;color:${th.textFaint};font-family:${F.mono};font-size:.58rem;font-weight:800;letter-spacing:.13em;}
     .rd-mission .rd-lesson-nav__top strong{display:block;color:${th.text};font-size:.84rem;}
@@ -1131,6 +1314,14 @@ export function Reader({
     .rd-mission .rd-lesson-nav__actions button{border:0;background:transparent;color:${th.textFaint};cursor:pointer;font-size:.65rem;}
     .rd-mission .rd-lesson-nav__actions button:hover{color:${th.accent};}
     .rd-mission .rd-lesson-nav__tree{min-height:0;overflow:auto;padding-right:4px;}
+    .rd-mission .rd-milestone-curriculum + .rd-lesson-nav__tree{display:none;}
+    .rd-milestone-curriculum{display:grid;gap:8px;min-height:0;height:auto;flex:0 0 auto;overflow:visible;padding-right:4px;padding-bottom:12px;}
+    .rd-milestone-group{border:1px solid ${th.border};border-radius:10px;background:${th.surface};overflow:hidden;}
+    .rd-milestone-group[data-state="complete"]{border-color:#22C55E;}
+    .rd-milestone-group[data-state="locked"]{opacity:.8;background:${th.bg};}
+    .rd-milestone-group__header{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:7px;width:100%;padding:9px 8px;border:0;background:transparent;color:${th.text};text-align:left;cursor:pointer;}
+    .rd-milestone-group__header strong{font-size:.73rem;}.rd-milestone-group__header small{color:${th.textFaint};font:800 .52rem ${F.mono};}.rd-milestone-group__header em{font-style:normal;color:${th.accent};}
+    .rd-milestone-group__body{padding:0 7px 7px;border-top:1px solid ${th.border};}.rd-milestone-group__lock{padding:10px;color:${th.textFaint};font-size:.66rem;}
     .rd-mission .rd-lesson-module{margin-bottom:12px;}
     .rd-mission .rd-lesson-module__header{display:flex;align-items:flex-start;gap:7px;width:100%;padding:8px 4px;border:0;background:transparent;color:${th.text};cursor:pointer;text-align:left;}
     .rd-mission .rd-lesson-module__chevron{width:14px;color:${th.accent};font-size:1rem;line-height:1;}
@@ -1151,7 +1342,7 @@ export function Reader({
     .rd-mission .rd-mission-strip{display:none;}
     .rd-mission .rd-main{display:flex;height:100%;min-width:0;min-height:0;overflow:hidden;background:${th.bg};}
     .rd-mission .rd-scroll{height:100%;min-height:0;background:${th.bg};}
-    .rd-mission .rd-content{width:min(100%,950px);max-width:950px;margin:0 auto;padding:52px clamp(28px,6vw,96px) 140px;}
+    .rd-mission .rd-content{width:min(100%,950px);max-width:950px;margin:0 auto;padding:18px clamp(28px,6vw,96px) 140px;}
     .rd-mission .rd-content::before{display:none;}
     .rd-mission .rd-hero{width:100%;max-width:none;margin:0 0 54px;padding:0 0 28px;border-bottom:1px solid ${th.border};}
     .rd-mission .rd-title{max-width:850px;margin-top:12px;font-size:clamp(1.45rem,2vw,2.15rem);line-height:1.12;letter-spacing:-.035em;}
@@ -1162,6 +1353,28 @@ export function Reader({
     .rd-mission .rd-prose p{max-width:800px;}
     .rd-mission .rd-footer{max-width:850px;margin-top:56px;}
     .rd-mission .rd-utility{display:flex;flex-direction:column;gap:26px;min-width:0;overflow:auto;padding:30px 18px;background:${th.surface};border-left:1px solid ${th.border};}
+    .rd-focus-timer{display:grid;gap:10px;padding:14px;border:2px solid #1f2937;border-radius:14px;background:#fff7ed;box-shadow:3px 3px 0 #1f2937;color:${th.text};}
+    .rd-focus-timer__heading{display:flex;align-items:center;justify-content:space-between;font:800 .62rem ${F.mono};letter-spacing:.1em;color:${th.accent};}
+    .rd-focus-timer__heading b{padding:3px 6px;border-radius:99px;background:#1f2937;color:#fff;font-size:.54rem;letter-spacing:.04em;}
+    .rd-focus-timer__lesson{margin:0;color:${th.textDim};font-size:.72rem;font-weight:700;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    .rd-focus-timer__clock{display:grid;justify-items:center;padding:8px 0 4px;}
+    .rd-focus-timer__clock strong{font:900 2.25rem ${F.mono};letter-spacing:.04em;color:#1f2937;}
+    .rd-focus-timer__clock span{color:${th.textFaint};font-size:.62rem;}
+    .rd-focus-timer__track{height:7px;overflow:hidden;border-radius:99px;background:#fed7aa;}
+    .rd-focus-timer__track i{display:block;height:100%;border-radius:inherit;background:${th.accent};transition:width .4s linear;}
+    .rd-focus-timer__presets{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;}
+    .rd-focus-timer__presets button,.rd-focus-timer__actions button{padding:7px 4px;border:1.5px solid ${th.border};border-radius:8px;background:#fff;color:${th.text};font:800 .64rem ${F.mono};cursor:pointer;}
+    .rd-focus-timer__presets button.is-selected{border-color:${th.accent};background:${th.accent};color:#fff;}
+    .rd-focus-timer__presets button:disabled{cursor:not-allowed;opacity:.55;}
+    .rd-focus-timer__actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+    .rd-focus-timer__actions button.primary,.rd-focus-timer__warning button:first-child{border-color:#1f2937;background:#1f2937;color:#fff;}
+    .rd-focus-timer__warning{display:grid;gap:7px;padding:10px;border:2px solid ${th.accent};border-radius:10px;background:#fff;color:${th.text};font-size:.68rem;line-height:1.4;}
+    .rd-focus-timer__warning span{color:${th.textDim};}
+    .rd-focus-timer__warning div{display:flex;gap:6px;}
+    .rd-focus-timer__warning button{flex:1;padding:7px 4px;border:1.5px solid ${th.border};border-radius:7px;background:#fff;color:${th.text};font:800 .62rem ${F.mono};cursor:pointer;}
+    .rd-focus-timer__sound{display:flex;align-items:center;gap:6px;color:${th.textDim};font-size:.62rem;cursor:pointer;}
+    .rd-focus-timer__sound input{accent-color:${th.accent};}
+    .rd-focus-timer__hint{color:${th.textFaint};font-size:.58rem;line-height:1.4;}
     .rd-mission .rd-utility__section{padding-bottom:22px;border-bottom:1px solid ${th.border};}
     .rd-mission .rd-utility__section:last-child{border-bottom:0;}
     .rd-mission .rd-utility__heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;color:${th.text};font-family:${F.mono};font-size:.62rem;font-weight:800;letter-spacing:.1em;}
@@ -1204,7 +1417,7 @@ export function Reader({
     .rd-reader-back:hover{background:${th.accentDim};color:${th.accent};}
     .rd-toolbar-title{display:flex;min-width:130px;max-width:240px;flex:0 1 220px;flex-direction:column;gap:2px;margin-right:8px;}
     .rd-top-nav{display:flex;align-items:center;gap:4px;flex:0 0 auto;}
-    .rd-top-nav__button{display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 8px;border:1px solid ${th.border};border-radius:${R.md};background:${th.surface};color:${th.textDim};cursor:pointer;font-family:${F.body};font-size:.68rem;font-weight:800;white-space:nowrap;}
+    .rd-top-nav__button{display:inline-flex;align-items:center;justify-content:center;width:34px;height:30px;padding:0;border:1px solid ${th.border};border-radius:${R.md};background:${th.surface};color:${th.textDim};cursor:pointer;font-family:${F.body};font-size:.8rem;font-weight:800;white-space:nowrap;}
     .rd-top-nav__button:hover{border-color:${th.accent};background:${th.accentDim};color:${th.accent};}
     .rd-mission .rd-reader-back,.rd-mission .rd-toolbar-title{display:none!important;}
     .rd-toolbar-title small{overflow:hidden;color:${th.textFaint};font-family:${F.mono};font-size:.56rem;font-weight:800;letter-spacing:.1em;text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap;}
@@ -1222,10 +1435,10 @@ export function Reader({
       .rd-mission .rd-rail{position:relative;left:auto;top:auto;bottom:auto;width:100%;max-height:360px;z-index:1;transform:none;box-shadow:none;}
       .rd-mission .rd-rail.is-open{transform:translateX(0);}
       .rd-mission .rd-utility{display:none;}
-      .rd-mission .rd-content{padding:36px 28px 100px;}
+      .rd-mission .rd-content{padding:18px 28px 100px;}
     }
     @media(max-width:560px){
-      .rd-mission .rd-content{padding:28px 18px 90px;}
+      .rd-mission .rd-content{padding:18px 18px 90px;}
       .rd-mission .rd-title{font-size:2.35rem;}
       .rd-mission .rd-prose{font-size:calc(1rem * var(--rd-fs,1));}
       .rd-mission .rd-toolbar-left{overflow:hidden;}
@@ -1239,7 +1452,7 @@ export function Reader({
 
   return (
     <div
-      className={`rd rd-root rd-mission${focusMode ? ' is-focus' : ''}${lessonNavOpen ? '' : ' lesson-nav-closed'}${utilityOpen ? '' : ' utility-closed'}`}
+      className={`rd rd-root rd-mission${focusMode ? ' is-focus' : ''}${lessonFocusActive ? ' is-lesson-focus' : ''}${lessonNavOpen ? '' : ' lesson-nav-closed'}${utilityOpen ? '' : ' utility-closed'}`}
       style={{
         ['--rd-fs' as any]: prefs.fontScale,
         ['--rd-lh' as any]: prefs.lineHeight,
@@ -1250,14 +1463,14 @@ export function Reader({
       {/* ── Toolbar ── */}
       <div className="rd-toolbar" role="toolbar">
         <div className="rd-toolbar-left">
-          <div className="rd-top-nav" aria-label="Course navigation">
-            <button type="button" className="rd-top-nav__button" onClick={onGoHome} aria-label="Go to dashboard" title="Go to dashboard">⌂ <span>Dashboard</span></button>
+          {!lessonFocusActive && <button type="button" className="rd-top-nav__button" onClick={onGoHome} aria-label="Go to home" title="Go to home"><img src="/logos/home-neo.svg" alt="" width="24" height="24" /></button>}
+          {false && <div className="rd-top-nav" aria-label="Course navigation">
+            <button type="button" className="rd-top-nav__button" onClick={onGoHome} aria-label="Go to dashboard" title="Go to dashboard"><img src="/logos/home-neo.svg" alt="" width="24" height="24" /><span>Dashboard</span></button>
             <button type="button" className="rd-top-nav__button" onClick={onSwitchCourse} aria-label="Switch course" title="Switch course">⇄ <span>Courses</span></button>
-          </div>
+          </div>}
           <button className="rd-reader-back" type="button" onClick={() => window.history.back()} aria-label="Go back">←</button>
           <div className="rd-toolbar-title"><small>{noteData?.module || 'Course lesson'}</small><strong>{cleanTitle}</strong></div>
-          {/* Mode tabs */}
-          <div className="rd-tabs" role="tablist">
+          {false && <div className="rd-tabs" role="tablist">
             {(['read', 'watch', 'blueprint'] as const).map((m, i) => (
               <button
                 key={m} role="tab" aria-selected={mode === m}
@@ -1267,7 +1480,7 @@ export function Reader({
                 {['Read', 'Watch', 'Blueprint'][i]}
               </button>
             ))}
-          </div>
+          </div>}
           {hasFiles && (
             <button
               className={`rd-btn${activeTab === 'files' ? ' primary' : ''}`}
@@ -1277,6 +1490,10 @@ export function Reader({
             </button>
           )}
         </div>
+
+        <div className="rd-toolbar-center" aria-label="Reader word">痴迷</div>
+
+        {completionAction && <div className="rd-toolbar-completion">{completionAction}</div>}
 
         {mode === 'read' && activeTab === 'notes' && (
           <div className="rd-highlighter" role="toolbar" aria-label="Text highlighter">
@@ -1314,6 +1531,7 @@ export function Reader({
           </div>
         )}
         <div className="rd-toolbar-right">
+          {completionAction}
           <span className="rd-chip" aria-live="polite">{Math.round(readingPct)}%</span>
           <span className="rd-chip">{minutesLeft} MIN</span>
           <span className="rd-chip">{currentIdx + 1} / {totalCount}</span>
@@ -1325,6 +1543,51 @@ export function Reader({
       </div>
 
       {/* ── Stage ── */}
+      <div className="rd-utility-hub">
+        {utilityHubOpen && (
+          <div className="rd-utility-hub__menu" role="dialog" aria-label="Reader utility hub">
+            <div className="rd-utility-hub__header"><strong>UTILITY HUB</strong><span>Everything in one place</span></div>
+            {completionAction && <section className="rd-utility-hub__section rd-completion-section"><div className="rd-utility-hub__section-label">Module complete</div><p className="rd-completion-message">Nice work. Share this milestone or continue to the next lesson.</p><div className="rd-completion-action">{completionAction}</div></section>}
+            <input
+              className="rd-utility-hub__filter"
+              value={utilityQuery}
+              onChange={event => setUtilityQuery(event.target.value)}
+              placeholder="Filter tools..."
+              aria-label="Filter assistant tools"
+            />
+            <div className="rd-utility-hub__progress"><span><strong>{Math.round(readingPct)}%</strong> complete</span><span>{minutesLeft} min · {currentIdx + 1}/{totalCount}</span></div>
+            <div className="rd-utility-hub__tts"><TextToSpeechPlayer courseId={courseId} part={noteData?.part ?? currentPart} title={cleanTitle} module={noteData?.module} markdown={noteData?.notes || ''} rate={ttsRate} onRateChange={setTtsRate} onNext={onNext} onActiveText={setTtsActiveText} onActivePosition={(index, total) => setTtsActivePosition({ index, total })} /></div>
+            <section className="rd-utility-hub__section" hidden={!!utilityQuery && !'view modes'.includes(utilityQuery.toLowerCase())}><div className="rd-utility-hub__section-label">VIEW MODES</div><div className="rd-utility-hub__actions">
+              <button className="rd-utility-hub__action" type="button" onClick={() => { onSwitchCourse(); setUtilityHubOpen(false); }}><i>⇄</i><span>Courses</span></button>
+              {(['read', 'watch', 'blueprint'] as const).map(m => (
+                <button key={m} className="rd-utility-hub__action" type="button" onClick={() => { setMode(m); setUtilityHubOpen(false); }}><i>{m === 'read' ? '▤' : m === 'watch' ? '▶' : '⌘'}</i><span>{m === 'read' ? 'Read' : m === 'watch' ? 'Watch video' : 'Blueprint'}</span></button>
+              ))}
+            </div></section>
+            <section className="rd-utility-hub__section" hidden={!!utilityQuery && !'ai tools'.includes(utilityQuery.toLowerCase())}><div className="rd-utility-hub__section-label">AI tools</div><div className="rd-utility-hub__actions">
+              <button className="rd-utility-hub__action" type="button" onClick={() => { setAiOpen(true); setUtilityHubOpen(false); }}><i>✦</i><span>Ask AI</span></button>
+              <button className="rd-utility-hub__action" type="button" onClick={() => { onShowShortcuts(); setUtilityHubOpen(false); }}><i>⌘</i><span>Shortcuts</span></button>
+            </div></section>
+            <section className="rd-utility-hub__section" hidden={!!utilityQuery && !'study tools'.includes(utilityQuery.toLowerCase())}><div className="rd-utility-hub__section-label">Study tools</div><div className="rd-utility-hub__actions">
+              <button className="rd-utility-hub__action" type="button" onClick={() => toggleBookmark(`lesson-${noteData?.part ?? currentPart}`)}><i>★</i><span>{isBookmarked ? 'Bookmarked' : 'Bookmark'}</span></button>
+              <button className="rd-utility-hub__action" type="button" onClick={onToggleComplete}><i>✓</i><span>{isCompleted ? 'Completed' : 'Mark complete'}</span></button>
+              <button className="rd-utility-hub__action" type="button" onClick={() => { setMode('read'); onTabChange('notes'); setUtilityHubOpen(false); }}><i>✎</i><span>Highlights</span></button>
+              <button className="rd-utility-hub__action" type="button" onClick={() => { setUtilityOpen(v => !v); setUtilityHubOpen(false); }}><i>☰</i><span>{utilityOpen ? 'Hide outline' : 'Show outline'}</span></button>
+              {HIGHLIGHT_COLORS.map(color => <button className="rd-utility-hub__action" key={color.id} type="button" onClick={() => { setMode('read'); onTabChange('notes'); setHighlightColor(color.id); setEraseHighlights(false); setUtilityHubOpen(false); }}><i style={{ backgroundColor: color.value }}> </i><span>{color.label} highlight</span></button>)}
+              <button className="rd-utility-hub__action" type="button" onClick={() => { setEraseHighlights(v => !v); setUtilityHubOpen(false); }}><i>⌫</i><span>{eraseHighlights ? 'Stop erasing' : 'Erase highlights'}</span></button>
+              <button className="rd-utility-hub__action" type="button" onClick={() => { clearHighlights(); setUtilityHubOpen(false); }} disabled={highlights.length === 0}><i>⌧</i><span>Clear highlights</span></button>
+            </div></section>
+            <section className="rd-utility-hub__section rd-voice-reader" hidden={!!utilityQuery && !'voice reader'.includes(utilityQuery.toLowerCase())}><div className="rd-utility-hub__section-label">Voice reader</div><div className="rd-utility-hub__voice-grid"><label>Voice<select value={ttsVoiceName} onChange={event => { const value = event.target.value; setTtsVoiceName(value); emitTtsPreference({ voiceName: value }); }}><option value="">Best available natural voice</option>{ttsVoices.map(voice => <option key={`${voice.name}-${voice.lang}`} value={voice.name}>{voice.name} · {voice.lang}</option>)}</select></label><label>Speed<select value={ttsRate} onChange={event => { const value = Number(event.target.value) as TtsSpeed; setTtsRate(value); emitTtsPreference({ rate: value }); }}>{TTS_SPEEDS.map(speed => <option key={speed} value={speed}>{speed}x</option>)}</select></label><label>Pitch<input aria-label="Voice pitch" type="range" min="0.85" max="1.15" step="0.01" value={ttsPitch} onChange={event => { const value = Number(event.target.value); setTtsPitch(value); emitTtsPreference({ pitch: value }); }} /></label><label>Volume<input aria-label="Voice volume" type="range" min="0" max="1" step="0.05" value={ttsVolume} onChange={event => { const value = Number(event.target.value); setTtsVolume(value); emitTtsPreference({ volume: value }); }} /></label></div><button type="button" className="rd-utility-hub__reset" onClick={() => { const defaults = resetTtsPreferences(); setTtsVoiceName(defaults.voiceName); setTtsRate(defaults.rate); setTtsPitch(defaults.pitch); setTtsVolume(defaults.volume); emitTtsPreference(defaults); }}>RESET VOICE DEFAULTS</button></section>
+            <section className="rd-utility-hub__section" hidden={!!utilityQuery && !'utilities'.includes(utilityQuery.toLowerCase())}><div className="rd-utility-hub__section-label">Utilities</div><div className="rd-utility-hub__actions">
+              <button className="rd-utility-hub__action" type="button" onClick={() => { onTabChange(activeTab === 'files' ? 'notes' : 'files'); setUtilityHubOpen(false); }}><i>▣</i><span>{activeTab === 'files' ? 'Open notes' : 'Open files'}</span></button>
+              <button className="rd-utility-hub__action" type="button" onClick={() => { onPrev?.(); setUtilityHubOpen(false); }} disabled={!onPrev}><i>←</i><span>Previous lesson</span></button>
+              <button className="rd-utility-hub__action" type="button" onClick={() => { onNext?.(); setUtilityHubOpen(false); }} disabled={!onNext}><i>→</i><span>Next lesson</span></button>
+              <button className="rd-utility-hub__action" type="button" onClick={onGoHome}><img src="/logos/home-neo.svg" alt="" width="22" height="22" /><span>Dashboard</span></button>
+            </div></section>
+          </div>
+        )}
+        <button className="rd-utility-hub__trigger" type="button" aria-expanded={utilityHubOpen} aria-label={utilityHubOpen ? 'Close utility hub' : 'Open utility hub'} onClick={() => setUtilityHubOpen(v => !v)}>{utilityHubOpen ? '×' : '✦'}</button>
+      </div>
+
       <div className="rd-stage">
         {!lessonNavOpen && <button className="rd-panel-reopen rd-panel-reopen--left" type="button" onClick={() => setLessonNavOpen(true)} aria-label="Open lesson navigator" title="Open lesson navigator">›</button>}
         {!utilityOpen && <button className="rd-panel-reopen rd-panel-reopen--right" type="button" onClick={() => setUtilityOpen(true)} aria-label="Open reader tools" title="Open reader tools">‹</button>}
@@ -1335,7 +1598,7 @@ export function Reader({
           aria-label="On this page"
           style={{ display: mode === 'read' && activeTab === 'notes' ? undefined : 'none' }}
         >
-          <LessonNavigator modules={modules} currentPart={currentPart} completedParts={completedParts} bookmarkedParts={bookmarkedParts} onSelectPart={onSelectPart} onNext={onNext} onClose={() => setLessonNavOpen(false)} />
+          <LessonNavigator courseId={courseId} modules={modules} currentPart={currentPart} completedParts={completedParts} bookmarkedParts={bookmarkedParts} onSelectPart={onSelectPart} onNext={onNext} onClose={() => setLessonNavOpen(false)} />
           {modules.find(module => module.notes.some(note => note.part === currentPart))?.moduleNote && (
             <div className="rd-module-note" aria-label="Module notes">
               <strong>MODULE NOTES</strong>
@@ -1422,12 +1685,8 @@ export function Reader({
               {!loading && activeTab === 'notes' && mode === 'read' && noteData && (
                 <>
                   <div className="rd-hero">
-                    <div className="rd-kicker">
-                      <span className="rd-badge accent">PART {noteData.part}</span>
-                      <span className={`rd-badge ${noteData.importance === 'critical' ? 'pink' : noteData.importance === 'medium' ? 'accent' : 'lime'}`}>
-                        {noteData.importance}
-                      </span>
-                      <span className="rd-badge cyan">{noteData.module}</span>
+                    <div className="rd-hero-heading">
+                      <h1 className="rd-title">{cleanTitle}</h1>
                       <button
                         className={`rd-btn icon${isBookmarked ? ' primary' : ''}`}
                         style={{ marginLeft: 'auto', padding: '4px 10px' }}
@@ -1438,7 +1697,6 @@ export function Reader({
                         {isBookmarked ? '★ PINNED' : '☆ PIN'}
                       </button>
                     </div>
-                    <h1 className="rd-title">{cleanTitle}</h1>
                     <div className="rd-submeta">
                       <span>{readTime} MIN READ</span>
                       <span className="dot">/</span>
@@ -1449,7 +1707,7 @@ export function Reader({
                   </div>
 
                   <article ref={articleRef} className="rd-prose" onMouseUp={handleTextSelection} onTouchEnd={handleTextSelection} aria-label="Lesson content">
-                    <MarkdownRenderer content={noteData.notes} components={markdownComponents} />
+                    <MarkdownRenderer content={displayNotes} components={markdownComponents} />
                   </article>
 
                   <div className="rd-footer">
@@ -1491,6 +1749,7 @@ export function Reader({
           </button>
         </main>
         <aside className="rd-utility" aria-label="Reader tools">
+          <LessonFocusTimer key={`${courseId}-${noteData?.part ?? currentPart}`} lessonTitle={cleanTitle} defaultMinutes={readTime} onFocusModeChange={handleLessonFocusModeChange} />
           <section className="rd-utility__section"><div className="rd-utility__heading"><span>ON THIS PAGE</span><small>{toc.length} sections</small><button className="rd-panel-close" type="button" onClick={() => setUtilityOpen(false)} aria-label="Close reader tools" title="Close reader tools">›</button></div><div className="rd-utility__toc">{toc.length === 0 ? <span className="rd-utility__empty">Headings appear here</span> : toc.map(item => <button type="button" key={item.id} className={activeId === item.id ? 'is-active' : ''} onClick={() => document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><i />{item.text}</button>)}</div></section>
           <section className="rd-utility__section"><div className="rd-utility__heading"><span>READING PROGRESS</span><strong>{Math.round(readingPct)}%</strong></div><div className="rd-utility__progress"><span style={{ width: `${readingPct}%` }} /></div><small className="rd-utility__muted">{minutesLeft} minutes remaining</small></section>
           <section className="rd-utility__section rd-utility__quick"><div className="rd-utility__heading"><span>QUICK ACTIONS</span></div><button type="button" onClick={() => toggleBookmark(`lesson-${noteData?.part ?? currentPart}`)}>★ {isBookmarked ? 'Bookmarked' : 'Bookmark lesson'}</button><button type="button" onClick={onShowShortcuts}>⌘ Keyboard shortcuts</button><button type="button" onClick={onToggleComplete}>{isCompleted ? '✓ Checkpoint complete' : '○ Mark checkpoint complete'}</button><button type="button" className="rd-utility__ai" onClick={() => setAiOpen(true)}>✦ Ask AI about this lesson</button></section>

@@ -20,6 +20,7 @@ import { AptitudeView } from '@/components/lesson/AptitudeView';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { TaskHub } from '@/components/assignments/TaskHub';
 import { AchievementShare } from '@/components/common/AchievementShare';
+import { getMilestones, hasMilestoneSystem, isMilestoneComplete, isMilestoneUnlocked, milestoneForModule, milestoneParts } from '@/features/certificates/milestones';
 
 type View = 'login' | 'dashboard' | 'landing' | 'reader' | 'typing' | 'aptitude' | 'taskhub' | 'targetroom';
 
@@ -299,54 +300,97 @@ function ChapterCompleteCelebration({ title, onDone }: { title: string; onDone: 
         @keyframes celebCheck { 0% { stroke-dashoffset: 40; } 100% { stroke-dashoffset: 0; } }
       `}</style>
       <div style={{
-        position: 'relative', textAlign: 'center', animation: 'celebPop 480ms cubic-bezier(0.2,0.8,0.2,1)',
+        position: 'relative', textAlign: 'center', background: C.amber, border: `3px solid ${C.text}`, boxShadow: `10px 10px 0 ${C.text}`, padding: '28px 24px 24px', animation: 'celebPop 480ms cubic-bezier(0.2,0.8,0.2,1)',
       }}>
         <div style={{ position: 'relative', width: '84px', height: '84px', margin: '0 auto 18px' }}>
-          <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: `2px solid ${C.green}`, animation: 'celebRing 1s ease-out' }} />
+          <div style={{ position: 'absolute', inset: -10, border: `3px solid ${C.amber}`, animation: 'celebRing 1s ease-out' }} />
           <div style={{
-            width: '84px', height: '84px', borderRadius: '50%',
-            background: `linear-gradient(135deg, ${C.green}, ${C.cyan})`,
+            width: '84px', height: '84px', background: C.amber,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: `0 0 40px ${C.greenDim}`,
+            border: `3px solid ${C.text}`, boxShadow: `5px 5px 0 ${C.text}`,
           }}>
             <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke={C.onAccent} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12" style={{ strokeDasharray: 40, animation: 'celebCheck 420ms 200ms ease-out both' }} />
             </svg>
           </div>
         </div>
-        <div style={{ fontFamily: F.mono, fontSize: '0.68rem', color: C.green, letterSpacing: '0.14em', marginBottom: '6px' }}>CHAPTER COMPLETE</div>
+        <div style={{ fontFamily: F.mono, fontSize: '0.68rem', color: C.text, letterSpacing: '0.14em', marginBottom: '6px', fontWeight: 900 }}>CHAPTER COMPLETE</div>
         <div style={{ fontFamily: F.display, fontWeight: 700, fontSize: '1.3rem', color: C.text, maxWidth: '420px', padding: '0 20px' }}>{title}</div>
       </div>
     </div>
   );
 }
 
+const SPACE_PARTICLES = Array.from({ length: 128 }, (_, index) => ({
+  angle: (index * 137.5) % 360,
+  radius: 130 + ((index * 47) % 360),
+  size: 1 + (index % 4) * 0.55,
+  depth: index % 3,
+  delay: -((index * 0.17) % 8),
+  duration: 7 + (index % 7) * 0.8,
+}));
+
 function AcademyBootScreen({ stage = 'auth' }: { stage?: 'auth' | 'courses' }) {
   const [phase, setPhase] = useState(0);
   const coursePhases = [
-    ['Waking up your workspace', 'Connecting your learning profile'],
-    ['Indexing the course library', 'Organizing your tracks and modules'],
-    ['Syncing your progress', 'Restoring your latest learning state'],
-    ['Setting your next move', 'Your learning space is almost ready'],
+    ['Initializing Intelligence...', 'Mapping your learning universe'],
+    ['Building Knowledge Universe...', 'Aligning courses and modules'],
+    ['Synchronizing Learning Modules...', 'Pulling your progress into orbit'],
+    ['Tuning Learning Orbit...', 'Calibrating your next learning move'],
+    ['Opening Learning Portal...', 'Rendering your knowledge galaxy'],
   ];
   const authPhases = [
-    ['Authenticating your account', 'Keeping your learning space private'],
-    ['Preparing your learning space', 'Loading your personalized academy'],
+    ['Calibrating Neural Systems...', 'Securing your learning universe'],
+    ['Opening Learning Portal...', 'Preparing your personalized academy'],
   ];
   const phases = stage === 'courses' ? coursePhases : authPhases;
 
   useEffect(() => {
-    const timer = window.setInterval(() => setPhase(current => (current + 1) % phases.length), 1800);
-    return () => window.clearInterval(timer);
+    let timer: number | undefined;
+    const start = () => {
+      if (document.hidden) return;
+      timer = window.setInterval(() => setPhase(current => (current + 1) % phases.length), 2200);
+    };
+    const handleVisibility = () => {
+      if (timer) window.clearInterval(timer);
+      timer = undefined;
+      if (!document.hidden) start();
+    };
+    start();
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => {
+      if (timer) window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, [phases.length]);
 
   const current = phases[phase];
 
   return (
-    <div className="academy-boot" role="status" aria-label={stage === 'courses' ? 'Loading your courses' : 'Authenticating'}>
+    <div className="academy-boot academy-space" role="status" aria-live="polite" aria-label={stage === 'courses' ? 'Opening the learning universe' : 'Opening secure learning portal'}>
       <div className="academy-boot-glow academy-boot-glow-one" aria-hidden="true" />
       <div className="academy-boot-glow academy-boot-glow-two" aria-hidden="true" />
       <div className="academy-boot-grid" aria-hidden="true" />
+      <div className="academy-space-stars" aria-hidden="true">
+        {SPACE_PARTICLES.map((particle, index) => (
+          <i
+            key={index}
+            className={`academy-space-particle depth-${particle.depth}`}
+            style={{ '--angle': `${particle.angle}deg`, '--radius': `${particle.radius}px`, '--size': `${particle.size}px`, '--delay': `${particle.delay}s`, '--duration': `${particle.duration}s` } as any}
+          />
+        ))}
+      </div>
+      <div className="academy-space-scene" aria-hidden="true">
+        <div className="academy-space-lens academy-space-lens-one" />
+        <div className="academy-space-lens academy-space-lens-two" />
+        <div className="academy-space-disk academy-space-disk-back" />
+        <div className="academy-space-photon-ring" />
+        <div className="academy-space-horizon" />
+        <div className="academy-space-disk academy-space-disk-front" />
+        <div className="academy-space-accretion-glow" />
+        <div className="academy-space-pulse academy-space-pulse-one" />
+        <div className="academy-space-pulse academy-space-pulse-two" />
+      </div>
 
       {stage === 'courses' && (
         <div className="academy-loading-preview" aria-hidden="true">
@@ -396,9 +440,20 @@ function AcademyBootScreen({ stage = 'auth' }: { stage?: 'auth' | 'courses' }) {
           ))}
         </div>
       </div>
+      <div className="academy-space-sidecopy academy-space-sidecopy-right" aria-hidden="true">
+        <span>ORBITAL STATUS</span>
+        <strong>GRAVITY ONLINE</strong>
+        <small>128 PARTICLE STREAMS</small>
+        <small>KNOWLEDGE FIELD STABLE</small>
+      </div>
       <div className="academy-boot-footer"><span>ONE PERCENT BETTER / EVERY DAY</span><span>PLEASE HOLD — WE ARE MAKING SPACE FOR YOUR NEXT REP</span></div>
     </div>
   );
+}
+
+function MilestoneCompleteCelebration({ courseTitle, milestoneName, skills, modulesCompleted, onDone }: { courseTitle: string; milestoneName: string; skills: string[]; modulesCompleted: number; onDone: () => void }) {
+  useEffect(() => { const timer = window.setTimeout(onDone, 6500); return () => window.clearTimeout(timer); }, [onDone]);
+  return <div className="milestone-celebration" role="dialog" aria-modal="true" aria-label={`${milestoneName} completed`}><div className="milestone-confetti" aria-hidden="true">{Array.from({ length: 28 }, (_, i) => <i key={i} style={{ ['--i' as any]: i }} />)}</div><div className="milestone-celebration-card"><button type="button" className="milestone-celebration-close" onClick={onDone} aria-label="Close celebration">×</button><div className="milestone-celebration-kicker">MILESTONE UNLOCKED</div><div className="milestone-celebration-badge">✓</div><h2>{milestoneName} completed</h2><p>{courseTitle} · {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p><div className="milestone-celebration-stats"><span><b>{modulesCompleted}</b> modules completed</span><span><b>100%</b> milestone progress</span></div><div className="milestone-celebration-skills">{skills.slice(0, 5).map(skill => <span key={skill}>✓ {skill}</span>)}</div><strong className="milestone-celebration-message">You earned this. Keep building your proof of progress.</strong></div></div>;
 }
 
 export function Academy() {
@@ -420,6 +475,7 @@ export function Academy() {
   const [courseNavCollapsed, setCourseNavCollapsed] = useState(false);
   const [downloadMenuOpen, setDownloadMenuOpen] = useState(false);
   const [celebration, setCelebration] = useState<string | null>(null);
+  const [milestoneCelebration, setMilestoneCelebration] = useState<{ name: string; skills: string[]; modulesCompleted: number } | null>(null);
 
   useEffect(() => {
     if (window.innerWidth <= 860) setSidebarOpen(false);
@@ -431,13 +487,13 @@ export function Academy() {
 
   useEffect(() => {
     if (activeCourse) {
-      document.title = `1% Dev Academy — ${activeCourse.title}`;
+      document.title = `Learning Platform — ${activeCourse.title}`;
       const metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc) {
         metaDesc.setAttribute('content', activeCourse.author ? `${activeCourse.description} Series by ${activeCourse.author}. Complete notes, code, and video.` : `${activeCourse.description}. Complete notes and code.`);
       }
     } else {
-      document.title = '1% Dev Academy';
+      document.title = 'Learning Platform';
     }
   }, [activeCourse]);
 
@@ -598,6 +654,11 @@ export function Academy() {
     const courseParam = params.get('course');
     const partParam = params.get('part');
 
+    // Establish the destination before the presentation timer can finish.
+    // Without this, the initial `login` view could briefly fall through to
+    // the empty reader shell while dashboard requests were still resolving.
+    if (!courseParam) setView('dashboard');
+
     dashboardDataPromise
       .then(({ courses: fetchedCourses }) => {
         setCourses(fetchedCourses);
@@ -654,7 +715,10 @@ export function Academy() {
           }).catch(() => setBooting(false));
         } else {
           setView('dashboard');
-          return splashMinimum.then(() => setBooting(false));
+          // Keep the branded scene up until the shared dashboard preload has
+          // completed. Mounting Dashboard after only the visual timer ends
+          // exposes its internal loading placeholders as a blank gap.
+          splashMinimum.then(() => setBooting(false));
         }
       })
         .catch(err => {
@@ -760,13 +824,28 @@ export function Academy() {
     await Promise.all(relatedParts.map(relatedPart => toggleProgress(activeCourseId, relatedPart, !isDone)));
     if (!isDone) {
       logActivity('lesson_complete', activeCourseId, part);
+      if (hasMilestoneSystem(activeCourseId)) {
+        const after = new Set([...completedParts, ...relatedParts]);
+        const newlyCompleted = getMilestones(activeCourseId).find(milestone => {
+          const wasComplete = isMilestoneComplete(modules, completedParts, milestone);
+          const nowComplete = isMilestoneUnlocked(activeCourseId, modules, Array.from(after), milestone) && isMilestoneComplete(modules, Array.from(after), milestone);
+          return !wasComplete && nowComplete;
+        });
+        if (newlyCompleted) {
+          const celebrationKey = `opd_milestone_celebrated_${user?.uid || 'local'}_${activeCourseId}_${newlyCompleted.id}`;
+          if (!localStorage.getItem(celebrationKey)) {
+            localStorage.setItem(celebrationKey, new Date().toISOString());
+            setMilestoneCelebration({ name: newlyCompleted.name, skills: newlyCompleted.skills, modulesCompleted: newlyCompleted.moduleIds.length });
+          }
+        }
+      }
       // Fire the chapter-complete celebration only when moving TO completed
       const title = noteData && noteData.part === part ? noteData.title : `Part ${part}`;
       setCelebration(title);
     } else {
       logActivity('progress_marked', activeCourseId, part);
     }
-  }, [activeCourseId, completedParts, modules, noteData]);
+  }, [activeCourseId, completedParts, modules, noteData, user?.uid]);
 
   const handleToggleBookmark = useCallback(async (part: number) => {
     if (!activeCourseId) return;
@@ -1015,7 +1094,7 @@ export function Academy() {
       <div class="letterhead">
         <div class="letterhead-seal">1%</div>
         <div class="letterhead-text">
-          <h1 class="letterhead-org">1% Dev Academy</h1>
+          <h1 class="letterhead-org">Learning Platform</h1>
           <div class="letterhead-dept">Office of Curriculum &amp; Certified Learning Records</div>
         </div>
         <div class="letterhead-ref">
@@ -1033,7 +1112,7 @@ export function Academy() {
         <div class="doc-meta-right">
           <p><strong>Date Issued:</strong> __GENERATED__</p>
           <p><strong>Document Version:</strong> 1.0</p>
-          <p><strong>Authority:</strong> 1% Dev Academy</p>
+          <p><strong>Authority:</strong> Learning Platform</p>
         </div>
       </header>
 
@@ -1056,7 +1135,7 @@ export function Academy() {
       <footer class="doc-footer">
         <p class="doc-cert-line">
           This document is issued as an official transcript of record for the above-referenced lesson,
-          certified accurate as of the date of issue by 1% Dev Academy.
+          certified accurate as of the date of issue by Learning Platform.
         </p>
 
         <div class="doc-signature-row">
@@ -1076,7 +1155,7 @@ export function Academy() {
 
         <div class="doc-footer-meta">
           <span>__COURSE__ • __MODULE__ • Part ${noteData.part}</span>
-          <span>Issued __GENERATED__ • 1% Dev Academy — Official Record</span>
+          <span>Issued __GENERATED__ • Learning Platform — Official Record</span>
         </div>
       </footer>
 
@@ -1151,6 +1230,12 @@ export function Academy() {
   const currentModule = modules.find(module => flattenCourseNotes([module]).some(note => note.part === currentPart)) || null;
   const currentModuleNotes = currentModule ? flattenCourseNotes([currentModule]) : [];
   const currentModuleComplete = currentModuleNotes.length > 0 && currentModuleNotes.every(note => isPartComplete(note, completedParts));
+  const currentMilestone = activeCourseId && currentModule && hasMilestoneSystem(activeCourseId)
+    ? milestoneForModule(activeCourseId, currentModule.id)
+    : null;
+  const currentMilestoneParts = currentMilestone ? milestoneParts(modules, currentMilestone) : [];
+  const currentMilestoneComplete = Boolean(currentMilestone && isMilestoneUnlocked(activeCourseId || '', modules, completedParts, currentMilestone) && currentMilestoneParts.length > 0 && currentMilestoneParts.every(part => completedParts.includes(part)));
+  const isMilestoneFinalModule = Boolean(currentMilestone && currentModule && currentMilestone.moduleIds.at(-1) === currentModule.id);
 
   if (authLoading) {
     return <AcademyBootScreen stage="auth" />;
@@ -1160,7 +1245,15 @@ export function Academy() {
     return <Login />;
   }
 
-  if (view === 'dashboard') {
+  // Never expose the reader shell while the authenticated route is still
+  // resolving its initial dashboard/course state.
+  if (booting) {
+    return <AcademyBootScreen stage="courses" />;
+  }
+
+  // A stale landing/reader URL can briefly arrive without a selected course.
+  // Treat that state as the dashboard instead of exposing an empty reader.
+  if (view === 'dashboard' || ((view === 'login' || view === 'reader') && !activeCourseId)) {
     return (
       <div className="academy-view-frame" style={{ position: 'fixed', inset: 0, overflow: 'hidden', zIndex: 0 }}>
         <ErrorBoundary name="Dashboard">
@@ -1287,10 +1380,6 @@ export function Academy() {
     );
   }
 
-  if (booting) {
-    return <AcademyBootScreen stage="courses" />;
-  }
-
   return (
     <ErrorBoundary name="Course Reader">
     <>
@@ -1303,6 +1392,9 @@ export function Academy() {
 
       {celebration && (
         <ChapterCompleteCelebration title={celebration} onDone={() => setCelebration(null)} />
+      )}
+      {milestoneCelebration && activeCourse && (
+        <MilestoneCompleteCelebration courseTitle={activeCourse.title} milestoneName={milestoneCelebration.name} skills={milestoneCelebration.skills} modulesCompleted={milestoneCelebration.modulesCompleted} onDone={() => setMilestoneCelebration(null)} />
       )}
 
       <a href="#main-content" className="skip-to-main">Skip to main content</a>
@@ -1423,19 +1515,6 @@ export function Academy() {
               />
             )}
 
-            {view === 'reader' && activeCourseId && activeCourse && currentModule && currentModuleComplete && (
-              <AchievementShare
-                userId={user?.uid}
-                courseId={activeCourseId}
-                courseTitle={activeCourse.title}
-                moduleId={currentModule.id}
-                moduleTitle={currentModule.title}
-                completedParts={currentModuleNotes.map(note => note.part)}
-                partTitles={currentModuleNotes.map(note => note.title)}
-                partNumbers={currentModuleNotes.map(note => note.part)}
-              />
-            )}
-
             {(view === 'reader' || (view as string) === 'landing') && (
               <button
                 className="icon-btn"
@@ -1524,11 +1603,23 @@ export function Academy() {
               completedParts={completedParts}
               bookmarkedParts={bookmarkedParts}
               onSelectPart={selectPart}
+              completionAction={activeCourse && currentMilestone && currentMilestoneComplete && isMilestoneFinalModule ? (
+                <AchievementShare
+                  userId={user?.uid}
+                  courseId={activeCourseId}
+                  courseTitle={activeCourse.title}
+                  moduleId={currentMilestone.index}
+                  moduleTitle={currentMilestone.name}
+                  milestoneLabel={`${currentMilestone.name} milestone`}
+                  nextMilestoneLabel={currentMilestone.nextLabel}
+                  completedParts={currentMilestoneParts}
+                  partTitles={currentMilestone.skills}
+                  partNumbers={currentMilestoneParts}
+                />
+              ) : undefined}
             />
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-muted)' }}>
-              No course selected.
-            </div>
+            <AcademyBootScreen stage="courses" />
           )}
         </main>
       </div>

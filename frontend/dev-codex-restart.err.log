@@ -1,0 +1,20 @@
+ ⨯ ./components/course/Landing.tsx
+Error:   [31mx[0m Expected '</', got 'main'
+     ,-[[36;1;4mD:\onepercentdev-main\frontend\components\course\Landing.tsx[0m:582:1]
+ [2m579[0m |               </div>
+ [2m580[0m |             </div>
+ [2m581[0m |           </div>
+ [2m582[0m |         </main>
+     : [35;1m          ^^^^[0m
+ [2m583[0m |       </div>
+ [2m584[0m |     </div>
+ [2m584[0m |   );
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/course/Landing.tsx
+./components/common/Academy.tsx
+./app/page.tsx

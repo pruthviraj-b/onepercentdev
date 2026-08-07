@@ -1,6 +1,9 @@
 module.exports = function registerTaskRoutes(ctx) {
   with (ctx) {
+    const localTasks = require('../services/LocalTaskStore');
+
     app.get('/api/tasks', async (req, res) => {
+      if (!HAS_SUPABASE_CONFIG) return res.json(localTasks.list(req.userId));
       const { data, error } = await supabase
         .from('tasks').select('id,text,done,due_date,created_at')
         .eq('user_id', req.userId).order('created_at', { ascending: true });
@@ -11,6 +14,10 @@ module.exports = function registerTaskRoutes(ctx) {
     app.post('/api/tasks', async (req, res) => {
       const { text, due_date } = req.body;
       if (!text?.trim()) return res.status(400).json({ error: 'Task text required' });
+      if (!HAS_SUPABASE_CONFIG) {
+        const task = localTasks.create(req.userId, text.trim(), due_date);
+        return res.json({ ok: true, id: task.id, task });
+      }
       const { data, error } = await supabase.from('tasks')
         .insert({ user_id: req.userId, text: text.trim(), done: false, due_date: due_date || null })
         .select('id').single();
@@ -25,6 +32,11 @@ module.exports = function registerTaskRoutes(ctx) {
       if (req.body.text !== undefined) patch.text = req.body.text.trim();
       if (req.body.done !== undefined) patch.done = !!req.body.done;
       if (req.body.due_date !== undefined) patch.due_date = req.body.due_date;
+      if (!Object.keys(patch).length) return res.status(400).json({ error: 'No task changes provided' });
+      if (!HAS_SUPABASE_CONFIG) {
+        if (!localTasks.update(req.userId, id, patch)) return res.status(404).json({ error: 'Task not found' });
+        return res.json({ ok: true });
+      }
       const { error } = await supabase.from('tasks').update(patch)
         .eq('id', id).eq('user_id', req.userId);
       if (error) return res.status(500).json({ error: error.message });
@@ -34,6 +46,10 @@ module.exports = function registerTaskRoutes(ctx) {
     app.delete('/api/tasks/:id', async (req, res) => {
       const id = parseInt(req.params.id);
       if (isNaN(id)) return res.status(400).json({ error: 'Invalid task id' });
+      if (!HAS_SUPABASE_CONFIG) {
+        if (!localTasks.remove(req.userId, id)) return res.status(404).json({ error: 'Task not found' });
+        return res.json({ ok: true });
+      }
       const { error } = await supabase.from('tasks').delete()
         .eq('id', id).eq('user_id', req.userId);
       if (error) return res.status(500).json({ error: error.message });

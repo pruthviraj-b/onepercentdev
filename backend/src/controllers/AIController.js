@@ -1,4 +1,4 @@
-const { generateLessonAnswer } = require('../services/aiProvider');
+const { generateLessonAnswer, generateLessonExplanation } = require('../services/aiProvider');
 
 module.exports = function registerAIController({ app }) {
   app.post('/api/ai/chat', async (req, res) => {
@@ -17,6 +17,18 @@ module.exports = function registerAIController({ app }) {
     } catch (error) {
       console.error('[ai]', error.message);
       res.status(503).json({ error: { message: 'Your mentor is temporarily unavailable. Please try again.' } });
+    }
+  });
+
+  app.post('/api/ai/explain-lesson', async (req, res) => {
+    const { lesson } = req.body || {};
+    if (!lesson || typeof lesson.notes !== 'string' || !lesson.notes.trim()) return res.status(400).json({ error: { message: 'Lesson notes are required' } });
+    try {
+      const result = await generateLessonExplanation(lesson);
+      res.json(result);
+    } catch (error) {
+      console.error('[ai-explain]', error.message);
+      res.status(503).json({ error: { message: 'Expert explanation is temporarily unavailable.' } });
     }
   });
 };

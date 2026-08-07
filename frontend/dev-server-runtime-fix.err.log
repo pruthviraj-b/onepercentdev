@@ -1,0 +1,94 @@
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: Could not find the module "D:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>) {
+  digest: '3490689400'
+}
+ ⨯ Error: Could not find the module "D:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>) {
+  digest: '3490689400'
+}
+ ⨯ Error: Could not find the module "D:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>) {
+  digest: '3490689400'
+}
+ ⨯ Error: Could not find the module "D:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>) {
+  digest: '4151842575'
+}
+ ⨯ Error: Could not find the module "D:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>) {
+  digest: '4151842575'
+}
+ ⨯ Error: Could not find the module "D:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>) {
+  digest: '4151842575'
+}
+ ⨯ [TypeError: Cannot read properties of undefined (reading 'call')] {
+  digest: '152090524'
+}
+ ⨯ Error: Could not find the module "D:\onepercentdev-main\frontend\node_modules\next\dist\next-devtools\userspace\app\segment-explorer-node.js#SegmentViewNode" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>) {
+  digest: '3490689400'
+}
+[TypeError: Cannot read properties of undefined (reading 'call')]
+ ⨯ [TypeError: Cannot read properties of undefined (reading 'call')]
+ ⨯ [TypeError: Cannot read properties of undefined (reading 'call')] {
+  page: '/'
+}
+ ⨯ Error: Cannot find module './331.js'
+Require stack:
+- D:\onepercentdev-main\frontend\.next\server\webpack-runtime.js
+- D:\onepercentdev-main\frontend\.next\server\app\page.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\server\require.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\server\load-components.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\build\utils.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\build\swc\options.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\build\swc\index.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\build\next-config-ts\transpile-config.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\server\config.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\server\next.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\server\lib\start-server.js
+    at <unknown> (D:\onepercentdev-main\frontend\.next\server\app\favicon.ico\route.js:1:72480)
+    at Object.<anonymous> (D:\onepercentdev-main\frontend\.next\server\app\favicon.ico\route.js:1:72526) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/favicon.ico'
+}
+ ⨯ Error: Cannot find module './331.js'
+Require stack:
+- D:\onepercentdev-main\frontend\.next\server\webpack-runtime.js
+- D:\onepercentdev-main\frontend\.next\server\pages\_document.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\server\require.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\server\load-components.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\build\utils.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\build\swc\options.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\build\swc\index.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\build\next-config-ts\transpile-config.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\server\config.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\server\next.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\server\lib\start-server.js
+    at <unknown> (D:\onepercentdev-main\frontend\.next\server\app\favicon.ico\route.js:1:72480)
+    at Object.<anonymous> (D:\onepercentdev-main\frontend\.next\server\app\favicon.ico\route.js:1:72526) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/favicon.ico'
+}
+ ⨯ Error: Cannot find module './331.js'
+Require stack:
+- D:\onepercentdev-main\frontend\.next\server\webpack-runtime.js
+- D:\onepercentdev-main\frontend\.next\server\pages\_document.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\server\require.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\server\load-components.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\build\utils.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\build\swc\options.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\build\swc\index.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\build\next-config-ts\transpile-config.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\server\config.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\server\next.js
+- D:\onepercentdev-main\frontend\node_modules\next\dist\server\lib\start-server.js
+    at <unknown> (D:\onepercentdev-main\frontend\.next\server\app\favicon.ico\route.js:1:72480)
+    at Object.<anonymous> (D:\onepercentdev-main\frontend\.next\server\app\favicon.ico\route.js:1:72526) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/favicon.ico'
+}

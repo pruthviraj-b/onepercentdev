@@ -3,6 +3,7 @@ node_modules/
 
 # Local databases (kept for local dev reference but not used in production)
 # academy.db
+.data/
 
 # Config file copied in during build (source of truth is repo root)
 courses.config.json

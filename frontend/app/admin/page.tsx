@@ -1113,7 +1113,7 @@ export default function AdminDashboard() {
 
       {/* Header bar */}
       <header className="titlebar">
-        <span className="titlebar-brand">1% Dev Academy · Admin Suite</span>
+        <span className="titlebar-brand">Admin Suite</span>
         <div className="titlebar-status">
           {isDirty ? (
             <span className="badge dirty">⚠️ Unsaved Changes</span>

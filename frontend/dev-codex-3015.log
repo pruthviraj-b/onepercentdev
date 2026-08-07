@@ -1,0 +1,439 @@
+
+> onepercentdev-frontend@0.1.0 predev
+> node -e "const fs = require('fs'); if (fs.existsSync('.next-dev')) fs.rmSync('.next-dev', { recursive: true, force: true });" && node scripts/export-data.js
+
+Exporting courses metadata...
+Exported courses.json successfully.
+Exported videos.json successfully.
+  (Supabase not configured — skipping Cloudinary file merge)
+Compiling course: Python for Data Analysis — Industry Master Program...
+  Exported modules-python.json
+  Exported part notes for python.
+Compiling course: Cloud Computing...
+  Exported modules-cloud.json
+  Exported part notes for cloud.
+Compiling course: Data Analyst (Telugu)...
+  Exported modules-data-analyst-te.json
+  Exported part notes for data-analyst-te.
+Compiling course: Data Analyst (English)...
+  Exported modules-data-analyst-en.json
+  Exported part notes for data-analyst-en.
+Compiling course: Excel Mastery...
+  Exported modules-excel.json
+  Exported part notes for excel.
+Compiling course: SQL...
+  Exported modules-sql.json
+  Exported part notes for sql.
+
+Data export complete!
+
+> onepercentdev-frontend@0.1.0 dev
+> cross-env NODE_OPTIONS=--max-old-space-size=4096 NEXT_TELEMETRY_DISABLED=1 next dev --port 3005 --port 3015
+
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3015
+   - Network:      http://192.168.137.1:3015
+   - Experiments (use with caution):
+     · cpus: 1
+
+ ✓ Starting...
+ ✓ Ready in 3.4s
+ ○ Compiling / ...
+ ✓ Compiled / in 10s (1472 modules)
+ GET / 200 in 11286ms
+ GET / 200 in 366ms
+ GET /?view=dashboard 200 in 151ms
+ ✓ Compiled in 3.2s (1450 modules)
+ ✓ Compiled in 1338ms (1450 modules)
+ GET /?view=dashboard 200 in 1060ms
+ GET /?view=dashboard 200 in 1921ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1412ms (885 modules)
+ GET /favicon.ico 200 in 1860ms
+ GET /?view=dashboard 200 in 7432ms
+ GET /favicon.ico 200 in 441ms
+ ✓ Compiled in 24.1s (1450 modules)
+ GET /?view=dashboard 200 in 27225ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 3.4s (885 modules)
+ GET /favicon.ico 200 in 4854ms
+ GET /?view=dashboard 200 in 1287ms
+ GET /?view=dashboard 200 in 985ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 10.8s (1472 modules)
+ GET /favicon.ico 404 in 13813ms
+ GET /?view=dashboard 200 in 13699ms
+ ✓ Compiled in 4.3s (1450 modules)
+ ✓ Compiled in 3.4s (1450 modules)
+ ✓ Compiled in 5.1s (1450 modules)
+ ✓ Compiled in 3.6s (1450 modules)
+ ✓ Compiled in 2.5s (1450 modules)
+ GET /?view=dashboard 200 in 17637ms
+ GET /?view=dashboard 200 in 599ms
+ GET /?view=dashboard 200 in 2792ms
+ ✓ Compiled in 18.7s (1450 modules)
+ ✓ Compiled in 2.9s (1450 modules)
+ ✓ Compiled in 5.6s (1450 modules)
+ ✓ Compiled in 3.4s (1450 modules)
+ GET /?view=dashboard 200 in 4309ms
+ GET /?view=dashboard 200 in 1330ms
+ ✓ Compiled in 9.3s (1452 modules)
+ ✓ Compiled in 923ms (1474 modules)
+ ✓ Compiled in 7.3s (1452 modules)
+ ✓ Compiled in 868ms (1452 modules)
+ ✓ Compiled in 1024ms (1452 modules)
+ ✓ Compiled in 6.1s (1474 modules)
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3015
+   - Network:      http://192.168.137.1:3015
+   - Experiments (use with caution):
+     · cpus: 1
+
+ ✓ Starting...
+ ✓ Ready in 4.6s
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3015
+   - Network:      http://10.225.152.59:3015
+   - Experiments (use with caution):
+     · cpus: 1
+
+ ✓ Starting...
+ ✓ Ready in 8.1s
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3015
+   - Network:      http://10.225.152.59:3015
+   - Experiments (use with caution):
+     · cpus: 1
+
+ ✓ Starting...
+ ✓ Ready in 5.5s
+ ○ Compiling / ...
+ ✓ Compiled / in 15.5s (1474 modules)
+ GET / 200 in 17912ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 3.4s (886 modules)
+ GET /favicon.ico 200 in 4123ms
+ ✓ Compiled in 637ms (1469 modules)
+ ✓ Compiled in 2.8s (1469 modules)
+ GET / 200 in 2366ms
+ GET / 200 in 153ms
+ GET / 200 in 1894ms
+ GET /favicon.ico 200 in 3112ms
+ GET / 200 in 2214ms
+ GET /favicon.ico 200 in 288ms
+ GET / 200 in 1682ms
+ GET / 200 in 946ms
+ GET / 200 in 1814ms
+ GET /favicon.ico 200 in 506ms
+ ✓ Compiled in 5.7s (1474 modules)
+ GET / 200 in 821ms
+ GET /?view=dashboard 200 in 1810ms
+ GET / 200 in 1189ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 3.3s (886 modules)
+ GET /favicon.ico 200 in 4598ms
+ ✓ Compiled in 4.9s (1474 modules)
+ GET /?course=sql&view=landing 200 in 849ms
+ GET / 200 in 861ms
+ GET /?view=dashboard 200 in 1324ms
+ GET /?view=dashboard 200 in 3576ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 5.7s (886 modules)
+ GET /favicon.ico 200 in 8261ms
+ GET /?view=dashboard 200 in 6738ms
+ GET /?view=reader&course=sql&part=1 200 in 1051ms
+ GET /?view=dashboard 200 in 1598ms
+ GET /?course=sql&view=reader&part=1 200 in 1015ms
+ GET /favicon.ico 200 in 386ms
+ ✓ Compiled in 6.5s (1474 modules)
+ GET /?course=sql&view=reader&part=1 200 in 1007ms
+ GET / 200 in 1016ms
+ GET /?view=reader&course=sql&part=1 200 in 4736ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1777ms (886 modules)
+ GET /favicon.ico 200 in 4637ms
+ GET /?course=sql&view=reader&part=1 200 in 1209ms
+ GET /favicon.ico 200 in 367ms
+ ✓ Compiled in 5.1s (1474 modules)
+ GET /?course=sql&view=reader&part=1 200 in 1112ms
+ GET / 200 in 1126ms
+ GET /?view=reader&course=sql&part=1 200 in 150ms
+ GET /?view=reader&course=sql&part=1 200 in 1401ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 3s (886 modules)
+ GET /favicon.ico 200 in 4417ms
+ ✓ Compiled in 6.6s (1474 modules)
+ GET / 200 in 922ms
+ GET /?view=reader&course=sql&part=1 200 in 95ms
+ GET /?view=reader&course=sql&part=1 200 in 3662ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 2.7s (886 modules)
+ GET /favicon.ico 200 in 5872ms
+ GET /?course=sql&view=reader&part=1 200 in 3898ms
+ GET /favicon.ico 200 in 183ms
+ ✓ Compiled in 7.8s (1452 modules)
+ ✓ Compiled in 2.6s (1452 modules)
+ GET /?view=reader&course=sql&part=1 200 in 4606ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 9.1s (886 modules)
+ GET /favicon.ico 200 in 10345ms
+ ✓ Compiled in 6.3s (1474 modules)
+ GET / 200 in 1074ms
+ GET /?view=reader&course=sql&part=1 200 in 81ms
+ GET /?view=reader&course=sql&part=1 200 in 3601ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 3.8s (886 modules)
+ GET /favicon.ico 200 in 5852ms
+ ✓ Compiled in 3.5s (1491 modules)
+ GET / 200 in 699ms
+ GET /?view=reader&course=sql&part=1 200 in 100ms
+ GET /?course=sql&view=reader&part=1 200 in 2366ms
+ GET /favicon.ico 200 in 1519ms
+ ✓ Compiled in 6.6s (1474 modules)
+ GET /?view=reader&course=sql&part=2 200 in 4924ms
+ GET / 200 in 3248ms
+ GET /?view=reader&course=sql&part=1 200 in 3248ms
+ GET /?view=reader&course=sql&part=1 200 in 3250ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 6.6s (886 modules)
+ GET /favicon.ico 200 in 9598ms
+ GET /?view=reader&course=sql&part=1 200 in 2936ms
+ GET /?view=landing 200 in 867ms
+ GET /favicon.ico 200 in 1222ms
+ ✓ Compiled in 7.2s (1474 modules)
+ GET /?view=reader&course=sql&part=1 200 in 3252ms
+ GET / 200 in 3205ms
+ GET /?view=landing&course=sql 200 in 3208ms
+ GET /?view=reader&course=sql&part=1 200 in 199ms
+ GET /?view=landing 200 in 1119ms
+ GET /?view=landing&course=sql 200 in 1352ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 6.2s (886 modules)
+ GET /favicon.ico 200 in 7509ms
+ ✓ Compiled in 7.2s (1452 modules)
+ ✓ Compiled in 1030ms (1452 modules)
+ ✓ Compiled in 2.3s (1474 modules)
+ GET /?view=reader&course=sql&part=1 200 in 1069ms
+ GET / 200 in 1082ms
+ GET /?view=landing 200 in 143ms
+ GET /?view=reader&course=sql&part=1 200 in 146ms
+ GET /?view=dashboard 200 in 4985ms
+ ✓ Compiled in 10.8s (1452 modules)
+ GET /?view=dashboard 200 in 3853ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 6.4s (886 modules)
+ GET /favicon.ico 200 in 7685ms
+ GET /?view=dashboard 200 in 6715ms
+ GET /?view=dashboard 200 in 3449ms
+ ✓ Compiled in 33.2s (1474 modules)
+ GET /?view=dashboard 200 in 35419ms
+ GET / 200 in 9229ms
+ GET /?view=reader&course=sql&part=1 200 in 302ms
+ GET /?view=landing 200 in 308ms
+ GET /?view=dashboard 200 in 307ms
+ GET /?view=reader&course=sql&part=1 200 in 333ms
+ ✓ Compiled in 16.1s (1474 modules)
+ GET /?view=reader&course=sql&part=1 200 in 2887ms
+ GET / 200 in 2962ms
+ GET /?view=landing 200 in 2976ms
+ GET /?view=dashboard 200 in 3053ms
+ GET /?view=reader&course=sql&part=1 200 in 1390ms
+ GET /?view=dashboard 200 in 1416ms
+ GET /?view=dashboard 200 in 1222ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1571ms (886 modules)
+ GET /favicon.ico 200 in 2781ms
+ GET / 200 in 2403ms
+ ✓ Compiled in 16.9s (1474 modules)
+ GET /?view=reader&course=sql&part=1 200 in 4604ms
+ GET /?view=landing 200 in 4629ms
+ GET / 200 in 4805ms
+ GET /?view=reader&course=sql&part=1 200 in 238ms
+ GET /?view=dashboard 200 in 242ms
+ GET /?view=dashboard 200 in 2274ms
+ GET / 200 in 1390ms
+ ✓ Compiled in 15.7s (1474 modules)
+ GET /?view=dashboard 200 in 14030ms
+ GET / 200 in 12027ms
+ GET /?view=reader&course=sql&part=1 200 in 2405ms
+ GET /?view=landing 200 in 2399ms
+ GET /?view=dashboard 200 in 2406ms
+ GET /?view=reader&course=sql&part=1 200 in 2359ms
+ GET /?view=dashboard 200 in 2307ms
+ GET /?view=landing 200 in 3624ms
+ ✓ Compiled in 21.3s (1474 modules)
+ GET / 200 in 2376ms
+ GET /?view=dashboard 200 in 2410ms
+ GET /?view=landing 200 in 2393ms
+ GET /?view=reader&course=sql&part=1 200 in 4123ms
+ GET /?view=dashboard 200 in 4122ms
+ GET /?view=landing 200 in 4132ms
+ GET /?view=reader&course=sql&part=1 200 in 3100ms
+ GET /?view=dashboard 200 in 2971ms
+ GET /?view=landing 200 in 6495ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 16.2s (886 modules)
+ GET /favicon.ico 200 in 19172ms
+ ✓ Compiled in 7.5s (1452 modules)
+ ✓ Compiled in 3s (1452 modules)
+ ✓ Compiled in 4.4s (1474 modules)
+ GET /?view=landing 200 in 4680ms
+ GET /?view=reader&course=sql&part=1 200 in 4714ms
+ GET / 200 in 4714ms
+ GET /?view=landing 200 in 4722ms
+ GET /?view=dashboard 200 in 4785ms
+ GET /?view=dashboard 200 in 681ms
+ GET /?view=reader&course=sql&part=1 200 in 706ms
+ GET /?view=dashboard 200 in 3926ms
+ GET /?view=landing 200 in 4129ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 9s (886 modules)
+ GET /favicon.ico 200 in 11800ms
+ GET /?view=landing 200 in 6195ms
+ GET /favicon.ico 200 in 980ms
+ ✓ Compiled in 36.1s (1491 modules)
+ GET / 200 in 1691ms
+ GET /?view=landing 200 in 1713ms
+ GET /?view=reader&course=sql&part=1 200 in 1021ms
+ GET /?view=dashboard 200 in 1034ms
+ GET /?view=landing 200 in 1034ms
+ GET /?view=reader&course=sql&part=1 200 in 577ms
+ GET /?view=dashboard 200 in 632ms
+ GET /?view=dashboard 200 in 426ms
+ GET /?view=dashboard 200 in 3009ms
+ GET /favicon.ico 200 in 1616ms
+ ✓ Compiled in 11.6s (1452 modules)
+ GET /?view=dashboard 200 in 5512ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 3.2s (886 modules)
+ GET /favicon.ico 200 in 4233ms
+ ✓ Compiled in 3.1s (1491 modules)
+ GET /?view=dashboard 200 in 1199ms
+ GET /?view=reader&course=sql&part=1 200 in 770ms
+ GET /?view=landing 200 in 772ms
+ GET / 200 in 775ms
+ GET /?view=landing 200 in 777ms
+ GET /?view=dashboard 200 in 773ms
+ GET /?view=reader&course=sql&part=1 200 in 536ms
+ GET /?view=dashboard 200 in 538ms
+ ✓ Compiled in 4.3s (1474 modules)
+ GET / 200 in 5178ms
+ GET /?view=landing 200 in 5131ms
+ GET /?view=reader&course=sql&part=1 200 in 5136ms
+ GET /?view=dashboard 200 in 5239ms
+ GET /?view=landing 200 in 4966ms
+ GET /?view=reader&course=sql&part=1 200 in 308ms
+ GET /?view=dashboard 200 in 314ms
+ GET /?view=dashboard 200 in 162ms
+ ✓ Compiled in 13.7s (1452 modules)
+ GET / 200 in 1565ms
+ GET /?view=dashboard 200 in 1678ms
+ GET /?view=reader&course=sql&part=1 200 in 520ms
+ GET /?view=landing 200 in 528ms
+ GET /?view=dashboard 200 in 461ms
+ GET /?view=reader&course=sql&part=1 200 in 387ms
+ GET /?view=dashboard 200 in 285ms
+ GET /?view=dashboard 200 in 2263ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1216ms (886 modules)
+ GET /favicon.ico 200 in 2900ms
+ GET /?view=landing 200 in 2849ms
+ GET /favicon.ico 200 in 767ms
+ ✓ Compiled in 43.1s (1452 modules)
+ GET /?view=landing 200 in 6174ms
+ GET /?view=reader&course=sql&part=1 200 in 6204ms
+ GET /?view=landing 200 in 6213ms
+ GET / 200 in 6308ms
+ GET /?view=dashboard 200 in 6226ms
+ GET /?view=landing 200 in 6272ms
+ GET /?view=reader&course=sql&part=1 200 in 2643ms
+ GET /?view=dashboard 200 in 616ms
+ GET /?view=landing 200 in 13723ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 25s (886 modules)
+ GET /favicon.ico 200 in 30418ms
+ ✓ Compiled in 9.6s (1452 modules)
+ ✓ Compiled in 3.1s (1474 modules)
+ GET /?view=landing 200 in 2280ms
+ GET /?view=dashboard 200 in 2283ms
+ GET /?view=dashboard 200 in 2287ms
+ GET /?view=reader&course=sql&part=1 200 in 2294ms
+ GET / 200 in 2309ms
+ GET /?view=reader&course=sql&part=1 200 in 318ms
+ GET /?view=landing 200 in 325ms
+ GET /?view=dashboard 200 in 326ms
+ GET /?view=dashboard 200 in 3239ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 2.6s (886 modules)
+ GET /favicon.ico 200 in 3848ms
+ ✓ Compiled in 5.5s (1491 modules)
+ GET /?view=dashboard 200 in 566ms
+ GET /?view=reader&course=sql&part=1 200 in 619ms
+ GET /?view=landing 200 in 324ms
+ GET / 200 in 342ms
+ GET /?view=dashboard 200 in 419ms
+ GET /?view=reader&course=sql&part=1 200 in 383ms
+ GET /?view=landing 200 in 237ms
+ GET /?view=dashboard 200 in 2364ms
+ GET /favicon.ico 200 in 453ms
+ ✓ Compiled in 4.6s (1491 modules)
+ GET / 200 in 2028ms
+ GET /?view=landing 200 in 2079ms
+ GET /?view=dashboard 200 in 2050ms
+ GET /?view=reader&course=sql&part=1 200 in 2059ms
+ GET /?view=reader&course=sql&part=1 200 in 478ms
+ GET /?view=dashboard 200 in 456ms
+ GET /?view=landing 200 in 509ms
+ ✓ Compiled in 3.9s (1491 modules)
+ GET / 200 in 536ms
+ GET /?view=landing 200 in 545ms
+ GET /?view=dashboard 200 in 553ms
+ GET /?view=reader&course=sql&part=1 200 in 548ms
+ GET /?view=reader&course=sql&part=1 200 in 225ms
+ GET /?view=dashboard 200 in 226ms
+ GET /?view=landing 200 in 232ms
+ GET / 200 in 1845ms
+ GET /favicon.ico 200 in 1451ms
+ ✓ Compiled in 11s (1452 modules)
+ GET /?view=landing 200 in 2854ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 3.3s (886 modules)
+ GET /favicon.ico 200 in 5238ms
+ GET / 200 in 4577ms
+ GET /favicon.ico 200 in 631ms
+ GET / 200 in 2479ms
+ GET /favicon.ico 200 in 888ms
+ GET /?view=landing 200 in 1574ms
+ GET /favicon.ico 200 in 199ms
+ ✓ Compiled in 7.9s (1469 modules)
+ GET / 200 in 3895ms
+ GET /favicon.ico 200 in 4450ms
+ ✓ Compiled in 12.5s (1452 modules)
+ GET /?view=landing 200 in 2834ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1837ms (886 modules)
+ GET /favicon.ico 200 in 3719ms
+ GET / 200 in 3554ms
+ GET /favicon.ico 200 in 373ms
+ GET /?view=landing 200 in 788ms
+ GET /favicon.ico 200 in 300ms
+ ✓ Compiled in 9.2s (1469 modules)
+ GET / 200 in 4016ms
+ GET /favicon.ico 200 in 1612ms
+ ✓ Compiled in 17s (1452 modules)
+ GET / 200 in 3968ms
+ GET /?view=landing 200 in 290ms
+ GET /?view=dashboard 200 in 301ms
+ GET /?view=reader&course=sql&part=1 200 in 304ms
+ GET /?view=landing 200 in 435ms
+ GET /?view=reader&course=sql&part=1 200 in 434ms
+ GET /?view=dashboard 200 in 444ms
+ ✓ Compiled in 9.3s (1474 modules)
+ GET /?view=landing 200 in 2427ms
+ GET / 200 in 2387ms
+ GET /?view=reader&course=sql&part=1 200 in 755ms
+ GET /?view=dashboard 200 in 752ms
+ GET /?view=landing 200 in 757ms
+ GET /?view=reader&course=sql&part=1 200 in 230ms
+ GET /?view=dashboard 200 in 222ms
+[?25h

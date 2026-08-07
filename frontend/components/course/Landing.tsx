@@ -1,8 +1,12 @@
 'use client';
 
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { Course, Module, PartMeta, fetchStreak, StreakData, fetchProgress, fetchModules, isPartComplete } from '@/services/courseService';
+import type { ReactNode } from 'react';
+import { Course, Module, PartMeta, fetchProgress, fetchModules, isPartComplete } from '@/services/courseService';
 import { useAuth } from '@/features/authentication/AuthProvider';
+import { getMilestones, hasMilestoneSystem, isMilestoneComplete, isMilestoneUnlocked, milestoneParts } from '@/features/certificates/milestones';
+import { MilestoneDashboard } from '@/components/course/MilestoneDashboard';
+import { MilestoneIcon } from '@/components/course/MilestoneIcon';
 
 // ── Type system (matches Dashboard) ───────────────────────────────────────
 const F = {
@@ -33,15 +37,15 @@ const C = {
 
 function getCourseLogoUrl(mascot?: string, id?: string): string | null {
   const val = `${mascot || ''} ${id || ''}`.toLowerCase();
-  if (val.includes('snake') || val.includes('python')) return '/logos/python.jpg';
-  if (val.includes('cloud')) return '/logos/cloud.jpg';
-  if (val.includes('excel')) return '/logos/excel.jpg';
-  if (val.includes('dashboard')) return '/logos/dashboard.jpg';
-  if (val.includes('aptitude') || val.includes('apti')) return '/logos/apti.jpg';
-  if (val.includes('typing')) return '/logos/typing-board.jpg';
-  if (val.includes('task') || val.includes('taskhub') || val.includes('hub')) return '/logos/completed-task.jpg';
-  if (val.includes('data-analyst') || val.includes('data analyst') || val.includes('analyst') || val.includes('chart')) return '/logos/da.jpg';
-  if (val.includes('database') || val.includes('sql')) return '/logos/sql.jpg';
+  if (val.includes('snake') || val.includes('python')) return '/logos/python-neo.svg';
+  if (val.includes('cloud')) return '/logos/cloud-neo.svg';
+  if (val.includes('excel')) return '/logos/excel-neo.svg';
+  if (val.includes('dashboard')) return '/logos/dashboard-neo.svg';
+  if (val.includes('aptitude') || val.includes('apti')) return '/logos/aptitude-neo.svg';
+  if (val.includes('typing')) return '/logos/typing-neo.svg';
+  if (val.includes('task') || val.includes('taskhub') || val.includes('hub')) return '/logos/tasks-neo.svg';
+  if (val.includes('data-analyst') || val.includes('data analyst') || val.includes('analyst') || val.includes('chart')) return '/logos/analytics-neo.svg';
+  if (val.includes('database') || val.includes('sql')) return '/logos/sql-neo.svg';
   return null;
 }
 
@@ -101,15 +105,21 @@ function CurriculumRow({ note, isDone, nested = false, onSelectPart }: { note: P
   return (
     <div
       onClick={() => onSelectPart(note.part)}
+      className={`course-timeline-row${nested ? ' is-nested' : ''}`}
+      data-done={isDone ? 'true' : 'false'}
       style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: nested ? '7px 18px 7px 72px' : '10px 18px 10px 46px', cursor: 'pointer', background: nested ? C.surfaceHi : 'transparent' }}
       onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = C.surfaceHi; }}
       onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = nested ? C.surfaceHi : 'transparent'; }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
-        <div style={{ width: nested ? '18px' : '20px', height: nested ? '18px' : '20px', flexShrink: 0, borderRadius: nested ? '4px' : '6px', background: isDone ? C.green : 'transparent', border: `1.5px solid ${isDone ? C.green : C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.mono, fontSize: '0.58rem', fontWeight: 700, color: isDone ? C.onAccent : C.textFaint }}>
-          {isDone ? '✓' : nested ? '' : note.part}
+        <div className="course-timeline-marker" style={{ width: nested ? '18px' : '20px', height: nested ? '18px' : '20px', flexShrink: 0, borderRadius: nested ? '4px' : '6px', background: isDone ? C.green : 'transparent', border: `1.5px solid ${isDone ? C.green : C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.mono, fontSize: '0.58rem', fontWeight: 700, color: isDone ? C.onAccent : C.textFaint }}>
+          {isDone ? (
+            <svg className="course-done-icon" viewBox="0 0 24 24" aria-label="Done" role="img">
+              <path d="M5 12.5 9.2 17 19 7" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          ) : nested ? '' : note.part}
         </div>
-        <div style={{ minWidth: 0 }}>
+        <div className="course-timeline-copy" style={{ minWidth: 0 }}>
           <div style={{ fontFamily: F.body, fontWeight: nested ? 500 : 600, fontSize: nested ? '0.76rem' : '0.8rem', color: isDone ? C.textFaint : C.text, textDecoration: isDone ? 'line-through' : 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {nested ? shortTitle : `Part ${note.part} — ${shortTitle}`}
           </div>
@@ -118,7 +128,7 @@ function CurriculumRow({ note, isDone, nested = false, onSelectPart }: { note: P
           </div>
         </div>
       </div>
-      <span style={{ fontFamily: F.mono, fontSize: '0.66rem', fontWeight: 700, color: isDone ? C.textFaint : C.cyan, flexShrink: 0 }}>
+      <span className="course-timeline-action" style={{ fontFamily: F.mono, fontSize: '0.66rem', fontWeight: 700, color: isDone ? C.textFaint : C.cyan, flexShrink: 0 }}>
         {isDone ? 'Review' : 'Read →'}
       </span>
     </div>
@@ -158,15 +168,11 @@ export function Landing({
 }: Props) {
   const { user, logout } = useAuth();
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
-  const [streak, setStreak] = useState<StreakData>({ currentStreak: 0, totalActiveDays: 0, current: 0, longest: 0, total: 0, dates: [] });
   const [courseStats, setCourseStats] = useState<Record<string, { completed: number; total: number }>>({});
   const [expandedModules, setExpandedModules] = useState<Set<number>>(new Set());
+  const [expandedMilestones, setExpandedMilestones] = useState<Set<string>>(new Set());
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    fetchStreak().then(sd => setStreak(sd)).catch(() => {});
-  }, []);
 
   useEffect(() => {
     Promise.all(
@@ -206,6 +212,25 @@ export function Landing({
     });
   };
 
+  const toggleMilestone = (id: string) => {
+    setExpandedMilestones(previous => { const next = new Set(previous); next.has(id) ? next.delete(id) : next.add(id); return next; });
+  };
+
+  const milestoneGroups = useMemo(() => {
+    if (!activeCourseId || !hasMilestoneSystem(activeCourseId)) return [];
+    const definitions = getMilestones(activeCourseId);
+    return definitions.map((definition, index) => {
+      const groupedModules = definition.moduleIds.map(id => modules.find(module => module.id === id)).filter(Boolean) as Module[];
+      const moduleProgress = groupedModules.map(module => {
+        const notes = module.notes.flatMap(note => [note, ...(note.subtopics || [])]);
+        return notes.length > 0 && notes.every(note => isPartComplete(note, completedParts));
+      });
+      const complete = isMilestoneComplete(modules, completedParts, definition);
+      const previousComplete = isMilestoneUnlocked(activeCourseId, modules, completedParts, definition);
+      return { definition, groupedModules, complete, unlocked: !definition.locked && previousComplete, completedModules: moduleProgress.filter(Boolean).length };
+    });
+  }, [activeCourseId, modules, completedParts]);
+
   const displayName = user?.displayName || '1%';
   const firstName = displayName.split(' ')[0];
   const initials = displayName.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase() || '1%';
@@ -243,20 +268,14 @@ export function Landing({
         <style>{`
 ::-webkit-scrollbar { height: 8px; width: 8px; }
           ::-webkit-scrollbar-thumb { background: ${C.borderHi}; border-radius: 4px; }
-          ::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-track { background: transparent; }
+          .catalog-topbar,.course-detail-topbar{display:none!important;}
         `}</style>
 
         {/* Sidebar */}
         <aside className="catalog-sidebar" style={{ width: '224px', flexShrink: 0, background: C.surface, borderRight: `1px solid ${C.border}`, display: 'flex', flexDirection: 'column', height: '100vh', position: 'sticky', top: 0 }}>
-          <div style={{ padding: '22px 20px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: `1px solid ${C.border}` }}>
-            <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: `linear-gradient(135deg, ${C.cyan}, ${C.violet})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.display, fontWeight: 700, fontSize: '0.8rem', color: C.onAccent }}>1%</div>
-            <div>
-              <div style={{ fontFamily: F.display, fontWeight: 600, fontSize: '0.92rem', letterSpacing: '-0.01em', lineHeight: 1.1 }}>Dev Academy</div>
-              <div style={{ fontFamily: F.mono, fontSize: '0.6rem', color: C.textFaint }}>~/courses</div>
-            </div>
-          </div>
           <nav style={{ flex: 1, overflowY: 'auto', padding: '14px 10px' }}>
-            <SideBtn icon="🏠" label="Dev Home" onClick={onGoHome} />
+            <SideBtn icon={<img src="/logos/home-neo.svg" alt="" style={{ width: 22, height: 22 }} />} label="Dev Home" onClick={onGoHome} />
             <div style={{ fontFamily: F.mono, fontSize: '0.6rem', color: C.textFaint, textTransform: 'uppercase', letterSpacing: '0.1em', padding: '16px 12px 6px' }}>Courses</div>
             {courses.filter(c => !c.parentId && !isHiddenCourse(c.id)).map(c => (
               <SideBtnLogo key={c.id} mascot={c.mascot} courseId={c.id} label={c.title} active={c.id === selectedGroup} onClick={() => onSelectCourse(c.id)} />
@@ -278,7 +297,7 @@ export function Landing({
             </div>
           </header>
 
-          <main className="catalog-main" style={{ flex: 1, overflowY: 'auto', padding: '28px 32px 60px' }}>
+          <main className="catalog-main" style={{ flex: 1, overflowY: 'auto', padding: '16px 32px 60px' }}>
 
             {/* Hero */}
             <div className="catalog-hero" style={{
@@ -293,12 +312,6 @@ export function Landing({
               <p style={{ fontFamily: F.body, fontSize: '0.85rem', color: C.textDim, margin: 0, maxWidth: '480px' }}>
                 Pick up a track or start something new — every lesson logged here counts toward your streak.
               </p>
-            </div>
-
-            {/* Stats row */}
-            <div className="catalog-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px', marginBottom: '22px' }}>
-              <StatCard label="Day streak" value={streak.current ?? 0} sub={`Best ${streak.longest ?? 0}`} color={C.amber} icon="🔥" />
-              <StatCard label="Active days" value={streak.total ?? 0} sub="all time" color={C.cyan} icon="🎯" />
             </div>
 
             {selectedGroup && (
@@ -378,24 +391,24 @@ export function Landing({
       <style>{`
 ::-webkit-scrollbar { height: 8px; width: 8px; }
         ::-webkit-scrollbar-thumb { background: ${C.borderHi}; border-radius: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-track { background: transparent; }
+        .catalog-topbar,.course-detail-topbar{display:none!important;}
       `}</style>
 
       {/* Sidebar */}
       <aside className="course-detail-sidebar" style={{ width: '224px', flexShrink: 0, background: C.surface, borderRight: `1px solid ${C.border}`, display: 'flex', flexDirection: 'column', height: '100vh', position: 'sticky', top: 0 }}>
-        <div style={{ padding: '22px 20px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: `1px solid ${C.border}` }}>
-          <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: `linear-gradient(135deg, ${C.cyan}, ${C.violet})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.display, fontWeight: 700, fontSize: '0.8rem', color: C.onAccent }}>1%</div>
-          <div>
-            <div style={{ fontFamily: F.display, fontWeight: 600, fontSize: '0.92rem', letterSpacing: '-0.01em', lineHeight: 1.1 }}>Dev Academy</div>
-            <div style={{ fontFamily: F.mono, fontSize: '0.6rem', color: C.textFaint }}>~/course</div>
-          </div>
-        </div>
         <nav style={{ flex: 1, overflowY: 'auto', padding: '14px 10px' }}>
-          <SideBtn icon="🏠" label="Dev Home" onClick={onGoHome} />
+          <SideBtn icon={<img src="/logos/home-neo.svg" alt="" style={{ width: 22, height: 22 }} />} label="Dev Home" onClick={onGoHome} />
           <div style={{ fontFamily: F.mono, fontSize: '0.6rem', color: C.textFaint, textTransform: 'uppercase', letterSpacing: '0.1em', padding: '16px 12px 6px' }}>Courses</div>
           {courses.filter(c => !c.parentId && !isHiddenCourse(c.id)).map(c => (
             <SideBtnLogo key={c.id} mascot={c.mascot} courseId={c.id} label={c.title} active={c.id === activeCourseId} onClick={() => onSelectCourse(c.id)} />
           ))}
+          {activeCourse && <div className="course-sidebar-banner">
+            <div className="course-sidebar-banner__top"><CourseLogoImg mascot={activeCourse.mascot} id={activeCourse.id} size={24} /><span>ACTIVE COURSE</span></div>
+            <strong>{activeCourse.title}</strong>
+            <small>{displayTotalParts} lessons · {progressPct}% complete</small>
+            <button type="button" onClick={onLaunch}>{completedCount > 0 ? 'Resume' : 'Start'} →</button>
+          </div>}
           <div style={{ fontFamily: F.mono, fontSize: '0.6rem', color: C.textFaint, textTransform: 'uppercase', letterSpacing: '0.1em', padding: '16px 12px 6px' }}>Training</div>
           <SideBtnLogo mascot="typing" courseId="typing" label="Typing" onClick={() => {}} />
           <SideBtnLogo mascot="aptitude" courseId="aptitude" label="Aptitude" onClick={() => {}} />
@@ -413,8 +426,9 @@ export function Landing({
           </div>
         </header>
 
-        <main className="course-detail-main" style={{ flex: 1, overflowY: 'auto', padding: '28px 32px 60px' }}>
+        <main className="course-detail-main" style={{ flex: 1, overflowY: 'auto', padding: '16px 32px 60px' }}>
 
+          {activeCourse && false && (<>
           {/* Course hero */}
           <section className="course-detail-hero" style={{
             background: `linear-gradient(135deg, ${C.surface}, ${C.surfaceHi})`, border: `1px solid ${C.border}`,
@@ -433,7 +447,7 @@ export function Landing({
                 <div style={{ display: 'flex', gap: '14px', fontFamily: F.mono, fontSize: '0.7rem', color: C.textFaint }}>
                   {activeCourse?.author ? (
                     <>
-                      <span>By <strong style={{ color: C.textDim }}>{activeCourse.author}</strong></span>
+                      <span>By <strong style={{ color: C.textDim }}>{activeCourse?.author}</strong></span>
                       <span>·</span>
                     </>
                   ) : null}
@@ -451,6 +465,8 @@ export function Landing({
             </button>
           </section>
 
+          </>)}
+          {activeCourseId && <MilestoneDashboard courseId={activeCourseId} modules={modules} completedParts={completedParts} progressPct={progressPct} />}
           <div className="course-detail-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 280px', gap: '20px' }}>
 
             {/* Curriculum list */}
@@ -468,7 +484,33 @@ export function Landing({
                 </div>
               ) : (
                 <div className="course-curriculum-list">
-                  {modules.map((mod, modIdx) => {
+                  {milestoneGroups.length > 0 ? milestoneGroups.map(({ definition, groupedModules, complete, unlocked, completedModules }) => {
+                    const milestoneOpen = expandedMilestones.has(definition.id);
+                    const lessonTotal = milestoneParts(groupedModules, definition).length;
+                    const lessonDone = milestoneParts(groupedModules, definition).filter(part => completedParts.includes(part)).length;
+                    const description = definition.kind === 'project'
+                      ? (definition.locked ? 'A dedicated capstone will unlock this milestone when it is added.' : 'Apply your skills to a realistic, portfolio-ready business problem.')
+                      : definition.index === 1 ? 'Build the fundamentals that make every later milestone easier.' : definition.index === 2 ? 'Turn core knowledge into practical professional workflows.' : 'Master advanced concepts for real-world work and interviews.';
+                    return (
+                      <section key={definition.id} className="curriculum-milestone" data-state={definition.locked ? 'locked' : complete ? 'complete' : unlocked ? 'unlocked' : 'upcoming'}>
+                        <button type="button" className="curriculum-milestone-header" onClick={() => toggleMilestone(definition.id)} aria-expanded={milestoneOpen}>
+                          <span className="curriculum-milestone-mark"><MilestoneIcon index={definition.index} size={28} /></span>
+                          <span className="curriculum-milestone-copy"><small>{definition.kind === 'project' ? 'PROJECT MILESTONE' : 'LEARNING MILESTONE'}</small><strong>{definition.name}</strong><span>{description}</span></span>
+                          <span className="curriculum-milestone-meta"><b>{complete ? 'Badge earned' : definition.locked ? 'Locked' : `${completedModules}/${groupedModules.length} modules`}</b><em>{milestoneOpen ? '⌃' : '⌄'}</em></span>
+                        </button>
+                        <div className="curriculum-milestone-progress"><i style={{ width: `${lessonTotal ? Math.round((lessonDone / lessonTotal) * 100) : 0}%` }} /></div>
+                        {milestoneOpen && <div className="curriculum-milestone-body">
+                          {definition.locked ? <div className="curriculum-milestone-lock">🔒 Master Project unlocks when a genuine dedicated capstone is added to this course.</div> : groupedModules.map((mod, modIdx) => {
+                            const isExpanded = expandedModules.has(mod.id);
+                            const moduleNotes = mod.notes.flatMap(note => [note, ...(note.subtopics || [])]);
+                            const modDone = moduleNotes.filter(n => isPartComplete(n, completedParts)).length;
+                            return <div key={mod.id} className="curriculum-milestone-module"><div className="course-module-header" onClick={() => toggleModule(mod.id)}><div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><span className="curriculum-module-index">{String(modIdx + 1).padStart(2, '0')}</span><h3>{mod.title}</h3></div><div className="curriculum-milestone-meta"><b>{modDone}/{moduleNotes.length}</b><em>{isExpanded ? '⌃' : '⌄'}</em></div></div>{isExpanded && <div>{mod.notes.map(note => <div key={note.part}><CurriculumRow note={note} isDone={isPartComplete(note, completedParts)} onSelectPart={onSelectPart} />{(note.subtopics || []).map(subtopic => <CurriculumRow key={subtopic.part} note={subtopic} isDone={completedParts.includes(subtopic.part)} nested onSelectPart={onSelectPart} />)}</div>)}</div>}</div>;
+                          })}
+                          {complete && <div className="curriculum-milestone-earned">✓ {definition.badgeName} earned</div>}
+                        </div>}
+                      </section>
+                    );
+                  }) : modules.map((mod, modIdx) => {
                     const isExpanded = expandedModules.has(mod.id);
                     const moduleNotes = mod.notes.flatMap(note => [note, ...(note.subtopics || [])]);
                     const modDone = moduleNotes.filter(n => isPartComplete(n, completedParts)).length;
@@ -482,8 +524,8 @@ export function Landing({
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <span style={{ fontFamily: F.mono, fontSize: '0.68rem', color: C.textDim }}>{modDone}/{moduleNotes.length}</span>
                             <span style={{ color: C.textFaint, fontSize: '0.65rem', transform: isExpanded ? 'rotate(180deg)' : 'none', transition: 'transform 150ms', display: 'inline-block' }}>▼</span>
-                          </div>
-                        </div>
+          </div>
+      </div>
 
                         {isExpanded && (
                           <div>
@@ -542,7 +584,6 @@ export function Landing({
                 <div style={{ fontFamily: F.display, fontStyle: 'italic', fontSize: '0.9rem', color: C.text, lineHeight: 1.5, marginBottom: '8px' }}>
                   "Consistency is the compound interest of learning."
                 </div>
-                <div style={{ fontFamily: F.mono, fontSize: '0.64rem', color: C.textFaint }}>— 1% Dev Academy</div>
               </div>
             </div>
           </div>
@@ -556,20 +597,7 @@ export function Landing({
 // SUB-COMPONENTS
 // ═══════════════════════════════════════════════════════════════
 
-function StatCard({ label, value, sub, color, icon }: { label: string; value: string | number; sub: string; color: string; icon: string }) {
-  return (
-    <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: '12px', padding: '16px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-        <span style={{ fontFamily: F.mono, fontSize: '0.64rem', color: C.textFaint, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</span>
-        <span style={{ fontSize: '0.9rem' }}>{icon}</span>
-      </div>
-      <div style={{ fontFamily: F.display, fontWeight: 700, fontSize: '1.6rem', color, lineHeight: 1 }}>{value}</div>
-      <div style={{ fontFamily: F.mono, fontSize: '0.66rem', color: C.textDim, marginTop: '4px' }}>{sub}</div>
-    </div>
-  );
-}
-
-function SideBtn({ icon, label, onClick, active = false }: { icon: string; label: string; onClick: () => void; active?: boolean }) {
+function SideBtn({ icon, label, onClick, active = false }: { icon: ReactNode; label: string; onClick: () => void; active?: boolean }) {
   const [hover, setHover] = useState(false);
   return (
     <button onClick={onClick}

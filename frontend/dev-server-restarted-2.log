@@ -1,0 +1,393 @@
+
+> onepercentdev-frontend@0.1.0 predev
+> node -e "const fs = require('fs'); if (fs.existsSync('.next')) fs.rmSync('.next', { recursive: true, force: true });" && node scripts/export-data.js
+
+Exporting courses metadata...
+Exported courses.json successfully.
+Exported videos.json successfully.
+  (Supabase not configured — skipping Cloudinary file merge)
+Compiling course: Python for Data Analysis — Industry Master Program...
+  Creating placeholder: content\python\Part-1
+  Creating placeholder: content\python\Part-2
+  Creating placeholder: content\python\Part-3
+  Creating placeholder: content\python\Part-4
+  Creating placeholder: content\python\Part-5
+  Creating placeholder: content\python\Part-6
+  Creating placeholder: content\python\Part-7
+  Creating placeholder: content\python\Part-8
+  Creating placeholder: content\python\Part-9
+  Creating placeholder: content\python\Part-10
+  Creating placeholder: content\python\Part-11
+  Creating placeholder: content\python\Part-12
+  Creating placeholder: content\python\Part-13
+  Creating placeholder: content\python\Part-14
+  Creating placeholder: content\python\Part-15
+  Creating placeholder: content\python\Part-16
+  Creating placeholder: content\python\Part-17
+  Creating placeholder: content\python\Part-18
+  Creating placeholder: content\python\Part-19
+  Creating placeholder: content\python\Part-20
+  Creating placeholder: content\python\Part-21
+  Creating placeholder: content\python\Part-22
+  Creating placeholder: content\python\Part-23
+  Creating placeholder: content\python\Part-24
+  Creating placeholder: content\python\Part-25
+  Creating placeholder: content\python\Part-26
+  Creating placeholder: content\python\Part-27
+  Creating placeholder: content\python\Part-28
+  Creating placeholder: content\python\Part-29
+  Creating placeholder: content\python\Part-30
+  Creating placeholder: content\python\Part-31
+  Creating placeholder: content\python\Part-32
+  Creating placeholder: content\python\Part-33
+  Creating placeholder: content\python\Part-34
+  Creating placeholder: content\python\Part-35
+  Creating placeholder: content\python\Part-36
+  Creating placeholder: content\python\Part-37
+  Creating placeholder: content\python\Part-38
+  Creating placeholder: content\python\Part-39
+  Creating placeholder: content\python\Part-40
+  Creating placeholder: content\python\Part-41
+  Creating placeholder: content\python\Part-42
+  Creating placeholder: content\python\Part-43
+  Creating placeholder: content\python\Part-44
+  Creating placeholder: content\python\Part-45
+  Creating placeholder: content\python\Part-46
+  Creating placeholder: content\python\Part-47
+  Creating placeholder: content\python\Part-48
+  Creating placeholder: content\python\Part-49
+  Creating placeholder: content\python\Part-50
+  Creating placeholder: content\python\Part-51
+  Creating placeholder: content\python\Part-52
+  Creating placeholder: content\python\Part-53
+  Creating placeholder: content\python\Part-54
+  Creating placeholder: content\python\Part-55
+  Creating placeholder: content\python\Part-56
+  Creating placeholder: content\python\Part-57
+  Creating placeholder: content\python\Part-58
+  Creating placeholder: content\python\Part-59
+  Creating placeholder: content\python\Part-60
+  Creating placeholder: content\python\Part-61
+  Creating placeholder: content\python\Part-62
+  Creating placeholder: content\python\Part-63
+  Creating placeholder: content\python\Part-64
+  Creating placeholder: content\python\Part-65
+  Creating placeholder: content\python\Part-66
+  Creating placeholder: content\python\Part-67
+  Creating placeholder: content\python\Part-68
+  Creating placeholder: content\python\Part-69
+  Creating placeholder: content\python\Part-70
+  Creating placeholder: content\python\Part-71
+  Creating placeholder: content\python\Part-72
+  Creating placeholder: content\python\Part-73
+  Creating placeholder: content\python\Part-74
+  Creating placeholder: content\python\Part-75
+  Creating placeholder: content\python\Part-76
+  Creating placeholder: content\python\Part-77
+  Creating placeholder: content\python\Part-78
+  Creating placeholder: content\python\Part-79
+  Creating placeholder: content\python\Part-80
+  Creating placeholder: content\python\Part-81
+  Creating placeholder: content\python\Part-82
+  Creating placeholder: content\python\Part-83
+  Creating placeholder: content\python\Part-84
+  Creating placeholder: content\python\Part-85
+  Creating placeholder: content\python\Part-86
+  Creating placeholder: content\python\Part-87
+  Creating placeholder: content\python\Part-88
+  Creating placeholder: content\python\Part-89
+  Creating placeholder: content\python\Part-90
+  Creating placeholder: content\python\Part-91
+  Creating placeholder: content\python\Part-92
+  Creating placeholder: content\python\Part-93
+  Creating placeholder: content\python\Part-94
+  Creating placeholder: content\python\Part-95
+  Creating placeholder: content\python\Part-96
+  Creating placeholder: content\python\Part-97
+  Creating placeholder: content\python\Part-98
+  Creating placeholder: content\python\Part-99
+  Creating placeholder: content\python\Part-100
+  Creating placeholder: content\python\Part-101
+  Creating placeholder: content\python\Part-102
+  Creating placeholder: content\python\Part-103
+  Creating placeholder: content\python\Part-104
+  Creating placeholder: content\python\Part-105
+  Creating placeholder: content\python\Part-106
+  Creating placeholder: content\python\Part-107
+  Creating placeholder: content\python\Part-108
+  Creating placeholder: content\python\Part-109
+  Creating placeholder: content\python\Part-110
+  Creating placeholder: content\python\Part-111
+  Creating placeholder: content\python\Part-112
+  Creating placeholder: content\python\Part-113
+  Creating placeholder: content\python\Part-114
+  Creating placeholder: content\python\Part-115
+  Creating placeholder: content\python\Part-116
+  Creating placeholder: content\python\Part-117
+  Creating placeholder: content\python\Part-118
+  Creating placeholder: content\python\Part-119
+  Creating placeholder: content\python\Part-120
+  Creating placeholder: content\python\Part-121
+  Creating placeholder: content\python\Part-122
+  Creating placeholder: content\python\Part-123
+  Creating placeholder: content\python\Part-124
+  Creating placeholder: content\python\Part-125
+  Creating placeholder: content\python\Part-126
+  Creating placeholder: content\python\Part-127
+  Creating placeholder: content\python\Part-128
+  Creating placeholder: content\python\Part-129
+  Creating placeholder: content\python\Part-130
+  Creating placeholder: content\python\Part-131
+  Creating placeholder: content\python\Part-132
+  Creating placeholder: content\python\Part-133
+  Creating placeholder: content\python\Part-134
+  Creating placeholder: content\python\Part-135
+  Creating placeholder: content\python\Part-136
+  Creating placeholder: content\python\Part-137
+  Creating placeholder: content\python\Part-138
+  Creating placeholder: content\python\Part-139
+  Creating placeholder: content\python\Part-140
+  Creating placeholder: content\python\Part-141
+  Creating placeholder: content\python\Part-142
+  Creating placeholder: content\python\Part-143
+  Creating placeholder: content\python\Part-144
+  Creating placeholder: content\python\Part-145
+  Creating placeholder: content\python\Part-146
+  Creating placeholder: content\python\Part-147
+  Creating placeholder: content\python\Part-148
+  Creating placeholder: content\python\Part-149
+  Creating placeholder: content\python\Part-150
+  Creating placeholder: content\python\Part-151
+  Creating placeholder: content\python\Part-152
+  Creating placeholder: content\python\Part-153
+  Creating placeholder: content\python\Part-154
+  Creating placeholder: content\python\Part-155
+  Creating placeholder: content\python\Part-156
+  Creating placeholder: content\python\Part-157
+  Creating placeholder: content\python\Part-158
+  Creating placeholder: content\python\Part-159
+  Creating placeholder: content\python\Part-160
+  Creating placeholder: content\python\Part-161
+  Creating placeholder: content\python\Part-162
+  Creating placeholder: content\python\Part-163
+  Creating placeholder: content\python\Part-164
+  Creating placeholder: content\python\Part-165
+  Creating placeholder: content\python\Part-166
+  Creating placeholder: content\python\Part-167
+  Creating placeholder: content\python\Part-168
+  Creating placeholder: content\python\Part-169
+  Creating placeholder: content\python\Part-170
+  Creating placeholder: content\python\Part-171
+  Creating placeholder: content\python\Part-172
+  Creating placeholder: content\python\Part-173
+  Creating placeholder: content\python\Part-174
+  Creating placeholder: content\python\Part-175
+  Creating placeholder: content\python\Part-176
+  Creating placeholder: content\python\Part-177
+  Creating placeholder: content\python\Part-178
+  Creating placeholder: content\python\Part-179
+  Creating placeholder: content\python\Part-180
+  Creating placeholder: content\python\Part-181
+  Creating placeholder: content\python\Part-182
+  Creating placeholder: content\python\Part-183
+  Creating placeholder: content\python\Part-184
+  Creating placeholder: content\python\Part-185
+  Creating placeholder: content\python\Part-186
+  Creating placeholder: content\python\Part-187
+  Creating placeholder: content\python\Part-188
+  Creating placeholder: content\python\Part-189
+  Creating placeholder: content\python\Part-190
+  Creating placeholder: content\python\Part-191
+  Creating placeholder: content\python\Part-192
+  Creating placeholder: content\python\Part-193
+  Creating placeholder: content\python\Part-194
+  Creating placeholder: content\python\Part-195
+  Creating placeholder: content\python\Part-196
+  Creating placeholder: content\python\Part-197
+  Creating placeholder: content\python\Part-198
+  Creating placeholder: content\python\Part-199
+  Creating placeholder: content\python\Part-200
+  Creating placeholder: content\python\Part-201
+  Creating placeholder: content\python\Part-202
+  Creating placeholder: content\python\Part-203
+  Creating placeholder: content\python\Part-204
+  Creating placeholder: content\python\Part-205
+  Creating placeholder: content\python\Part-206
+  Creating placeholder: content\python\Part-207
+  Creating placeholder: content\python\Part-208
+  Creating placeholder: content\python\Part-209
+  Creating placeholder: content\python\Part-210
+  Creating placeholder: content\python\Part-211
+  Creating placeholder: content\python\Part-212
+  Creating placeholder: content\python\Part-213
+  Creating placeholder: content\python\Part-214
+  Creating placeholder: content\python\Part-215
+  Creating placeholder: content\python\Part-216
+  Creating placeholder: content\python\Part-217
+  Creating placeholder: content\python\Part-218
+  Creating placeholder: content\python\Part-219
+  Creating placeholder: content\python\Part-220
+  Creating placeholder: content\python\Part-221
+  Creating placeholder: content\python\Part-222
+  Creating placeholder: content\python\Part-223
+  Creating placeholder: content\python\Part-224
+  Creating placeholder: content\python\Part-225
+  Creating placeholder: content\python\Part-226
+  Creating placeholder: content\python\Part-227
+  Creating placeholder: content\python\Part-228
+  Creating placeholder: content\python\Part-229
+  Creating placeholder: content\python\Part-230
+  Creating placeholder: content\python\Part-231
+  Creating placeholder: content\python\Part-232
+  Creating placeholder: content\python\Part-233
+  Creating placeholder: content\python\Part-234
+  Creating placeholder: content\python\Part-235
+  Creating placeholder: content\python\Part-236
+  Creating placeholder: content\python\Part-237
+  Creating placeholder: content\python\Part-238
+  Creating placeholder: content\python\Part-239
+  Creating placeholder: content\python\Part-240
+  Creating placeholder: content\python\Part-241
+  Creating placeholder: content\python\Part-242
+  Creating placeholder: content\python\Part-243
+  Creating placeholder: content\python\Part-244
+  Creating placeholder: content\python\Part-245
+  Creating placeholder: content\python\Part-246
+  Creating placeholder: content\python\Part-247
+  Creating placeholder: content\python\Part-248
+  Creating placeholder: content\python\Part-249
+  Creating placeholder: content\python\Part-250
+  Creating placeholder: content\python\Part-251
+  Creating placeholder: content\python\Part-252
+  Creating placeholder: content\python\Part-253
+  Creating placeholder: content\python\Part-254
+  Creating placeholder: content\python\Part-255
+  Creating placeholder: content\python\Part-256
+  Creating placeholder: content\python\Part-257
+  Creating placeholder: content\python\Part-258
+  Creating placeholder: content\python\Part-259
+  Creating placeholder: content\python\Part-260
+  Creating placeholder: content\python\Part-261
+  Creating placeholder: content\python\Part-262
+  Creating placeholder: content\python\Part-263
+  Creating placeholder: content\python\Part-264
+  Creating placeholder: content\python\Part-265
+  Creating placeholder: content\python\Part-266
+  Creating placeholder: content\python\Part-267
+  Creating placeholder: content\python\Part-268
+  Creating placeholder: content\python\Part-269
+  Creating placeholder: content\python\Part-270
+  Creating placeholder: content\python\Part-271
+  Creating placeholder: content\python\Part-272
+  Creating placeholder: content\python\Part-273
+  Creating placeholder: content\python\Part-274
+  Creating placeholder: content\python\Part-275
+  Creating placeholder: content\python\Part-276
+  Creating placeholder: content\python\Part-277
+  Creating placeholder: content\python\Part-278
+  Creating placeholder: content\python\Part-279
+  Creating placeholder: content\python\Part-280
+  Creating placeholder: content\python\Part-281
+  Creating placeholder: content\python\Part-282
+  Creating placeholder: content\python\Part-283
+  Creating placeholder: content\python\Part-284
+  Creating placeholder: content\python\Part-285
+  Creating placeholder: content\python\Part-286
+  Creating placeholder: content\python\Part-287
+  Creating placeholder: content\python\Part-288
+  Creating placeholder: content\python\Part-289
+  Creating placeholder: content\python\Part-290
+  Creating placeholder: content\python\Part-291
+  Creating placeholder: content\python\Part-292
+  Creating placeholder: content\python\Part-293
+  Creating placeholder: content\python\Part-294
+  Creating placeholder: content\python\Part-295
+  Creating placeholder: content\python\Part-296
+  Creating placeholder: content\python\Part-297
+  Creating placeholder: content\python\Part-298
+  Creating placeholder: content\python\Part-299
+  Creating placeholder: content\python\Part-300
+  Creating placeholder: content\python\Part-301
+  Creating placeholder: content\python\Part-302
+  Creating placeholder: content\python\Part-303
+  Creating placeholder: content\python\Part-304
+  Creating placeholder: content\python\Part-305
+  Creating placeholder: content\python\Part-306
+  Creating placeholder: content\python\Part-307
+  Creating placeholder: content\python\Part-308
+  Creating placeholder: content\python\Part-309
+  Creating placeholder: content\python\Part-310
+  Exported modules-python.json
+  Exported part notes for python.
+Compiling course: Cloud Computing...
+  Exported modules-cloud.json
+  Exported part notes for cloud.
+Compiling course: Data Analyst (Telugu)...
+  Exported modules-data-analyst-te.json
+  Exported part notes for data-analyst-te.
+Compiling course: Data Analyst (English)...
+  Exported modules-data-analyst-en.json
+  Exported part notes for data-analyst-en.
+Compiling course: Excel Mastery...
+  Exported modules-excel.json
+  Exported part notes for excel.
+Compiling course: SQL...
+  Exported modules-sql.json
+  Exported part notes for sql.
+
+Data export complete!
+
+> onepercentdev-frontend@0.1.0 dev
+> cross-env NODE_OPTIONS=--max-old-space-size=4096 NEXT_TELEMETRY_DISABLED=1 next dev --port 3005
+
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3005
+   - Network:      http://10.35.85.59:3005
+   - Experiments (use with caution):
+     · cpus: 1
+
+ ✓ Starting...
+ ✓ Ready in 7.9s
+ ○ Compiling / ...
+ ✓ Compiled / in 12.9s (1445 modules)
+ GET / 200 in 7965ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 3.2s (879 modules)
+ GET /favicon.ico 200 in 3345ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 681ms (1453 modules)
+ GET /api/modules-data-analyst.json 404 in 1225ms
+ GET /api/modules-data-analyst.json 404 in 96ms
+ ✓ Compiled in 4.3s (1445 modules)
+ GET /?course=sql&view=reader&part=1 200 in 627ms
+ GET /?course=sql&view=reader&part=1 200 in 3586ms
+ GET /?course=sql&view=reader&part=1 200 in 95ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 798ms (879 modules)
+ GET /favicon.ico 200 in 1196ms
+ ✓ Compiled in 6.7s (1462 modules)
+ GET /?course=sql&view=reader&part=1 200 in 474ms
+ GET /?course=sql&view=reader&part=1 200 in 6336ms
+ GET /favicon.ico 200 in 203ms
+ GET /?course=sql&view=reader&part=1 200 in 1520ms
+ ✓ Compiled in 5.6s (1431 modules)
+ ✓ Compiled in 455ms (1431 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 3.3s (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 4723ms
+ GET /?view=dashboard 200 in 1337ms
+ GET /api/modules-data-analyst.json 404 in 62ms
+ ✓ Compiled in 1347ms (1436 modules)
+ ✓ Compiled in 636ms (1431 modules)
+ ✓ Compiled in 819ms (583 modules)
+ ✓ Compiled in 1395ms (1445 modules)
+ GET /?view=landing&course=python 200 in 1858ms
+ GET /?view=landing&course=python 200 in 44ms
+ ✓ Compiled in 2.2s (1431 modules)
+ GET /?view=landing&course=python 200 in 366ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 5.7s (1779 modules)
+ GET /?view=reader&course=sql&part=1 200 in 2040ms
+ GET /?view=landing&course=sql 200 in 3370ms
+ GET / 500 in 17656ms
+[?25h

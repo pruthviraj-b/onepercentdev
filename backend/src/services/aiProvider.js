@@ -49,4 +49,37 @@ async function generateLessonAnswer({ question, context, history = [] }) {
   throw new Error(`All AI providers failed (${failures.join(', ')})`);
 }
 
-module.exports = { generateLessonAnswer };
+async function generateLessonExplanation({ course, module, title, notes }) {
+  const prompt = `You are an expert instructor creating a spoken lesson for an LMS. Rewrite the notes below into a natural tutor explanation for a serious learner.
+
+Teaching requirements:
+- Start with the main idea and why it matters.
+- Explain terminology in plain language before using it.
+- Build from intuition to technical detail.
+- Add one concrete example and one practical use case when the notes support it.
+- Call out common mistakes and trade-offs when relevant.
+- Preserve every important fact, formula, code behavior, and constraint from the source. Never invent APIs, results, or claims.
+- Use short spoken paragraphs, natural transitions, and occasional emphasis. Do not use Markdown, bullet symbols, stage directions, or meta commentary.
+- Sound like a calm senior engineer teaching one student, not like a narrator reading documentation.
+
+COURSE: ${course || 'Current course'}
+MODULE: ${module || 'Current module'}
+LESSON: ${title || 'Current lesson'}
+
+SOURCE NOTES:
+${String(notes || '').slice(0, 24000)}`;
+  const providers = [
+    ...keys('GEMINI_API_KEY').map(key => ({ name: 'Gemini', key, call: callGemini })),
+    ...keys('GROK_API_KEY').map(key => ({ name: 'Grok', key, call: callGrok })),
+  ];
+  if (!providers.length) throw new Error('No AI providers configured');
+  for (const provider of providers) {
+    try {
+      const answer = await provider.call(provider.key, prompt);
+      if (answer) return { answer, provider: provider.name };
+    } catch { /* try the next configured provider */ }
+  }
+  throw new Error('All explanation providers failed');
+}
+
+module.exports = { generateLessonAnswer, generateLessonExplanation };

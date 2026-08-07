@@ -56,6 +56,30 @@ const SNIPPETS = [
   { category: 'DevOps', label: 'Terraform - VPC Topology', code: `resource "aws_vpc" "production_core" {\n cidr_block = "10.100.0.0/16"\n enable_dns_hostnames = true\n}\n` },
 ];
 
+const SQL_KEYWORDS = [
+  'SELECT', 'FROM', 'WHERE', 'DISTINCT', 'ORDER BY', 'GROUP BY', 'HAVING', 'LIMIT',
+  'OFFSET', 'INNER JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'FULL OUTER JOIN', 'SELF JOIN', 'COUNT', 'SUM',
+  'AVG', 'MIN', 'MAX', 'AND', 'OR', 'NOT', 'BETWEEN', 'IN',
+  'LIKE', 'IS NULL', 'EXISTS', 'CREATE TABLE', 'ALTER TABLE', 'DROP TABLE', 'TRUNCATE', 'CASCADE',
+  'INSERT', 'UPDATE', 'DELETE', 'PRIMARY KEY', 'FOREIGN KEY', 'UNIQUE', 'CHECK', 'DEFAULT',
+];
+
+const SQL_EDITOR_ACTIONS = [
+  'TAB → Indent code', 'SHIFT+TAB → Un-indent code', 'CTRL+C → Copy', 'CTRL+V → Paste',
+  'CTRL+Z → Undo', 'CTRL+Y → Redo', 'CTRL+F → Find', 'CTRL+H → Replace',
+  'CTRL+S → Save', 'CTRL+ENTER → Run query',
+];
+
+const SQL_DAILY_SETS = [
+  { id: 'sql-set-1', title: 'Set 1 · Query basics', description: 'Everyday keywords for reading data.', items: SQL_KEYWORDS.slice(0, 8) },
+  { id: 'sql-set-2', title: 'Set 2 · Joins & aggregates', description: 'Connect tables and calculate results.', items: SQL_KEYWORDS.slice(8, 16) },
+  { id: 'sql-set-3', title: 'Set 3 · Conditions', description: 'Filter, compare, and find rows.', items: SQL_KEYWORDS.slice(16, 24) },
+  { id: 'sql-set-4', title: 'Set 4 · Table commands', description: 'Create and manage database structure.', items: SQL_KEYWORDS.slice(24, 32) },
+  { id: 'sql-set-5', title: 'Set 5 · Data & constraints', description: 'Change data and protect its quality.', items: SQL_KEYWORDS.slice(32, 40) },
+  { id: 'sql-shortcuts', title: 'Set 6 · Editor shortcuts', description: 'Build muscle memory for the SQL editor.', items: SQL_EDITOR_ACTIONS },
+  { id: 'sql-all', title: 'Full review · 40 + 10', description: 'Practice the complete SQL reference.', items: [...SQL_KEYWORDS, ...SQL_EDITOR_ACTIONS] },
+];
+
 interface Props { onBack: () => void; }
 type GameState = 'idle' | 'running' | 'finished' | 'lesson';
 type CategoryFilter = 'All' | 'SQL & Database' | 'Python' | 'DevOps' | 'By Level';
@@ -63,16 +87,18 @@ interface HistoryEntry { wpm: number; accuracy: number; label: string; category:
 
 const LS_HISTORY = 'opd_hyper_typing_history_v4';
 const LS_PROGRESS = 'opd_sql_progress_v4';
+const LS_DAILY_PROGRESS = 'opd_sql_daily_progress_v1';
 
 function loadHistory(): HistoryEntry[] { try { const raw = localStorage.getItem(LS_HISTORY); return raw? JSON.parse(raw) : []; } catch { return []; } }
 function saveHistory(h: HistoryEntry[]) { try { localStorage.setItem(LS_HISTORY, JSON.stringify(h.slice(0, 50))); } catch {} }
 function loadProgress(): Record<number, boolean> { try { const raw = localStorage.getItem(LS_PROGRESS); return raw? JSON.parse(raw) : {}; } catch { return {}; } }
+function loadDailyProgress(): Record<string, boolean> { try { const raw = localStorage.getItem(LS_DAILY_PROGRESS); return raw? JSON.parse(raw) : {}; } catch { return {}; } }
 
 export function TypingView({ onBack }: Props) {
   const [level, setLevel] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('By Level');
   const [snippetIdx, setSnippetIdx] = useState(0);
-  const [gameState, setGameState] = useState<GameState>('lesson');
+  const [gameState, setGameState] = useState<GameState>('idle');
   const [userInput, setUserInput] = useState('');
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsed, setElapsed] = useState(0);
@@ -83,6 +109,8 @@ export function TypingView({ onBack }: Props) {
   const [charStates, setCharStates] = useState<('correct' | 'wrong' | 'pending')[]>([]);
   const [isFocused, setIsFocused] = useState(false);
   const [weakKeys, setWeakKeys] = useState<Record<string, number>>({});
+  const [activeDailySetId, setActiveDailySetId] = useState<string | null>('sql-set-1');
+  const [dailyProgress, setDailyProgress] = useState<Record<string, boolean>>(loadDailyProgress);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const timerRef = useRef<number | null>(null);
@@ -94,7 +122,8 @@ export function TypingView({ onBack }: Props) {
   }, [selectedCategory, level]);
 
   const activeSnippet = filteredSnippets[snippetIdx] || filteredSnippets[0] || SNIPPETS[0];
-  const target = activeSnippet.code;
+  const activeDailySet = SQL_DAILY_SETS.find(set => set.id === activeDailySetId) || null;
+  const target = activeDailySet ? `${activeDailySet.items.join('\n')}\n` : activeSnippet.code;
   const currentLesson = CURRICULUM[level] || CURRICULUM[0];
 
   useEffect(() => {
@@ -142,12 +171,18 @@ export function TypingView({ onBack }: Props) {
     const newHistory = [entry,...loadHistory()].slice(0, 50);
     saveHistory(newHistory);
     setHistory(newHistory);
-    const newProgress = {...loadProgress(), [level]: finalAccuracy >= 85 };
-    localStorage.setItem(LS_PROGRESS, JSON.stringify(newProgress));
-    setProgress(newProgress);
+    if (activeDailySet) {
+      const newDailyProgress = {...loadDailyProgress(), [activeDailySet.id]: finalAccuracy >= 85 };
+      localStorage.setItem(LS_DAILY_PROGRESS, JSON.stringify(newDailyProgress));
+      setDailyProgress(newDailyProgress);
+    } else {
+      const newProgress = {...loadProgress(), [level]: finalAccuracy >= 85 };
+      localStorage.setItem(LS_PROGRESS, JSON.stringify(newProgress));
+      setProgress(newProgress);
+    }
     submitTypingScore(finalWpm, finalAccuracy, Math.round(totalSec));
     pingStreak();
-  }, [startTime, target, activeSnippet, level]);
+  }, [startTime, target, activeSnippet, activeDailySet, level]);
 
   const handleReset = () => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -156,12 +191,24 @@ export function TypingView({ onBack }: Props) {
   };
 
   const handleNext = () => {
+    if (activeDailySet) {
+      const currentSetIndex = SQL_DAILY_SETS.findIndex(set => set.id === activeDailySet.id);
+      const nextSet = SQL_DAILY_SETS[(currentSetIndex + 1) % SQL_DAILY_SETS.length];
+      setActiveDailySetId(nextSet.id);
+      handleReset();
+      return;
+    }
     if (snippetIdx + 1 < filteredSnippets.length) setSnippetIdx(i => i + 1);
     else if (level < 10) { setLevel(l => l + 1); setSnippetIdx(0); }
     handleReset();
   };
 
   const handleLevelChange = (newLevel: number) => { setLevel(newLevel); setSnippetIdx(0); handleReset(); };
+  const handleDailySetChange = (setId: string) => {
+    setActiveDailySetId(setId);
+    setSnippetIdx(0);
+    handleReset();
+  };
 
   useEffect(() => () => { if (timerRef.current) clearInterval(timerRef.current); }, []);
 
@@ -174,8 +221,8 @@ export function TypingView({ onBack }: Props) {
     <div className="typing-page" style={{ background: `radial-gradient(900px at 18% -10%, ${C.cyanGlow}, transparent), ${C.bg}`, minHeight: '100vh', color: C.text, fontFamily: 'var(--font-ui)' }}>
       <nav className="typing-nav" style={{ position: 'sticky', top: 0, zIndex: 100, height: 64, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(16px)', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ fontWeight: 800, padding: '7px 12px', background: C.surfaceHi, color: C.neonCyan, border: `1px solid ${C.borderHi}`, borderRadius: 7, fontSize: '0.72rem', letterSpacing: '0.08em' }}>TYPING LAB</div>
-          <span style={{ fontSize: '0.78rem', color: C.textDim }}>Level {level} / 10</span>
+          <div style={{ fontWeight: 800, padding: '7px 12px', background: C.surfaceHi, color: C.neonCyan, border: `1px solid ${C.borderHi}`, borderRadius: 7, fontSize: '0.72rem', letterSpacing: '0.08em' }}>PRACTICE SPACE</div>
+          <span style={{ fontSize: '0.78rem', color: C.textDim }}>SQL drills · daily</span>
         </div>
         <button onClick={onBack} style={{ background: C.surfaceHi, color: C.neonCyan, border: `1px solid ${C.borderHi}`, borderRadius: 8, padding: '7px 16px', fontWeight: 800, cursor: 'pointer' }}>← Dashboard</button>
       </nav>
@@ -220,7 +267,45 @@ export function TypingView({ onBack }: Props) {
         </aside>
 
         <main className="typing-main" style={{ padding: 24, maxWidth: 1020 }}>
-          {gameState === 'lesson' && (
+          <section className="typing-daily-card">
+            <div className="typing-daily-card__heading">
+              <div>
+                <div className="typing-eyebrow">SQL DAILY PRACTICE</div>
+                <h1>Build SQL muscle memory</h1>
+                <p>Practice one small set each day. Complete the full review when you are ready.</p>
+              </div>
+              <div className="typing-daily-count">{Object.values(dailyProgress).filter(Boolean).length} / {SQL_DAILY_SETS.length} cleared</div>
+            </div>
+            <div className="typing-daily-grid">
+              {SQL_DAILY_SETS.map(set => {
+                const isActive = activeDailySetId === set.id;
+                const isDone = dailyProgress[set.id];
+                return (
+                  <button
+                    key={set.id}
+                    className={`typing-daily-set${isActive ? ' is-active' : ''}${isDone ? ' is-done' : ''}`}
+                    onClick={() => handleDailySetChange(set.id)}
+                  >
+                    <span className="typing-daily-set__status">{isDone ? '✓' : set.id === 'sql-all' ? '★' : '0'}</span>
+                    <span><strong>{set.title}</strong><small>{set.description}</small></span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          {activeDailySet && (
+            <section className="typing-session-card">
+              <div>
+                <div className="typing-eyebrow">TODAY’S SESSION</div>
+                <h2>{activeDailySet.title}</h2>
+                <p>{activeDailySet.description} Type each item on its own line.</p>
+              </div>
+              <span className="typing-session-card__count">{activeDailySet.items.length} items</span>
+            </section>
+          )}
+
+          {!activeDailySet && gameState === 'lesson' && (
             <div className="typing-lesson-widget" style={{ background: `linear-gradient(180deg, ${C.surfaceCardHi}, ${C.surfaceCard})`, border: `1px solid ${C.border}`, borderRadius: 16, padding: 24, marginBottom: 20 }}>
               <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900 }}># Level {currentLesson.level} - {currentLesson.title}</h2>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 16 }}>

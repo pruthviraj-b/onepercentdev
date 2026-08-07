@@ -1266,8 +1266,7 @@
           6,
           7,
           8,
-          9,
-          10
+          9
         ],
         "code": "1",
         "moduleDir": "Module-1",
@@ -2215,8 +2214,8 @@
   },
   "excel": {
     "title": "Excel Mastery",
-    "description": "Master Microsoft Excel from basics to advanced â€” 50 chapters, 500 lessons, real-world projects across every industry.",
-    "tagline": "EXCEL MASTERY â€” 500 LESSONS, ZERO TO ANALYST",
+    "description": "Master Microsoft Excel from basics to advanced â€” 50 chapters, 499 lessons, real-world projects across every industry.",
+    "tagline": "EXCEL MASTERY â€” 499 LESSONS, ZERO TO ANALYST",
     "mascot": "ðŸ“Š",
     "contentDir": "content/excel",
     "dirPattern": "Part-{part}",
@@ -2230,7 +2229,7 @@
     "target": "Students, professionals, and analysts wanting to master Excel for real-world data work",
     "goal": "Build powerful spreadsheets, automate workflows, and create stunning dashboards across every industry",
     "welcomeParagraphs": [
-      "Welcome to the <b>Excel Mastery</b> course â€” 50 chapters and 500 lessons taking you from absolute zero to professional analyst.",
+      "Welcome to the <b>Excel Mastery</b> course â€” 50 chapters and 499 lessons taking you from absolute zero to professional analyst.",
       "This is a circular learning curriculum: each advanced chapter revisits earlier skills at a deeper level, ensuring reinforcement and real mastery.",
       "Every part includes structured notes, the lesson video, and real-world examples from industries like Finance, HR, E-commerce, Healthcare, and more."
     ],
@@ -2247,8 +2246,7 @@
           6,
           7,
           8,
-          9,
-          10
+          9
         ],
         "code": "1",
         "moduleDir": "Module-1",
@@ -7947,8 +7945,7 @@
           6,
           7,
           8,
-          9,
-          10
+          9
         ],
         "lessons": [
           {
@@ -8003,12 +8000,6 @@
             "part": 9,
             "code": "1.09",
             "title": "1.09 Type checking",
-            "subtopics": []
-          },
-          {
-            "part": 10,
-            "code": "1.10",
-            "title": "1.10 Best practices",
             "subtopics": []
           }
         ]

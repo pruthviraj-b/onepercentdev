@@ -1,0 +1,382 @@
+
+> onepercentdev-frontend@0.1.0 predev
+> node -e "const fs = require('fs'); if (fs.existsSync('.next')) fs.rmSync('.next', { recursive: true, force: true });" && node scripts/export-data.js
+
+Exporting courses metadata...
+Exported courses.json successfully.
+Exported videos.json successfully.
+  (Supabase not configured — skipping Cloudinary file merge)
+Compiling course: Python for Data Analysis — Industry Master Program...
+  Exported modules-python.json
+  Exported part notes for python.
+Compiling course: Cloud Computing...
+  Exported modules-cloud.json
+  Exported part notes for cloud.
+Compiling course: Data Analyst (Telugu)...
+  Exported modules-data-analyst-te.json
+  Exported part notes for data-analyst-te.
+Compiling course: Data Analyst (English)...
+  Exported modules-data-analyst-en.json
+  Exported part notes for data-analyst-en.
+Compiling course: Excel Mastery...
+  Exported modules-excel.json
+  Exported part notes for excel.
+Compiling course: SQL...
+  Exported modules-sql.json
+  Exported part notes for sql.
+
+Data export complete!
+
+> onepercentdev-frontend@0.1.0 dev
+> cross-env NODE_OPTIONS=--max-old-space-size=4096 NEXT_TELEMETRY_DISABLED=1 next dev --port 3005
+
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3005
+   - Network:      http://192.168.134.237:3005
+   - Experiments (use with caution):
+     · cpus: 1
+
+ ✓ Starting...
+ ✓ Ready in 12.6s
+ ○ Compiling / ...
+ ✓ Compiled / in 41.5s (1445 modules)
+ GET / 200 in 3445ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 3.7s (879 modules)
+ GET /favicon.ico 200 in 4151ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1554ms (1453 modules)
+ GET /api/modules-data-analyst.json 404 in 2415ms
+ GET /api/modules-data-analyst.json 404 in 128ms
+ ✓ Compiled in 8.9s (1431 modules)
+ ✓ Compiled in 775ms (1431 modules)
+ ✓ Compiled in 900ms (1431 modules)
+ ✓ Compiled in 2.7s (1445 modules)
+ GET / 200 in 1026ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1381ms (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 4741ms
+ GET /?view=landing 200 in 350ms
+ GET /api/modules-data-analyst.json 404 in 177ms
+ ✓ Compiled in 5s (1436 modules)
+ ✓ Compiled in 706ms (1445 modules)
+ GET /?view=landing&course=python 200 in 342ms
+ GET /?view=reader&course=python&part=5 200 in 2252ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 906ms (879 modules)
+ GET /favicon.ico 200 in 1267ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1562ms (1453 modules)
+ GET /api/modules-data-analyst.json 404 in 4237ms
+ GET /api/modules-data-analyst.json 404 in 685ms
+ GET /?view=landing 200 in 2668ms
+ GET /?view=dashboard 200 in 2704ms
+ GET /api/modules-data-analyst.json 404 in 262ms
+ GET /api/modules-data-analyst.json 404 in 136ms
+ ✓ Compiled in 12.1s (1432 modules)
+ ✓ Compiled in 4s (1431 modules)
+ ✓ Compiled in 4.8s (1431 modules)
+ ✓ Compiled in 8s (1445 modules)
+ GET /?view=reader&course=sql&part=1 200 in 2406ms
+ GET /?view=dashboard 200 in 2560ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1738ms (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 4147ms
+ GET /api/modules-data-analyst.json 404 in 384ms
+ GET /?view=dashboard 200 in 2356ms
+ GET /?view=reader&course=sql&part=1 200 in 2357ms
+ ✓ Compiled in 3.9s (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 1433ms
+ GET /api/modules-data-analyst.json 404 in 466ms
+ GET /api/modules-data-analyst.json 404 in 184ms
+ GET /api/modules-data-analyst.json 404 in 107ms
+ GET /api/modules-data-analyst.json 404 in 308ms
+ GET /api/modules-data-analyst.json 404 in 180ms
+ ✓ Compiled in 19.8s (1436 modules)
+ ✓ Compiled in 666ms (1445 modules)
+ GET /?view=reader&course=python&part=1 200 in 570ms
+ GET /?view=reader&course=sql&part=1 200 in 581ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1071ms (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 2441ms
+ GET /api/modules-data-analyst.json 404 in 457ms
+ GET /?view=reader&course=sql&part=1 200 in 469ms
+ GET /?view=dashboard 200 in 468ms
+ ✓ Compiled in 2.6s (1436 modules)
+ GET / 200 in 1379ms
+ GET /api/modules-data-analyst.json 404 in 246ms
+ GET /api/modules-data-analyst.json 404 in 112ms
+ GET /api/modules-data-analyst.json 404 in 1778ms
+ GET /api/modules-data-analyst.json 404 in 358ms
+ ✓ Compiled in 5s (1445 modules)
+ GET /?view=dashboard 200 in 523ms
+ ✓ Compiled in 3.3s (1431 modules)
+ ✓ Compiled in 1625ms (1431 modules)
+ GET / 200 in 1603ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 3.1s (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 4355ms
+ GET /api/modules-data-analyst.json 404 in 456ms
+ GET /?view=dashboard 200 in 475ms
+ GET / 200 in 485ms
+ ✓ Compiled in 3.7s (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 750ms
+ GET /api/modules-data-analyst.json 404 in 87ms
+ ✓ Compiled in 1988ms (1436 modules)
+ ✓ Compiled in 5.9s (1432 modules)
+ GET / 200 in 2186ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 3.9s (879 modules)
+ GET /favicon.ico 200 in 4575ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 2.9s (1453 modules)
+ ✓ Compiled in 1821ms (1445 modules)
+ GET /?view=reader&course=sql&part=1 200 in 843ms
+ ✓ Compiled in 1586ms (1445 modules)
+ GET /?view=reader&course=sql&part=1 200 in 149ms
+ ✓ Compiled in 3.1s (1431 modules)
+ ✓ Compiled in 504ms (1431 modules)
+ ✓ Compiled in 588ms (1431 modules)
+ ✓ Compiled in 420ms (1445 modules)
+ GET /?view=reader&course=sql&part=1 200 in 427ms
+ GET / 200 in 1349ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1130ms (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 2351ms
+ GET /api/modules-data-analyst.json 404 in 282ms
+ GET /?view=reader&course=sql&part=1 200 in 294ms
+ GET / 200 in 294ms
+ GET /api/modules-data-analyst.json 404 in 875ms
+ GET /api/modules-data-analyst.json 404 in 155ms
+ GET /api/modules-data-analyst.json 404 in 120ms
+ GET /api/modules-data-analyst.json 404 in 152ms
+ GET /api/modules-data-analyst.json 404 in 247ms
+ GET /api/modules-data-analyst.json 404 in 137ms
+ GET /api/modules-data-analyst.json 404 in 346ms
+ GET /api/modules-data-analyst.json 404 in 175ms
+ ✓ Compiled in 10.3s (1436 modules)
+ ✓ Compiled in 554ms (1450 modules)
+ GET / 200 in 418ms
+ GET /?view=reader&course=sql&part=1 200 in 427ms
+ GET /api/modules-data-analyst.json 404 in 4043ms
+ GET /api/modules-data-analyst.json 404 in 152ms
+ GET /api/modules-data-analyst.json 404 in 930ms
+ GET /api/modules-data-analyst.json 404 in 155ms
+ GET / 200 in 2916ms
+ GET /api/modules-data-analyst.json 404 in 279ms
+ GET /api/modules-data-analyst.json 404 in 207ms
+ ✓ Compiled in 12.7s (1432 modules)
+ ✓ Compiled in 1160ms (1445 modules)
+ GET / 200 in 995ms
+ GET /?view=dashboard 200 in 982ms
+ GET / 200 in 2027ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 5s (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 6628ms
+ GET /api/modules-data-analyst.json 404 in 453ms
+ GET /?view=dashboard 200 in 1510ms
+ GET / 200 in 1517ms
+ GET / 200 in 1517ms
+ GET /?view=typing 200 in 468ms
+ GET /?view=aptitude 200 in 205ms
+ GET /?view=targetroom 200 in 151ms
+ GET /?view=taskhub 200 in 170ms
+ GET /api/modules-data-analyst.json 404 in 484ms
+ GET /api/modules-data-analyst.json 404 in 291ms
+ GET / 200 in 160ms
+ GET /api/modules-data-analyst.json 404 in 137ms
+ GET /api/modules-data-analyst.json 404 in 68ms
+ GET / 200 in 72ms
+ GET /api/modules-data-analyst.json 404 in 212ms
+ GET /api/modules-data-analyst.json 404 in 84ms
+ ✓ Compiled in 5.5s (1450 modules)
+ GET / 200 in 1334ms
+ GET / 200 in 1368ms
+ GET /?view=dashboard 200 in 1282ms
+ GET / 200 in 1040ms
+ GET / 200 in 87ms
+ GET / 200 in 155ms
+ GET /api/modules-data-analyst.json 404 in 368ms
+ GET /api/modules-data-analyst.json 404 in 145ms
+ GET /?course=sql&part=1 200 in 287ms
+ ✓ Compiled in 12.5s (1431 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 532ms (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 1853ms
+ ✓ Compiled in 1736ms (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 652ms
+ GET /api/modules-data-analyst.json 404 in 77ms
+ ✓ Compiled in 14.5s (1432 modules)
+ ✓ Compiled in 2.2s (1431 modules)
+ ✓ Compiled in 724ms (1431 modules)
+ ✓ Compiled in 1212ms (1431 modules)
+ ✓ Compiled in 1484ms (1431 modules)
+ ✓ Compiled in 3.8s (1431 modules)
+ ✓ Compiled in 2.6s (1431 modules)
+ ✓ Compiled in 916ms (1431 modules)
+ ✓ Compiled in 2s (1431 modules)
+ ✓ Compiled in 12.8s (1431 modules)
+ ✓ Compiled in 1926ms (1431 modules)
+ ✓ Compiled in 11.2s (1431 modules)
+ ✓ Compiled in 734ms (1431 modules)
+ ✓ Compiled in 1516ms (1431 modules)
+ ✓ Compiled in 1105ms (1431 modules)
+ ✓ Compiled in 1450ms (1431 modules)
+ ✓ Compiled in 647ms (1431 modules)
+ ✓ Compiled in 733ms (1431 modules)
+ ✓ Compiled in 1789ms (1431 modules)
+ ✓ Compiled in 2.8s (1431 modules)
+ ✓ Compiled in 709ms (1431 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 6.7s (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 7736ms
+ GET /api/modules-data-analyst.json 404 in 63ms
+ ✓ Compiled in 3.9s (1431 modules)
+ ✓ Compiled in 1633ms (1431 modules)
+ ✓ Compiled in 745ms (1431 modules)
+ ✓ Compiled in 3.7s (1431 modules)
+ GET /?view=dashboard 200 in 6985ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /_not-found in 9.9s (1453 modules)
+ GET /favicon.ico 200 in 11156ms
+ GET /logos/logo.svg.png 404 in 10805ms
+ GET /api/modules-data-analyst.json 404 in 3337ms
+ GET /api/modules-data-analyst.json 404 in 81ms
+ GET /?view=dashboard 200 in 505ms
+ GET /favicon.ico 200 in 28ms
+ GET /api/modules-data-analyst.json 404 in 224ms
+ GET /api/modules-data-analyst.json 404 in 136ms
+ GET /?view=dashboard 200 in 511ms
+ GET /favicon.ico 200 in 66ms
+ GET /api/modules-data-analyst.json 404 in 853ms
+ GET /api/modules-data-analyst.json 404 in 118ms
+ ✓ Compiled in 13.9s (1431 modules)
+ ✓ Compiled in 740ms (1431 modules)
+ ✓ Compiled in 3.3s (1445 modules)
+ GET /?view=dashboard 200 in 989ms
+ GET /?view=dashboard 200 in 48ms
+ GET / 200 in 3121ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 4.3s (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 6440ms
+ GET /api/modules-data-analyst.json 404 in 1118ms
+ GET /?view=dashboard 200 in 1411ms
+ GET / 200 in 3198ms
+ GET /?view=dashboard 200 in 1242ms
+ ✓ Compiled in 13.5s (1450 modules)
+ GET / 200 in 6141ms
+ GET /?view=dashboard 200 in 3445ms
+ GET / 200 in 3400ms
+ GET /?view=dashboard 200 in 85ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 9.4s (1453 modules)
+ GET /favicon.ico 200 in 11130ms
+ GET /api/modules-data-analyst.json 404 in 3683ms
+ GET /api/modules-data-analyst.json 404 in 177ms
+ ✓ Compiled in 1224ms (1467 modules)
+ GET / 200 in 626ms
+ GET /?view=dashboard 200 in 287ms
+ GET /?view=dashboard 200 in 203ms
+ GET / 200 in 1775ms
+ GET /favicon.ico 200 in 345ms
+ GET /api/modules-data-analyst.json 404 in 298ms
+ GET /api/modules-data-analyst.json 404 in 92ms
+ ✓ Compiled in 18s (1431 modules)
+ ✓ Compiled in 1573ms (1445 modules)
+ GET /?view=dashboard 200 in 1857ms
+ GET /?view=dashboard 200 in 96ms
+ GET / 200 in 3494ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 3.2s (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 4914ms
+ GET /api/modules-data-analyst.json 404 in 516ms
+ GET / 200 in 1772ms
+ GET /?view=dashboard 200 in 1790ms
+ GET /?view=dashboard 200 in 614ms
+ ✓ Compiled in 8.4s (1445 modules)
+ GET /?view=dashboard 200 in 996ms
+ GET /?view=dashboard 200 in 103ms
+ GET / 200 in 4665ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 6.2s (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 8966ms
+ GET /api/modules-data-analyst.json 404 in 658ms
+ GET / 200 in 2710ms
+ GET /?view=dashboard 200 in 2701ms
+ GET /?view=dashboard 200 in 136ms
+ ✓ Compiled in 20.8s (1431 modules)
+ GET /?view=dashboard 200 in 8268ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /_not-found in 12.4s (1453 modules)
+ GET /favicon.ico 200 in 14302ms
+ GET /api/modules-data-analyst.json 404 in 6546ms
+ GET /api/modules-data-analyst.json 404 in 76ms
+ GET /?view=dashboard 200 in 6526ms
+ GET /logos/applogo.mp4 404 in 254ms
+ GET /api/modules-data-analyst.json 404 in 401ms
+ GET /api/modules-data-analyst.json 404 in 132ms
+ ✓ Compiled in 9.5s (1431 modules)
+ ✓ Compiled in 4.4s (1445 modules)
+ GET /?view=dashboard 200 in 1064ms
+ GET /?view=dashboard 200 in 2157ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 883ms (879 modules)
+ GET /favicon.ico 200 in 1431ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 708ms (1453 modules)
+ GET /api/modules-data-analyst.json 404 in 1634ms
+ GET /api/modules-data-analyst.json 404 in 251ms
+ GET /?view=dashboard 200 in 905ms
+ ✓ Compiled in 7.4s (1467 modules)
+ GET /?view=dashboard 200 in 743ms
+ ✓ Compiled in 1803ms (1445 modules)
+ GET /?view=dashboard 200 in 773ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 568ms (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 3123ms
+ GET /api/modules-data-analyst.json 404 in 256ms
+ GET /?view=dashboard 200 in 2547ms
+ ✓ Compiled in 18.8s (1431 modules)
+ ✓ Compiled in 660ms (1445 modules)
+ GET /?view=dashboard 200 in 895ms
+ GET / 200 in 3687ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 4.3s (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 8051ms
+ GET /api/modules-data-analyst.json 404 in 3206ms
+ GET /?view=dashboard 200 in 4471ms
+ GET / 200 in 4539ms
+ ✓ Compiled in 10.1s (1431 modules)
+ ✓ Compiled in 551ms (1445 modules)
+ GET /?view=dashboard 200 in 379ms
+ GET / 200 in 3579ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 3.5s (1436 modules)
+ GET /api/modules-data-analyst.json 404 in 4878ms
+ GET /api/modules-data-analyst.json 404 in 523ms
+ GET / 200 in 1309ms
+ GET /?view=dashboard 200 in 1322ms
+ ✓ Compiled in 16.7s (1445 modules)
+ GET /?view=landing&course=python 200 in 121ms
+ GET /?view=landing&course=python 200 in 5841ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1309ms (879 modules)
+ GET /favicon.ico 200 in 1671ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1087ms (1453 modules)
+ GET /api/modules-data-analyst.json 404 in 2283ms
+ GET /api/modules-data-analyst.json 404 in 314ms
+ GET /?view=landing&course=python 200 in 1151ms
+ ✓ Compiled in 1006ms (1467 modules)
+ GET /?view=landing&course=python 200 in 189ms
+ GET /favicon.ico 500 in 911ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_not-found in 9.8s (1801 modules)
+ GET /?view=landing&course=python 500 in 23992ms
+ GET /?view=dashboard 200 in 7290ms
+ GET /api/modules-data-analyst.json 404 in 4771ms
+ GET /favicon.ico 500 in 68ms
+ GET / 200 in 1014ms
+ GET / 200 in 5622ms
+ GET /?view=landing&course=python 200 in 2684ms
+ GET /favicon.ico 500 in 735ms

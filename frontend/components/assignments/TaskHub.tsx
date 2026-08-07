@@ -262,6 +262,7 @@ function TaskCard({
   return (
     <div
       className="taskhub-task-card"
+      data-completed={isDone ? 'true' : 'false'}
       style={{
         background: isDone ? VS.bgAlt : VS.bgRaised,
         border: `1px solid ${task.is_pinned ? VS.keyword : VS.border}`,
@@ -278,6 +279,7 @@ function TaskCard({
         onClick={handleCardClick}>
         {/* Status toggle */}
         <button
+          className="taskhub-status-toggle"
           onClick={e => { e.stopPropagation(); onToggleStatus(task); }}
           style={{ width:20, height:20, flexShrink:0, border:`2px solid ${isDone ? VS.number : VS.borderStrong}`,
             borderRadius: 5,
@@ -1314,7 +1316,7 @@ export function TaskHub({ onBack, onNavigateInternal, courses = [] }: TaskHubPro
         : await Notification.requestPermission();
       if (permission === 'granted') {
         new Notification('Test reminder', {
-          body: 'Website alerts are working for 1% Dev Academy.',
+          body: 'Website alerts are working.',
           icon: '/favicon.ico',
           tag: 'opd-test-reminder',
         });
