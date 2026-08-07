@@ -40,7 +40,10 @@ const allowedOrigins = (process.env.CORS_ORIGINS || 'https://onepercentdev.pruth
 app.use(cors({ origin(origin, callback) {
   const normalizedOrigin = String(origin || '').replace(/\/+$/, '');
   const localDevelopmentOrigin = /^https?:\/\/(localhost|127\.0\.0\.1):(3000|3005|3015)$/.test(normalizedOrigin);
-  const vercelDeploymentOrigin = /^https:\/\/onepercentdev-main(?:-[a-z0-9]+)*\.vercel\.app$/.test(normalizedOrigin);
+  // Vercel preview URLs include a deployment identifier and, for team
+  // projects, the team slug. Keep the allowlist limited to this LMS's known
+  // Vercel project names while allowing production and preview deployments.
+  const vercelDeploymentOrigin = /^https:\/\/(?:opd|onepercentdev)(?:-[a-z0-9-]+)?\.vercel\.app$/.test(normalizedOrigin);
   if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(normalizedOrigin) || localDevelopmentOrigin || vercelDeploymentOrigin) return callback(null, true);
   return callback(new Error('CORS origin denied'));
 }, credentials: true }));
