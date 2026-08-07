@@ -66,7 +66,9 @@ const CONFIG_PATH = path.join(__dirname, '..', '..', 'courses.config.json');
 const COURSES_CONFIG = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf-8'));
 
 const CONTENT_ROOT = path.join(__dirname, '..', '..');
-const OUTPUT_DIR = path.join(__dirname, '..', 'public', 'api');
+// Keep generated static data outside /api because Vercel routes /api/* to the
+// backend service. The frontend reads these files directly from /course-data.
+const OUTPUT_DIR = path.join(__dirname, '..', 'public', 'course-data');
 
 const COURSES = Object.entries(COURSES_CONFIG).map(([id, cfg]) => ({
   id,

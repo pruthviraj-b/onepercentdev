@@ -105,13 +105,14 @@ export interface NoteData {
 
 // ── Instant Cached Courses Fetcher (0ms response on repeat) ─────────────────
 const BASE_PATH = process.env.NEXT_PUBLIC_GITHUB_PAGES === 'true' ? '/onepercentdev' : '';
+const STATIC_DATA_PATH = `${BASE_PATH}/course-data`;
 
 export async function fetchCourses(): Promise<Course[]> {
   if (cacheCourses) return cacheCourses;
   if (pendingCourses.current) return pendingCourses.current;
   pendingCourses.current = (async () => {
     try {
-      const staticRes = await fetch(`${BASE_PATH}/api/courses.json`);
+      const staticRes = await fetch(`${STATIC_DATA_PATH}/courses.json`);
       if (staticRes.ok) {
         const data = await staticRes.json();
         cacheCourses = data;
@@ -141,7 +142,7 @@ export async function fetchModules(courseId: string): Promise<Module[]> {
   if (pending) return pending;
   const request = (async () => {
     try {
-      const res = await fetch(`${BASE_PATH}/api/modules-${courseId}.json`);
+      const res = await fetch(`${STATIC_DATA_PATH}/modules-${courseId}.json`);
       if (res.ok) {
         const data = await res.json();
         cacheModules.set(courseId, data);
@@ -165,7 +166,7 @@ export async function fetchNote(courseId: string, part: number): Promise<NoteDat
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 3000);
     try {
-      const res = await fetch(`${BASE_PATH}/api/notes/${courseId}/${part}.json`, { signal: controller.signal });
+      const res = await fetch(`${STATIC_DATA_PATH}/notes/${courseId}/${part}.json`, { signal: controller.signal });
       if (res.ok) {
         const data = await res.json();
         cacheNotes.set(key, data);

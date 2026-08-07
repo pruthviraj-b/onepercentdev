@@ -12,7 +12,7 @@ async function loadVideos(): Promise<Record<string, Record<string, string | stri
   if (videosRequest) return videosRequest;
   videosRequest = (async () => {
     try {
-      const res = await fetch(`${BASE_PATH}/api/videos.json`);
+      const res = await fetch(`${BASE_PATH}/course-data/videos.json`);
       if (res.ok) {
         videosCache = await res.json();
         return videosCache!;
